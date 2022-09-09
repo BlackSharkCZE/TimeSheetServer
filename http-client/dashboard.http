@@ -1,0 +1,11 @@
+GET http://localhost:8882/graphql/schema.graphql
+
+###
+
+POST http://localhost:8882/graphql
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query{dashboard(date: \"2021-04-01\") {workTimeDashboard {date, hoursDone, hoursInMonth}, projectReportList{projectName, workTimeOnProject}}}"
+}

@@ -1,0 +1,83 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="jiri">
+        <dropNotNullConstraint tableName="company" columnName="okres"/>
+    </changeSet>
+
+    <changeSet id="2" author="jiri">
+        <modifyDataType tableName="invoice" columnName="i_number" newDataType="varchar(64)"/>
+    </changeSet>
+
+    <changeSet id="3" author="jiri">
+        <createSequence sequenceName="invoice_id_seq" cacheSize="1" incrementBy="1"/>
+        <addColumn tableName="invoice">
+            <column type="int" defaultValueSequenceNext="invoice_id_seq" name="id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="4" author="jiri">
+        <createIndex tableName="invoice" indexName="invoice_id_uq" unique="true">
+            <column name="id"/>
+        </createIndex>
+        <addColumn tableName="invoice_item">
+            <column name="invoice_int_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="invoice_item"
+            baseColumnNames="invoice_int_id"
+            constraintName="invoice_item_invoice_fk"
+            referencedTableName="invoice" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5" author="jiri">
+        <comment>Update invoice item with new invoice ID</comment>
+        <sql>
+            update invoice_item
+            set invoice_int_id = invoice.id
+            from invoice
+            where invoice.i_number = invoice_item.invoice_id
+        </sql>
+        <addNotNullConstraint tableName="invoice_item" columnName="invoice_int_id"/>
+    </changeSet>
+
+    <changeSet id="6" author="jiri">
+        <comment>change primary key column on invoice</comment>
+        <dropForeignKeyConstraint baseTableName="invoice_item" constraintName="invoice_item_invoice_id_fkey"/>
+    </changeSet>
+
+    <changeSet id="7" author="jiri">
+        <comment>change foreign key</comment>
+        <dropPrimaryKey tableName="invoice" constraintName="invoice_pkey" />
+        <addPrimaryKey tableName="invoice" columnNames="id" constraintName="invoice_pkey" />
+        <addForeignKeyConstraint
+            baseTableName="invoice_item"
+            baseColumnNames="invoice_int_id"
+            constraintName="invoice_item_invoice_pk_foreign_key"
+            referencedTableName="invoice" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="8" author="jiri">
+        <comment>Add timestamp when item timeline is write to external system</comment>
+        <addColumn tableName="timeline">
+            <column type="timestamp with time zone" name="jira_write">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="9" author="jiri">
+        <comment>Add new colum to invoice holding path to saved file</comment>
+        <addColumn tableName="invoice">
+            <column name="store_path" type="varchar(256)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

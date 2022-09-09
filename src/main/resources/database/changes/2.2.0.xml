@@ -1,0 +1,34 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="jiri">
+        <addColumn tableName="project">
+            <column name="root_project_id" type="int" />
+            <column name="project_id" type="int" />
+            <column name="key" type="varchar(16)" />
+            <column name="remote_writer_list" type="varchar(256)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2" author="jiri">
+        <createSequence sequenceName="remote_write_timestamp_seq" cacheSize="1" incrementBy="1"/>
+        <createTable tableName="remote_write_timestamp">
+            <column name="id" defaultValueSequenceNext="remote_write_timestamp_seq" type="int">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="timesheet_id" type="int">
+                <constraints referencedTableName="timeline" foreignKeyName="timesheet_rw_fk" referencedColumnNames="id" nullable="false" />
+            </column>
+            <column name="writer_name" type="varchar(32)">
+                <constraints nullable="false" />
+            </column>
+            <column name="write_timestamp" type="timestamptz">
+                <constraints nullable="false" />
+            </column>
+            <column name="success" type="boolean" />
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

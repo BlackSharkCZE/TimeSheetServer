@@ -1,0 +1,85 @@
+quarkus:
+  cache:
+    caffeine:
+      "remote-writer-settings":
+        expire-after-write: 120S
+  http:
+    port: 8883
+    cors:
+      ~: true
+      methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - OPTIONS
+        - HEAD
+        - DELETE
+      origins:
+        - http://localhost
+        - http://localhost:8081
+        - http://localhost:8082
+        - http://localhost:8080
+        - http://localhost:8885
+  datasource:
+    db-kind: postgresql
+    username: timesheet
+    password: timesheet
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/timesheet
+      min-size: 1
+      max-size: 10
+  hibernate-orm:
+    log:
+      sql: false
+    dialect: org.hibernate.dialect.PostgreSQL9Dialect
+    database:
+      generation: none
+  smallrye-graphql:
+    print-data-fetcher-exception: true
+    error-extension-fields:
+      - exception
+      - description
+  log:
+    level: DEBUG
+    min-level: TRACE
+    console:
+      level: INFO
+      format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
+    category:
+      "cz.blackshark.http.filter":
+        level: TRACE
+      "org.jboss.resteasy.client":
+        level: DEBUG
+    file:
+      enable: true
+      level: DEBUG
+      path: log/app.log
+      format: "%d{YYYY-MM-dd'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
+      rotation:
+        max-file-size: "10M"
+        max-backup-index: 4
+  liquibase:
+    migrate-at-start: true
+    default-schema-name: public
+    change-log: database/changeLog.xml
+    database-change-log-table-name: databasechangelog
+application:
+  jax-rs-date-format: yyyy-MM-dd
+  file-storage-path: ${FILE_STORAGE_PATH}
+jira:
+  username: ${JIRA_USERNAME}
+  token: ${JIRA_TOKEN}
+  account-id: ${JIRA_ACCOUNT_ID}
+gemts:
+  username: ${TIMESHEET_USERNAME}
+  password: ${TIMESHEET_PASSWORD}
+  dr-max-project-name: "DrMax integrační platforma"
+ares-api/mp-rest/url: "http://wwwinfo.mfcr.cz"
+ares-api/mp-rest/scope: "javax.inject.Singleton"
+
+drmax-jira/mp-rest/url: ${DRMAX_TIMESHEET_URL}
+drmax-jira/mp-rest/scope: "javax.inject.Singleton"
+
+gem-timesheet/mp-rest/url: ${GEM_TIMESHEET_URL}
+gem-timesheet/mp-rest/scope: "javax.inject.Singleton"

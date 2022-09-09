@@ -1,0 +1,27 @@
+POST http://localhost:8883/graphql
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query{allTodo {id, done, todo, created}}"
+}
+
+###
+
+POST http://localhost:8882/graphql
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "mutation{createTodo(todo: {todo: \"Test Todo from graph\"}) {id, todo, created, done}}"
+}
+
+###
+
+POST http://localhost:8882/graphql
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "mutation{markDone(id: 6) {id, todo, created, done}}"
+}

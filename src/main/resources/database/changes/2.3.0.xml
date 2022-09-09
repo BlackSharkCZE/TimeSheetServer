@@ -1,0 +1,35 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="jiri">
+        <dropColumn tableName="project">
+            <column name="root_project_id" type="int"/>
+            <column name="project_id" type="int"/>
+            <column name="key" type="varchar(16)"/>
+            <column name="remote_writer_list" type="varchar(256)"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="2" author="jiri">
+        <createSequence sequenceName="remote_write_settings_seq" cacheSize="1" incrementBy="1"/>
+        <createTable tableName="remote_write_settings">
+            <column name="id" defaultValueSequenceNext="remote_write_settings_seq" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="root_project_id" type="int"/>
+            <column name="project_id" type="int"/>
+            <column name="key_pattern" type="varchar(256)"/>
+            <column name="remote_writer_list" type="varchar(256)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="jiri">
+        <dropColumn tableName="timeline">
+            <column name="jira_write" />
+        </dropColumn>
+    </changeSet>
+
+</databaseChangeLog>

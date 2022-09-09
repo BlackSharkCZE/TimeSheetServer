@@ -1,0 +1,16 @@
+GET http://localhost:8882/todo
+
+###
+
+POST http://localhost:8882/todo
+Content-Type: application/json
+Accept: application/json
+
+{
+  "todo": "Greeting"
+}
+
+###
+
+PATCH http://localhost:8882/todo/3/done
+Accept: application/json
