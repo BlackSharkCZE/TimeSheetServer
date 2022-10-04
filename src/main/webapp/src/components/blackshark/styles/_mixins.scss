@@ -1,0 +1,23 @@
+@mixin container-shadow {
+  -webkit-box-shadow: 5px 5px 8px -4px #212b34;
+  box-shadow: 5px 5px 8px -4px #212b34;
+}
+
+
+@mixin navigation-highlight {
+  font-weight: bold;
+  text-decoration: underline;
+  color: $navigation-current-highlight-color;
+  background-color: $navigation-current-text-background;
+}
+
+
+@mixin bs-table-row-hovered {
+  background: rgb(242, 242, 242);
+  background: linear-gradient(90deg, rgba(242, 242, 242, 1) 0%, rgba(150, 150, 158, 1) 35%, rgba(193, 238, 247, 1) 100%);
+}
+
+@mixin bs-table-alt-row-hovered {
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+}

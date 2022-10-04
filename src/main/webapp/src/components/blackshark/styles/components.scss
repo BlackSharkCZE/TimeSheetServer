@@ -1,0 +1,106 @@
+@import "_variables.scss";
+@import "_mixins.scss";
+
+ul {
+  &.navigation {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: inline;
+      padding: 0 .4rem;
+      margin: 0.1rem;
+      cursor: pointer;
+      background-color: $navigation-text-background;
+
+      &.current {
+        @include navigation-highlight;
+      }
+    }
+  }
+}
+
+
+.bs-table {
+  color: $bs-table-text-color;
+
+  width: 100%;
+  @include container-shadow;
+
+  .bs-table-label {
+    background-color: $bs-table-title-background;
+    color: $bs-table-title-color;
+    font-size: 1.3rem;
+    padding: 0.4rem 04rem;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  .bs-table-info {
+
+  }
+
+  table {
+    font-size: 1rem;
+    border: 1px solid $bs-table-border-color;
+
+    thead {
+      tr {
+        background-color: $bs-table-header-background;
+        color: $bs-table-header-color;
+      }
+    }
+
+    tbody {
+      tr {
+        border: 1px solid $bs-table-border-color;
+        background-color: $bs-table-row-background;
+        &.odd {
+          background-color: $bs-table-alt-row-background;
+          &:HOVER {
+            @include bs-table-alt-row-hovered;
+          }
+        }
+        &.even {
+
+        }
+        &:HOVER {
+          @include bs-table-row-hovered;
+        }
+      }
+    }
+
+    tfoot {
+      .bs-table-navigation {
+        color: $bs-table-footer-color;
+        background-color: $bs-table-footer-background;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+
+        .item {
+          padding: $bs-table-navigation-padding;
+
+          &.middle {
+            background-color: $bs-table-navigation-background;
+            color: $bs-table-navigation-color;
+            flex-grow: 2;
+          }
+
+          &.left {
+
+          }
+
+          &.right {
+
+          }
+        }
+
+      }
+    }
+
+
+  }
+
+}
