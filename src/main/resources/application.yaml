@@ -4,29 +4,23 @@ quarkus:
       "remote-writer-settings":
         expire-after-write: 120S
   http:
-    port: 8883
+    port: ${SERVER_PORT:8883}
     cors:
       ~: true
-      methods:
-        - GET
-        - POST
-        - PUT
-        - PATCH
-        - OPTIONS
-        - HEAD
-        - DELETE
-      origins:
-        - http://localhost
-        - http://localhost:8081
-        - http://localhost:8082
-        - http://localhost:8080
-        - http://localhost:8885
+    ssl:
+      certificate:
+        key-store-file-type: JKS
+        key-store-password: ${KEYSTORE_PASSWORD}
+        key-store-alias: ${KEYSTORE_CERT_ALIAS}
+        key-store-file: /security/keystore.jks
+    ssl-port: ${SERVER_SSL_PORT:8443}
+    insecure-requests: redirect
   datasource:
     db-kind: postgresql
-    username: timesheet
-    password: timesheet
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:123456}
     jdbc:
-      url: jdbc:postgresql://localhost:5432/timesheet
+      url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:25432}/${DATABASE_NAME:postgres}
       min-size: 1
       max-size: 10
   hibernate-orm:
@@ -64,6 +58,14 @@ quarkus:
     default-schema-name: public
     change-log: database/changeLog.xml
     database-change-log-table-name: databasechangelog
+  keycloak:
+    admin-client:
+      server-url: ${QUARKUS_ADMIN_URL}
+      username: ${QUARKUS_ADMIN_USERNAME}
+      password: ${QUARKUS_ADMIN_PASSWORD}
+      client-id: ${QUARKUS_ADMIN_CLIENT_ID}
+      client-secret: ${QUARKUS_ADMIN_CLIENT_SECRET}
+      realm: ${QUARKUS_ADMIN_REALM}
 application:
   jax-rs-date-format: yyyy-MM-dd
   file-storage-path: ${FILE_STORAGE_PATH}
@@ -83,3 +85,19 @@ drmax-jira/mp-rest/scope: "javax.inject.Singleton"
 
 gem-timesheet/mp-rest/url: ${GEM_TIMESHEET_URL}
 gem-timesheet/mp-rest/scope: "javax.inject.Singleton"
+
+
+
+
+"%test":
+  quarkus:
+    log:
+      level: INFO
+      min-level: DEBUG
+      file:
+        format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %X{X_CORRELATION_ID} [%c{3.}] (%t) %s%e%n"
+        path: "log/aps_poc_log.log"
+        rotation:
+          max-backup-index: 10
+          max-file-size: "20M"
+        enable: true
