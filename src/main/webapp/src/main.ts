@@ -9,20 +9,15 @@ import axios from "axios";
 import moment from "moment";
 
 import VueAxios from "vue-axios";
+import Keycloak from "keycloak-js";
 
 const app: Vue.App = createApp(App)
     .use(keycloakPlugin, {
-        onReady: () => {
-
+        onReady: (_keycloak: Keycloak) => {
             moment.locale('cs')
-
             app.use(router)
                 .use(VueAxios, axios)
             app.provide('axios', app.config.globalProperties.axios)
-
-            app.config.globalProperties.moment = moment
-            app.provide('moment', app.config.globalProperties.moment)
-
             app.mount("#app")
         }
     })

@@ -15,6 +15,13 @@ quarkus:
         key-store-file: /security/keystore.jks
     ssl-port: ${SERVER_SSL_PORT:8443}
     insecure-requests: redirect
+  oidc:
+    auth-server-url: ${QUARKUS_REALM}
+    client-id: ${QUARKUS_CLIENT_ID}
+    credentials:
+      secret: ${QUARKUS_CLIENT_SECRET}
+    tls:
+      verification: none
   datasource:
     db-kind: postgresql
     username: ${DATABASE_USERNAME:postgres}

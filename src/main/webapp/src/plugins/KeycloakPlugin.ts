@@ -14,7 +14,7 @@ const keycloakPlugin: Plugin = {
     install(app: App, options: any): any {
         keycloak.init(keycloakOptions).then(function (authenticated) {
             setTimeout(updateTokenProcess, 1000)
-            options.onReady()
+            options.onReady(keycloak)
         }).catch(function (e) {
             options.onReady()
         })
