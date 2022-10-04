@@ -57,11 +57,19 @@ async function isAuthenticated() {
 }
 
 router.beforeEach(async( to, from, next) => {
+    console.log('Here we are!')
     if (to.meta.authRequired == true) {
+        console.log('Auth required!')
         if (await isAuthenticated()) {
+            console.log('User is already authenticated!')
             next()
         } else {
-            KeycloakInstance.login()
+            const path = window.location.protocol+'//'+window.location.hostname+':'+window.location.port+to.fullPath
+            console.log('Login with redirect: ', path)
+            console.log(to)
+            KeycloakInstance.login({
+                redirectUri: path
+            })
             next()
         }
     } else {
