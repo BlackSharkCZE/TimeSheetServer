@@ -8,5 +8,6 @@ import cz.blackshark.timesheet.commons.domain.CompanyVo
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class SubjectDetailVo(
     val subject: String,
+    val userName: String,
     val company: CompanyVo? = null
 )

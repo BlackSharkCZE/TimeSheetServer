@@ -122,8 +122,6 @@ function changePage(page: number) {
 }
 
 function emitCustomSignal() {
-  console.log('Rows: ', rows.value)
-  console.log('Paginator: ', paginator.value)
   emits('itemSelected')
 }
 

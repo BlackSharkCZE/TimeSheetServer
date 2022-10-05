@@ -23,11 +23,6 @@ export default defineComponent({
     return {
       keycloak,
     }
-  },
-  methods: {
-    refresh() {
-      console.log(this.keycloak)
-    }
   }
 });
 </script>
