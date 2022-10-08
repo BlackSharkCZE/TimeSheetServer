@@ -1,11 +1,13 @@
-import {createRouter, createWebHistory, NavigationGuardWithThis, RouteRecordRaw} from 'vue-router'
+import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
 import Home from '../views/Home.vue'
-import PrivateLayout from '../views/private/PrivateLayout.vue'
-import PrivateHome from '@/views/private/PrivateHome.vue'
+
 import TodoList from '@/views/private/TodoList.vue'
 import DataTableView from '@/views/DataTableView.vue'
-import Vue, {App} from "vue";
-import { KeycloakInstance } from '@/plugins/KeycloakPlugin'
+import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
+
+import PrivateHome from '@/views/private/PrivateHome.vue'
+import ListCompanyView from '@/views/private/company/ListCompaniesView.vue'
+import CreateCompanyView from '@/views/private/company/CreateCompanyView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -15,9 +17,9 @@ const routes: Array<RouteRecordRaw> = [
         component: Home
     },
     {
-      path: '/dev',
-      name: 'DevPage',
-      component: DataTableView
+        path: '/dev',
+        name: 'DevPage',
+        component: DataTableView
     },
     {
         path: '/about',
@@ -30,7 +32,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/private',
         name: 'privateLayout',
-        component: PrivateLayout,
         meta: {
             authRequired: true
         },
@@ -43,6 +44,20 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'todo-list',
                 component: TodoList
             },
+            {
+                path: 'companies',
+                children: [
+                    {
+                        path: 'create',
+                        component: CreateCompanyView
+                    },
+                    {
+                        path: 'list',
+                        component: ListCompanyView
+                    }
+                ]
+            }
+
         ]
     }
 ]
@@ -56,12 +71,12 @@ async function isAuthenticated() {
     return KeycloakInstance.authenticated
 }
 
-router.beforeEach(async( to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     if (to.meta.authRequired == true) {
         if (await isAuthenticated()) {
             next()
         } else {
-            const path = window.location.protocol+'//'+window.location.hostname+':'+window.location.port+to.fullPath
+            const path = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + to.fullPath
             KeycloakInstance.login({
                 redirectUri: path
             })

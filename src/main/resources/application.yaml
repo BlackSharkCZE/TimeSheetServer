@@ -12,7 +12,7 @@ quarkus:
         key-store-file-type: JKS
         key-store-password: ${KEYSTORE_PASSWORD}
         key-store-alias: ${KEYSTORE_CERT_ALIAS}
-        key-store-file: /security/keystore.jks
+        key-store-file: ${KEYSTORE_PATH}
     ssl-port: ${SERVER_SSL_PORT:8443}
     insecure-requests: redirect
   oidc:

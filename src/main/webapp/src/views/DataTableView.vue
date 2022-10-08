@@ -36,7 +36,7 @@ const filter = {
 const definition = TimelineTableFields
 
 function processRowClick(row: any) {
-  console.log('Click to row: ', row)
+  const a=1
 }
 
 function getWriters(row: any) {

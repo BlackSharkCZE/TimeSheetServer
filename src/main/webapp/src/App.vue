@@ -1,11 +1,20 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/Dev">Dev</router-link> |
-    <router-link to="/private/home">Private Home</router-link>
-  </div>
-  <router-view/>
+  <w-app>
+    <div id="nav">
+      <router-link to="/">Home</router-link>
+      |
+      <router-link to="/about">About</router-link>
+      |
+      <router-link to="/Dev">Dev</router-link>
+      |
+      <router-link to="/private/companies/create">Create Company</router-link>
+      |
+      <router-link to="/private/companies/list">List Companies</router-link>
+      |
+      <router-link to="/private/home">Private Home</router-link>
+    </div>
+    <router-view/>
+  </w-app>
 </template>
 
 <style lang="scss">

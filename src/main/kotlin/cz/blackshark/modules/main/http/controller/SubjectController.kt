@@ -1,8 +1,10 @@
 package cz.blackshark.modules.main.http.controller
 
 import com.fasterxml.jackson.annotation.JsonView
+import cz.blackshark.modules.main.converter.CompanyMapper
 import cz.blackshark.modules.main.dto.SubjectDetailVo
 import cz.blackshark.modules.main.http.views.Views
+import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.timesheet.commons.domain.CompanyVo
 import io.quarkus.security.Authenticated
 import org.eclipse.microprofile.jwt.JsonWebToken
@@ -14,19 +16,22 @@ import javax.ws.rs.core.SecurityContext
 
 @Path("subject")
 @Authenticated
-class SubjectController {
+class SubjectController  {
 
     @Inject
     private lateinit var jwt: JsonWebToken
 
+    @Inject
+    private lateinit var companyRepository: CompanyRepository
+
+
     @GET
     @JsonView(Views.Simple::class)
     fun findSubjectDetail(@Context context: SecurityContext ): SubjectDetailVo {
-        return SubjectDetailVo(jwt.subject, context.userPrincipal.name, CompanyVo().apply {
-            this.ic = "776543654"
-            this.platceDph = false
-            this.phoneNumber = "420778503001"
-        })
+        val company = companyRepository.findPrimaryCompany()?.let {
+            CompanyMapper.convert(it)
+        }
+        return SubjectDetailVo(jwt.subject, context.userPrincipal.name, company)
     }
 
 }

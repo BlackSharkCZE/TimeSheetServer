@@ -6,11 +6,15 @@ import router from './router'
 
 import keycloakPlugin from "@/plugins/KeycloakPlugin";
 
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import moment from "moment";
 
 import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
+
+import WaveUI from 'wave-ui'
+import 'wave-ui/dist/wave-ui.css'
+
 
 import { useUserStore } from "@/stores/UserStore";
 
@@ -24,13 +28,20 @@ const app: Vue.App = createApp(App)
                 .use(pinia)
 
             const store = useUserStore()
-
+            app.config.globalProperties.axios.interceptors.request.use((config: AxiosRequestConfig) => {
+                config.headers = {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${_keycloak.token}`
+                }
+                return config
+            })
             app.provide('axios', app.config.globalProperties.axios)
             axios.get("/subject", {
                 headers: {
                     'Authorization': 'Bearer ' + _keycloak.token
                 }
             }).then(response => {
+                new WaveUI(app, {})
                 store.storeUser(response.data)
                 app.mount("#app")
             })

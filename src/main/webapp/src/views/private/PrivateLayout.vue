@@ -37,8 +37,8 @@ import {useUserStore} from "@/stores/UserStore";
 const store = useUserStore()
 const keycloak = inject<Keycloak>('keycloak')
 
-onMounted(() => {
-})
+/*onMounted(() => {
+})*/
 
 
 </script>
