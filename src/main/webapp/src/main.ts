@@ -14,6 +14,7 @@ import Keycloak from "keycloak-js";
 
 import WaveUI from 'wave-ui'
 import 'wave-ui/dist/wave-ui.css'
+import '@mdi/font/css/materialdesignicons.min.css'
 
 
 import { useUserStore } from "@/stores/UserStore";

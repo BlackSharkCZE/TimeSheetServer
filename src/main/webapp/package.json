@@ -10,6 +10,7 @@
     "prod": "vue-cli-service build --dest ../resources/META-INF/resources/"
   },
   "dependencies": {
+    "@mdi/font": "^7.0.96",
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
     "keycloak-js": "^19.0.2",
