@@ -1,10 +1,6 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
 import Home from '../views/Home.vue'
-
-import TodoList from '@/views/private/TodoList.vue'
-import DataTableView from '@/views/DataTableView.vue'
 import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
-
 import PrivateHome from '@/views/private/PrivateHome.vue'
 import ListCompanyView from '@/views/private/company/ListCompaniesView.vue'
 import CreateCompanyView from '@/views/private/company/CreateCompanyView.vue'
@@ -15,11 +11,6 @@ const routes: Array<RouteRecordRaw> = [
         path: '/',
         name: 'Home',
         component: Home
-    },
-    {
-        path: '/dev',
-        name: 'DevPage',
-        component: DataTableView
     },
     {
         path: '/about',
@@ -39,10 +30,6 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'home',
                 component: PrivateHome,
-            },
-            {
-                path: 'todo-list',
-                component: TodoList
             },
             {
                 path: 'companies',

@@ -1,8 +1,6 @@
 <template>
   <h2>Private HomePage</h2>
 
-  <w-button bg-color="success" xl>Button 1</w-button>
-
 </template>
 
 <script lang="ts" setup>

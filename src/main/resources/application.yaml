@@ -15,6 +15,7 @@ quarkus:
         key-store-file: ${KEYSTORE_PATH}
     ssl-port: ${SERVER_SSL_PORT:8443}
     insecure-requests: redirect
+    host: timesheet.local.cz
   oidc:
     auth-server-url: ${QUARKUS_REALM}
     client-id: ${QUARKUS_CLIENT_ID}

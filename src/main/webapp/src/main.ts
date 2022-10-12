@@ -12,10 +12,6 @@ import moment from "moment";
 import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
 
-import WaveUI from 'wave-ui'
-import 'wave-ui/dist/wave-ui.css'
-import '@mdi/font/css/materialdesignicons.min.css'
-
 
 import { useUserStore } from "@/stores/UserStore";
 
@@ -42,7 +38,6 @@ const app: Vue.App = createApp(App)
                     'Authorization': 'Bearer ' + _keycloak.token
                 }
             }).then(response => {
-                new WaveUI(app, {})
                 store.storeUser(response.data)
                 app.mount("#app")
             })
