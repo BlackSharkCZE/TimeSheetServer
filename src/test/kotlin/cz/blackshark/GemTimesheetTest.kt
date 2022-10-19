@@ -6,12 +6,14 @@ import cz.blackshark.modules.gemts.service.GemTsBean
 import io.quarkus.test.junit.QuarkusTest
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.Month
 import javax.inject.Inject
 
 @QuarkusTest
+@Disabled
 class GemTimesheetTest {
 
     @RestClient

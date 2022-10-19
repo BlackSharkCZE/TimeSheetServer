@@ -102,9 +102,3 @@ ALTER TABLE "invoice_item" ADD CONSTRAINT "invoice_item_invoice_id_fkey" FOREIGN
 -- changeset jiri:1611904497273-30
 ALTER TABLE "invoice_item" ADD CONSTRAINT "invoice_item_requisition_id_fkey" FOREIGN KEY ("requisition_id") REFERENCES "requisition" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
 
--- changeset jiri:1611904497273-31
-CREATE TABLE "public.databasechangelog" ("id" VARCHAR(255) NOT NULL, "author" VARCHAR(255) NOT NULL, "filename" VARCHAR(255) NOT NULL, "dateexecuted" TIMESTAMP WITHOUT TIME ZONE NOT NULL, "orderexecuted" INTEGER NOT NULL, "exectype" VARCHAR(10) NOT NULL, "md5sum" VARCHAR(35), "description" VARCHAR(255), "comments" VARCHAR(255), "tag" VARCHAR(255), "liquibase" VARCHAR(20), "contexts" VARCHAR(255), "labels" VARCHAR(255), "deployment_id" VARCHAR(10));
-
--- changeset jiri:1611904497273-32
-CREATE TABLE "public.databasechangeloglock" ("id" INTEGER NOT NULL, "locked" BOOLEAN NOT NULL, "lockgranted" TIMESTAMP WITHOUT TIME ZONE, "lockedby" VARCHAR(255), CONSTRAINT "PUBLIC.DATABASECHANGELOGLOCK_PKEY" PRIMARY KEY ("id"));
-

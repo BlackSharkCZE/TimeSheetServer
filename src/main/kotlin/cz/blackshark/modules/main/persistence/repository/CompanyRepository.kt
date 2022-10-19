@@ -11,5 +11,13 @@ open class CompanyRepository : PanacheRepositoryBase<CompanyEntity, Long> {
 		return find("#CompanyEntity.findPrimary").firstResult()
 	}
 
+	fun findWithPrimary(includePrimary: Boolean): List<CompanyEntity> {
+		return if (includePrimary) {
+			findAll().list()
+		} else {
+			find("primary!=true").list()
+		}
+	}
+
 
 }

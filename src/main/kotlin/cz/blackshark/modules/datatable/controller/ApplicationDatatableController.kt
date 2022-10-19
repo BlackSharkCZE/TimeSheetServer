@@ -109,14 +109,14 @@ class ApplicationDatatableController @Inject constructor(
                 .findAll(Sort.by(sort, Sort.Direction.Descending))
                 .page(Page.of(page, pageSize))
             val rows: List<O> = query.list<I>().map { convert.invoke(it) }
-            val paginator = Paginator(query.pageCount(), pageSize, page)
+            val paginator = Paginator(query.pageCount(), pageSize, page, query.count())
             return DataTableResponse(rows, paginator)
         } else {
             val query: PanacheQuery<I> = repository
                 .find(params.first, Sort.by(sort, Sort.Direction.Descending), params.second)
                 .page(Page.of(page, pageSize))
             val rows: List<O> = query.list<I>().map { convert.invoke(it) }
-            val paginator = Paginator(query.pageCount(), pageSize, page)
+            val paginator = Paginator(query.pageCount(), pageSize, page, query.count())
             return DataTableResponse(rows, paginator)
         }
 

@@ -30,7 +30,7 @@ quarkus:
     jdbc:
       url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:25432}/${DATABASE_NAME:postgres}
       min-size: 1
-      max-size: 10
+      max-size: 100
   hibernate-orm:
     log:
       sql: false
@@ -63,7 +63,6 @@ quarkus:
         max-backup-index: 4
   liquibase:
     migrate-at-start: true
-    default-schema-name: public
     change-log: database/changeLog.xml
     database-change-log-table-name: databasechangelog
   keycloak:

@@ -5,37 +5,33 @@
     |
     <router-link to="/about">About</router-link>
     |
-    <router-link to="/Dev">Dev</router-link>
-    |
     <router-link to="/private/companies/create">Create Company</router-link>
     |
     <router-link to="/private/companies/list">List Companies</router-link>
     |
+    <router-link to="/private/rate/create">Create Rate</router-link>
+    |
     <router-link to="/private/home">Private Home</router-link>
   </div>
+
+  <Message :closable="false"  v-if="noPrimaryCompany" severity="warn">You do not have set primary company.</Message>
+
   <router-view/>
 
 </template>
 
+<script lang="ts" setup>
+import Message from 'primevue/message'
+import {useUserStore} from "@/stores/UserStore";
+import {computed} from "vue";
+const store = useUserStore()
+
+const noPrimaryCompany = computed(()=> {
+  return store.userDetail.company === undefined || store.userDetail.company === null
+})
+
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>

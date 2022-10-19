@@ -4,12 +4,14 @@ import cz.blackshark.config.JiraConfig
 import cz.blackshark.modules.jira.beans.JiraBean
 import io.quarkus.test.junit.QuarkusTest
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 @QuarkusTest
+@Disabled
 class JiraBeanTest {
 
     @Inject

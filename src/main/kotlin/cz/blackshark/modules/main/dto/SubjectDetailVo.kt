@@ -9,5 +9,6 @@ import cz.blackshark.timesheet.commons.domain.CompanyVo
 data class SubjectDetailVo(
     val subject: String,
     val userName: String,
+    val internalId: Long,
     val company: CompanyVo? = null
 )

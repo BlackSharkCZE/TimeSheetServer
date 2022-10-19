@@ -6,10 +6,12 @@ import cz.blackshark.modules.gemts.dto.WriteWorkLogRequestVo
 import cz.blackshark.modules.jira.customizations.JiraClientObjectMapper
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import io.quarkus.test.junit.QuarkusTest
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @QuarkusTest
+@Disabled
 class GemTsWriteMapperTest {
 
     @Inject

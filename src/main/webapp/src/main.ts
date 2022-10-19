@@ -12,6 +12,10 @@ import moment from "moment";
 import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
 
+import PrimeVue from 'primevue/config'
+import 'primevue/resources/themes/mdc-dark-indigo/theme.css'
+import 'primevue/resources/primevue.min.css'
+import 'primeicons/primeicons.css'
 
 import { useUserStore } from "@/stores/UserStore";
 
@@ -39,6 +43,8 @@ const app: Vue.App = createApp(App)
                 }
             }).then(response => {
                 store.storeUser(response.data)
+                app.use(PrimeVue)
+
                 app.mount("#app")
             })
         }

@@ -4,6 +4,8 @@ import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
 import PrivateHome from '@/views/private/PrivateHome.vue'
 import ListCompanyView from '@/views/private/company/ListCompaniesView.vue'
 import CreateCompanyView from '@/views/private/company/CreateCompanyView.vue'
+import CreateRateView from '@/views/private/rate/CreateRateView.vue'
+import ListRateView from '@/views/private/rate/ListRateView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -30,6 +32,20 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'home',
                 component: PrivateHome,
+            },
+            {
+                path: 'rate',
+                children: [
+                    {
+                        path: 'create',
+                        component: CreateRateView
+                    },
+                    {
+                        path: 'list',
+                        component: ListRateView
+                    },
+
+                ]
             },
             {
                 path: 'companies',
