@@ -6,6 +6,8 @@ import ListCompanyView from '@/views/private/company/ListCompaniesView.vue'
 import CreateCompanyView from '@/views/private/company/CreateCompanyView.vue'
 import CreateRateView from '@/views/private/rate/CreateRateView.vue'
 import ListRateView from '@/views/private/rate/ListRateView.vue'
+import CreateRequisitionView from '@/views/private/requisition/CreateRequisitionView.vue'
+import ListRequisitionView from '@/views/private/requisition/ListRequisitionView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -59,7 +61,21 @@ const routes: Array<RouteRecordRaw> = [
                         component: ListCompanyView
                     }
                 ]
-            }
+            },
+            {
+                path: 'requisition',
+                children: [
+                    {
+                        path: 'create',
+                        component: CreateRequisitionView
+                    },
+                    {
+                        path: 'list',
+                        component: ListRequisitionView
+                    },
+
+                ]
+            },
 
         ]
     }

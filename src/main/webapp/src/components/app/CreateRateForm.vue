@@ -23,13 +23,13 @@
           </template>
         </Dropdown>
         <small v-if="v$.$invalid && submitted"
-               class="p-error">{{ v$.since.required.$message.replace('Value', 'Company') }}</small>
+               class="p-error">{{ v$.company.required.$message.replace('Value', 'Company') }}</small>
       </div>
 
       <div class="field">
-        <label for="since">Plate od <span v-if="v$.required">*</span></label>
+        <label for="since">Plate od <span v-if="v$.since.required">*</span></label>
         <calendar id="since"
-                  :class="{'p-invalid':v$.$invalid && submitted}"
+                  :class="{'p-invalid':v$.since.$invalid && submitted}"
                   v-model="formData.since"/>
         <small v-if="v$.$invalid && submitted"
                class="p-error">{{ v$.since.required.$message.replace('Value', 'Platne od') }}</small>
