@@ -33,6 +33,7 @@
                     :showCancelButton="false"
                     :multiple="false"
                     url="/requisition/create"
+                    @upload="uploadDone"
                     @select="fileSelected"
                     @before-upload="beforeUploadHandler"/>
       </div>
@@ -158,13 +159,17 @@ function beforeUploadHandler(event: FileUploadBeforeUploadEvent) {
 }
 
 function fileSelected(event: FileUploadSelectEvent) {
-  console.log('File Select event: ')
   if (event.files.length > 0) {
     fileName = event.files[0].name
   } else {
     fileName = null
   }
-  console.log(event)
+}
+
+function uploadDone() {
+  router.push({
+    path: '/private/requisition/list'
+  })
 }
 
 function handleSubmit(isFormValid: boolean) {
@@ -186,24 +191,6 @@ function loadCompanies() {
       console.error(response)
     }
   })
-}
-
-function saveRequisition() {
-  let path = "/requisition/create"
-
-  axios?.post(path, buildData()).then((response) => {
-    if (response.status >= 200 && response.status <= 299) {
-      router.push({
-        path: '/private/rate/list'
-      })
-    } else {
-      console.error(response)
-    }
-  })
-}
-
-function buildData(): any {
-  return {}
 }
 
 </script>
