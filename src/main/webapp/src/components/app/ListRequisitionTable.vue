@@ -1,6 +1,7 @@
 <template>
 
   <DataTable
+      :rowHover="true"
       :page="pageIndex+1"
       ref="dt"
       dataKey="id"
