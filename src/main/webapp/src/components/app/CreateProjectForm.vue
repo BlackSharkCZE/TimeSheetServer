@@ -7,8 +7,9 @@
           label="Company"
           v-model="formData.company"
           :vualidate="v$.company"
-          :submitted="submitted"
-      ></company-field>
+          :submitted="submitted">
+
+      </company-field>
 
       <input-field id="name"
                    label="Project name"
@@ -26,11 +27,9 @@
 <script lang="ts" setup>
 import Button from 'primevue/button'
 import Panel from 'primevue/panel'
-import Calendar from "primevue/calendar";
-import Dropdown from "primevue/dropdown";
 
 import {AxiosStatic} from "axios";
-import {inject, onMounted, reactive, ref} from "vue";
+import {inject, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -69,20 +68,27 @@ const v$ = useVuelidate(rules, formData)
 function handleSubmit(isFormValid: boolean) {
   submitted.value = true
   if (isFormValid) {
-    saveRate()
+    saveProject()
   } else {
     console.error('Form is not valid!')
   }
 }
 
-function saveRate() {
-  let path = "/rate/create"
+function saveProject() {
+  let path = "/project"
 
   axios?.post(path, buildData()).then((response) => {
     if (response.status >= 200 && response.status <= 299) {
-      router.push({
-        path: '/private/rate/list'
-      })
+
+      if (response.data.id > 0) {
+        router.push({
+          path: '/private/project/list'
+        })
+      } else {
+        console.error("Can not save project. Invalid response", response)
+      }
+
+
     } else {
       // message.error('Ulozeni spolecnosti se nezdarilo!')
       console.error(response)
@@ -92,9 +98,9 @@ function saveRate() {
 
 function buildData(): any {
   return {
-    rate: formData.amount,
-    validSince: formData.since,
-    companyId: formData.company.id
+    name: formData.name,
+    companyID: formData.company.id,
+    companyName: formData.company.companyName
   }
 }
 

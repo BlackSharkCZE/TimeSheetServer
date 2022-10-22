@@ -9,6 +9,7 @@ import ListRateView from '@/views/private/rate/ListRateView.vue'
 import CreateRequisitionView from '@/views/private/requisition/CreateRequisitionView.vue'
 import ListRequisitionView from '@/views/private/requisition/ListRequisitionView.vue'
 import CreateProjectView from '@/views/private/project/CreateProjectView.vue'
+import ListProjectView from '@/views/private/project/ListProjectView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -83,6 +84,10 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: 'create',
                         component: CreateProjectView
+                    },
+                    {
+                        path: 'list',
+                        component: ListProjectView
                     }
                 ]
             },
