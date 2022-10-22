@@ -3,6 +3,8 @@ quarkus:
     caffeine:
       "remote-writer-settings":
         expire-after-write: 120S
+      "user-by-subject-id":
+        expire-after-write: 600S
   http:
     port: ${SERVER_PORT:8883}
     cors:

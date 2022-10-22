@@ -2,29 +2,12 @@
   <Panel header="Create Requisition">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
-      <div class="field">
-        <label for="company">Company <span v-if="v$.company.required">*</span></label>
-        <Dropdown id="company"
-                  :class="{'p-invalid':v$.company.$invalid && submitted}"
-                  v-model="v$.company.$model" :options="companies" optionLabel="name" :filter="true"
-                  placeholder="Select a company" :showClear="true">
-          <template #value="slotProps">
-            <div v-if="slotProps.value">
-              <div>{{ slotProps.value.companyName }}</div>
-            </div>
-            <span v-else>
-                    {{ slotProps.placeholder }}
-                </span>
-          </template>
-          <template #option="slotProps">
-            <div>
-              <div>{{ slotProps.option.companyName }} ({{ slotProps.option.email }})</div>
-            </div>
-          </template>
-        </Dropdown>
-        <small v-if="v$.company.$invalid && submitted"
-               class="p-error">{{ v$.company.required.$message.replace('Value', 'Company') }}</small>
-      </div>
+      <company-field
+          id="company"
+          label="Company"
+          v-model="formData.company"
+          :vualidate="v$.company"
+          :submitted="submitted"></company-field>
 
       <div class="field">
         <FileUpload name="file"
@@ -78,7 +61,7 @@
 
   </Panel>
 
-  {{formData}}
+  {{ formData }}
 
 </template>
 
@@ -86,16 +69,16 @@
 import Button from 'primevue/button'
 import Panel from 'primevue/panel'
 import Calendar from "primevue/calendar";
-import Dropdown from "primevue/dropdown";
 import FileUpload, {FileUploadBeforeUploadEvent, FileUploadSelectEvent} from "primevue/fileupload";
 
 import {AxiosStatic} from "axios";
-import {inject, onMounted, reactive, ref} from "vue";
+import {inject, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import InputField from "@/components/blocks/InputField.vue";
 import moment from "moment";
+import CompanyField from "@/components/blocks/CompanyField.vue";
 
 // Define types
 type FormData = {
@@ -135,14 +118,7 @@ const axios = inject<AxiosStatic>('axios')
 // Define used properties
 const router = useRouter()
 const v$ = useVuelidate(rules, formData)
-const companies = ref([])
 const fileUpload = ref<FileUpload>()
-
-// Define lifecycle hooks
-onMounted(() => {
-  loadCompanies()
-})
-
 
 // Define functions
 function beforeUploadHandler(event: FileUploadBeforeUploadEvent) {
@@ -181,18 +157,6 @@ function handleSubmit(isFormValid: boolean) {
     console.error('Form is not valid!')
   }
 }
-
-function loadCompanies() {
-  axios?.get("/company/all?primary=true").then((response) => {
-    if (response.status >= 200 && response.status <= 299) {
-      companies.value = response.data
-    } else {
-      // message.error('Ulozeni spolecnosti se nezdarilo!')
-      console.error(response)
-    }
-  })
-}
-
 </script>
 
 <style scoped>

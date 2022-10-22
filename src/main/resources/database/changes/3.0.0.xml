@@ -24,4 +24,13 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="3" author="jiri">
+        <addColumn tableName="timeline">
+            <column name="subject_id" type="int">
+                <constraints referencedTableName="subject" foreignKeyName="timeline_subject_fk" referencedColumnNames="id" nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+
 </databaseChangeLog>

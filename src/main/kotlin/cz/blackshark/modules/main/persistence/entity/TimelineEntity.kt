@@ -43,6 +43,10 @@ open class TimelineEntity : PanacheEntityBase() {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "timeline", orphanRemoval = true)
     var remoteWriteTimestamp: MutableList<RemoteWriteTimestampEntity> = mutableListOf()
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id")
+    var subject: SubjectEntity? = null
+
     @PrePersist
     fun prepersist() {
         startWorkDate = fromTime.toLocalDate()

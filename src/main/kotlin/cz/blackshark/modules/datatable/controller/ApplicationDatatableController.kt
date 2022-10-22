@@ -4,6 +4,7 @@ import cz.blackshark.modules.datatable.domain.DataTableResponse
 import cz.blackshark.modules.datatable.domain.FilterSetting
 import cz.blackshark.modules.datatable.domain.Paginator
 import cz.blackshark.modules.main.beans.RemoteWriteSettingsBean
+import cz.blackshark.modules.main.beans.SubjectBean
 import cz.blackshark.modules.main.converter.CompanyMapper
 import cz.blackshark.modules.main.converter.ProjectMapper
 import cz.blackshark.modules.main.dto.TimelineVo
@@ -19,8 +20,10 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase
 import io.quarkus.panache.common.Page
 import io.quarkus.panache.common.Sort
+import io.quarkus.security.Authenticated
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
+import org.eclipse.microprofile.jwt.JsonWebToken
 import java.io.InvalidClassException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -30,30 +33,43 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import javax.inject.Inject
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.SecurityContext
+import kotlin.jvm.Throws
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmErasure
 
 @Path("/datatable")
 @Produces(MediaType.APPLICATION_JSON)
+@Authenticated
 class ApplicationDatatableController @Inject constructor(
     val timelineRepository: TimelineRepository,
     val invoiceRepository: InvoiceRepository,
     val companyRepository: CompanyRepository,
     val projectRepository: ProjectRepository,
-    val remoteWriterSettingsBean: RemoteWriteSettingsBean
+    val remoteWriterSettingsBean: RemoteWriteSettingsBean,
+    val subjectBean: SubjectBean
 ) {
+
+    @Inject
+    lateinit var jwtToken: JsonWebToken
 
     @Path("{resource}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Throws(NotAuthorizedException::class)
     fun getTimeline(
+        @Context securityContext: SecurityContext,
         @PathParam("resource") resource: String,
         @QueryParam("page") @DefaultValue("0") page: Int,
         @QueryParam("pageSize") @DefaultValue("25") pageSize: Int,
         @QueryParam("sort") sort: String,
         filter: String
     ): DataTableResponse<Any> {
+
+        val subject = subjectBean.findByRemoteId(jwtToken.subject)
+            ?: throw NotAuthorizedException("Subject not found in database")
 
         val filterJson = Json.decodeValue(filter) as JsonObject  // prichozi JSON String
         val filterMap = mutableMapOf<String, FilterSetting>()    // pozadovana mapa
@@ -75,6 +91,7 @@ class ApplicationDatatableController @Inject constructor(
                 buildParams(filterMap, CompanyEntity::class)
             ) { en -> CompanyMapper.convertBase(en) }
             "timeline" -> {
+                filterMap["subject"] = FilterSetting("=", subject.id!!, "id")
                 buildDataTableResult(
                     timelineRepository,
                     page, pageSize,

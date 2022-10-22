@@ -1,30 +1,25 @@
 <template>
-  <Panel header="Create Rate">
+  <Panel header="Create Project">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
-      <company-field id="company"
-                     v-model="formData.company"
-                     :vualidate="v$.company"
-                     :submitted="submitted"
-                     label="Company"></company-field>
+      <company-field
+          id="company"
+          label="Company"
+          v-model="formData.company"
+          :vualidate="v$.company"
+          :submitted="submitted"
+      ></company-field>
 
-      <div class="field">
-        <label for="since">Plate od <span v-if="v$.since.required">*</span></label>
-        <calendar id="since"
-                  :class="{'p-invalid':v$.since.$invalid && submitted}"
-                  v-model="formData.since"/>
-        <small v-if="v$.$invalid && submitted"
-               class="p-error">{{ v$.since.required.$message.replace('Value', 'Platne od') }}</small>
-      </div>
-
-      <input-field id="amount"
-                   label="Castka za MD"
-                   :vualidate="v$.amount"
+      <input-field id="name"
+                   label="Project name"
+                   :vualidate="v$.name"
                    :submitted="submitted"
-                   v-model="formData.amount"/>
+                   v-model="formData.name"/>
 
       <Button type="submit" label="Pridat" class="mt-2"/>
     </form>
+
+    {{ formData }}
   </Panel>
 </template>
 
@@ -32,9 +27,10 @@
 import Button from 'primevue/button'
 import Panel from 'primevue/panel'
 import Calendar from "primevue/calendar";
+import Dropdown from "primevue/dropdown";
 
 import {AxiosStatic} from "axios";
-import {inject, reactive, ref} from "vue";
+import {inject, onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -44,15 +40,13 @@ import CompanyField from "@/components/blocks/CompanyField.vue";
 // Define types
 type FormData = {
   company: any | null
-  since: string | null,
-  amount: number | null
+  name: string | null,
 }
 
 // Define component data
 const formData = reactive<FormData>({
   company: null,
-  since: null,
-  amount: null
+  name: null
 })
 
 const formRef = ref(null)
@@ -60,8 +54,7 @@ const submitted = ref<boolean>(false)
 
 const rules = {
   company: {required},
-  since: {required},
-  amount: {required}
+  name: {required}
 }
 
 // Inject dependencies
@@ -70,6 +63,7 @@ const axios = inject<AxiosStatic>('axios')
 // Define used properties
 const router = useRouter()
 const v$ = useVuelidate(rules, formData)
+
 
 // Define functions
 function handleSubmit(isFormValid: boolean) {

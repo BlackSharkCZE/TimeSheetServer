@@ -16,6 +16,9 @@
     <router-link to="/private/requisition/list">Smlouvy</router-link>
     |
     <router-link to="/private/requisition/create">Pridat smlouvu</router-link>
+    |
+    <router-link to="/private/project/create">Pridat projekt</router-link>
+
   </div>
 
   <Message :closable="false"  v-if="noPrimaryCompany" severity="warn">You do not have set primary company.</Message>
