@@ -10,6 +10,7 @@ import CreateRequisitionView from '@/views/private/requisition/CreateRequisition
 import ListRequisitionView from '@/views/private/requisition/ListRequisitionView.vue'
 import CreateProjectView from '@/views/private/project/CreateProjectView.vue'
 import ListProjectView from '@/views/private/project/ListProjectView.vue'
+import DashboardView from '@/views/private/dashboard/DashboardView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -36,6 +37,10 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'home',
                 component: PrivateHome,
+            },
+            {
+                path: 'dashboard',
+                component: DashboardView
             },
             {
                 path: 'rate',

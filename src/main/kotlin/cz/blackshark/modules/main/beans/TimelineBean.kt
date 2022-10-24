@@ -8,14 +8,19 @@ import cz.blackshark.modules.main.persistence.repository.ProjectRepository
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
+import javax.ws.rs.NotAuthorizedException
 
 @ApplicationScoped
 class TimelineBean @Inject constructor(
     internal val timelineRepository: TimelineRepository,
-    internal val projectRepository: ProjectRepository
+    internal val projectRepository: ProjectRepository,
+    private val subjectBean: SubjectBean
 ) {
 
-    fun saveUpdate(timelineVo: TimelineVo): OperationResult {
+    fun saveUpdate(timelineVo: TimelineVo, subject: String): OperationResult {
+
+        val subjectEntity = subjectBean.findByRemoteId(subject) ?: throw NotAuthorizedException("Subject not found in database")
+
         val validationResult = validate(timelineVo)
         if (validationResult.isNotEmpty()) {
             return OperationResult(false, null, validationResult)
@@ -37,7 +42,7 @@ class TimelineBean @Inject constructor(
                         pause = timelineVo.pause
                     }
                 } else {
-                    TimelineEntityFactory.create(timelineVo, project.get())
+                    TimelineEntityFactory.create(timelineVo, project.get(), subjectEntity)
                 }
                 timelineRepository.persistAndFlush(entity)
                 if (entity.id == null) {

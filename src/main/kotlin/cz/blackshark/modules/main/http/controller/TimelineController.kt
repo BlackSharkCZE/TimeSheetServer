@@ -14,7 +14,9 @@ import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.RemoteWriteTimestampEntity
 import cz.blackshark.modules.main.persistence.repository.ProjectRepository
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
+import io.quarkus.security.Authenticated
 import io.vertx.core.json.JsonObject
+import org.eclipse.microprofile.jwt.JsonWebToken
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
@@ -28,6 +30,7 @@ import kotlin.streams.toList
 
 
 @Path("/timeline")
+@Authenticated
 class TimelineController {
 
     @Inject
@@ -51,6 +54,9 @@ class TimelineController {
     @Inject
     lateinit var remoteWriteSettingsBean: RemoteWriteSettingsBean
 
+    @Inject
+    private lateinit var jwtToken: JsonWebToken
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("remote-write/{timelineId}")
@@ -63,7 +69,7 @@ class TimelineController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     fun saveTimeline(@Valid timeline: TimelineVo): OperationResult {
-        return timelineBean.saveUpdate(timeline)
+        return timelineBean.saveUpdate(timeline, jwtToken.subject)
     }
 
     @DELETE
@@ -94,7 +100,7 @@ class TimelineController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     fun updateTimeline(@Valid timeline: TimelineVo): OperationResult {
-        return timelineBean.saveUpdate(timeline)
+        return timelineBean.saveUpdate(timeline, jwtToken.subject)
     }
 
 

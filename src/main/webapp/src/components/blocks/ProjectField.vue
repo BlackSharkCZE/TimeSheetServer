@@ -1,17 +1,17 @@
 <template>
 
   <div class="field">
-    <label :for="props.id">{{props.label}} <span v-if="vualidate.required">*</span></label>
+    <label :for="props.id">{{ props.label }} <span v-if="vualidate.required">*</span></label>
     <Dropdown :id="props.id"
               :class="{'p-invalid':vualidate.$invalid && submitted}"
               v-model="mv"
-              :options="companies"
               @change="processChange"
+              :options="companies"
               optionLabel="name" :filter="true"
-              placeholder="Select a company" :showClear="true">
+              :placeholder="'Select a ' + props.label" :showClear="true">
       <template #value="slotProps">
         <div v-if="slotProps.value">
-          <div>{{ slotProps.value.companyName }}</div>
+          <div>{{ slotProps.value.name }}</div>
         </div>
         <span v-else>
                     {{ slotProps.placeholder }}
@@ -19,7 +19,7 @@
       </template>
       <template #option="slotProps">
         <div>
-          <div>{{ slotProps.option.companyName }} ({{ slotProps.option.email }})</div>
+          <div>{{ slotProps.option.name }}</div>
         </div>
       </template>
     </Dropdown>
@@ -33,7 +33,6 @@
 
 import {defineEmits, defineProps, inject, onMounted, ref, watch, withDefaults} from 'vue'
 import Dropdown, {DropdownChangeEvent} from 'primevue/dropdown'
-import InputText from 'primevue/inputtext'
 import {AxiosStatic} from "axios";
 
 // Define inject
@@ -61,18 +60,18 @@ const mv = ref<any | null>(null)
 const companies = ref([])
 
 // Define functions
+
 function processChange(event: DropdownChangeEvent) {
   console.log('Valu change: ', mv.value)
   emits('update:modelValue', mv.value)
 }
 
 function loadCompanies() {
-  axios?.get("/company/all?primary=true").then((response) => {
+  axios?.get("/project/all").then((response) => {
     if (response.status >= 200 && response.status <= 299) {
       companies.value = response.data
     } else {
-      // message.error('Ulozeni spolecnosti se nezdarilo!')
-      console.error(response)
+      console.error('Error loading projects', response)
     }
   })
 }
@@ -82,13 +81,9 @@ watch(() => props.modelValue, (current, prev) => {
   mv.value = current
 })
 
-onMounted(()=>{
+onMounted(() => {
   loadCompanies()
 })
-
-
-
-
 
 
 </script>

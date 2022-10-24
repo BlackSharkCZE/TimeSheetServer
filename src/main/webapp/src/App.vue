@@ -18,6 +18,8 @@
     <router-link to="/private/requisition/create">Pridat smlouvu</router-link>
     |
     <router-link to="/private/project/create">Pridat projekt</router-link>
+|
+    <router-link to="/private/dashboard">Dashboard</router-link>
 
   </div>
 
