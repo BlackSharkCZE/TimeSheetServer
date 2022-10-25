@@ -1,7 +1,7 @@
 <template>
   <Panel header="Create Project">
 
-    <div>Error: {{errorMessage}}</div>
+    <div>Error: {{ errorMessage }}</div>
 
     <Message v-if="errorMessage!=null" severity="error" :closable="false">{{ errorMessage }}</Message>
 
@@ -170,16 +170,14 @@ function saveTimeline() {
   axios?.post(path, buildData()).then((response) => {
     if (response.status >= 200 && response.status <= 299) {
 
-      if (response.data.id > 0) {
+      console.log('Response data: ', response.data)
+
+      if (response.data.itemID > 0) {
         emits('itemCreated', response.data)
+        submitted.value = false
         clearFormData()
 
-        formData.fromTime = formData.toTime
-        if (formData.pause > 0) {
-          formData.pause = 0
-        }
-        formData.toTime = null
-        formData.note = null
+
 
       } else {
 
@@ -188,7 +186,7 @@ function saveTimeline() {
           errorMessage.value = response.data.list[0].message
         }
 
-        console.error("Can not save project. Invalid response", response)
+        console.error("Can not save timeline. Invalid response", response)
       }
     } else {
       // message.error('Ulozeni spolecnosti se nezdarilo!')
@@ -198,7 +196,12 @@ function saveTimeline() {
 }
 
 function clearFormData() {
-  console.error('Function clearFormData not implemented yet!')
+  formData.fromTime = formData.toTime
+  if (formData.pause > 0) {
+    formData.pause = 0
+  }
+  formData.toTime = null
+  formData.note = null
 }
 
 function buildData(): any {

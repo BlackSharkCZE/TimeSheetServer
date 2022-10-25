@@ -85,6 +85,11 @@ onMounted(() => {
 })
 
 // Define methods
+function reloadTable() {
+  console.log('Reload table invoked!')
+  loadData(mapFilterToDataTablePayload(filters.value))
+}
+
 function loadData(filterData: any = {}) {
   loading.value = true
   axios?.post("/datatable/timeline?sort=fromTime&page=" + pageIndex.value + "&pageSize=" + pageSize.value, filterData)
@@ -154,6 +159,9 @@ function getFilterType(vueType: string): string {
       return '='
   }
 }
+
+// Define exposes
+defineExpose({reloadTable})
 
 
 </script>
