@@ -1,5 +1,6 @@
 <template>
-  <create-timeline-form @itemCreated="itemCreatedHandler" ></create-timeline-form>
+
+<create-timeline-form @itemCreated="itemCreatedHandler" ></create-timeline-form>
 
   <list-timeline-table ref="createTimelineForm"></list-timeline-table>
 </template>
@@ -8,6 +9,7 @@
 import ListTimelineTable from "@/components/app/ListTimelineTable.vue";
 import CreateTimelineForm from "@/components/app/CreateTimelineForm.vue";
 import {ref} from "vue";
+import GemProjectField from "@/components/blocks/GemProjectField.vue";
 
 // Define component properties
 const createTimelineForm = ref<any>(null)

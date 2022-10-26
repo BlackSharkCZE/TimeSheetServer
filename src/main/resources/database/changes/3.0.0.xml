@@ -32,5 +32,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="4" author="jiri">
+        <addColumn tableName="remote_write_settings">
+            <column name="root_project_name" type="varchar(256)" />
+            <column name="project_name" type="varchar(256)" />
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>

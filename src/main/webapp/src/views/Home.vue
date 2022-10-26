@@ -1,5 +1,11 @@
 <template>
   <div class="home">
+
+    <gem-project-field v-model="gemProject" ></gem-project-field>
+
+    {{gemProject}}
+
+
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
     <div v-if="!$keycloak.authenticated">
@@ -8,21 +14,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, inject} from 'vue';
+<script lang="ts" setup>
+import {defineComponent, inject, ref} from 'vue';
 import HelloWorld from '@/components/HelloWorld.vue';
-import Keycloak from "keycloak-js"; // @ is an alias to /src
+import Keycloak from "keycloak-js";
+import GemProjectField from "@/components/blocks/GemProjectField.vue"; // @ is an alias to /src
 
-export default defineComponent({
-  name: 'Home',
-  components: {
-    HelloWorld,
-  },
-  setup() {
-    const keycloak = inject('keycloak') as Keycloak
-    return {
-      keycloak,
-    }
-  }
-});
+const gemProject = ref({rootProject: null, project: null})
+
+
 </script>

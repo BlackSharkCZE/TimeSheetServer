@@ -16,12 +16,17 @@ import PrimeVue from 'primevue/config'
 import 'primevue/resources/themes/mdc-dark-indigo/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
+import 'primeflex/primeflex.min.css'
 
 import { useUserStore } from "@/stores/UserStore";
 
 const app: Vue.App = createApp(App)
     .use(keycloakPlugin, {
         onReady: (_keycloak: Keycloak) => {
+            console.log('Keycloak authenticated: ', _keycloak.authenticated)
+            if (!_keycloak.authenticated) {
+                _keycloak.login()
+            }
             moment.locale('cs')
             const pinia = createPinia()
             app.use(router)

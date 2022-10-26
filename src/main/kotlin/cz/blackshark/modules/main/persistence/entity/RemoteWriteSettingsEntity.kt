@@ -27,8 +27,14 @@ class RemoteWriteSettingsEntity {
 
     @Column(name = "remote_writer_list", nullable = false)
     var remoteWriterList: String? = null
-    
+
     @Column(name = "tag_id", nullable = true)
     var tagId: Int? = null
+
+    @Column(name = "root_project_name")
+    var rootProjectName: String? = null
+
+    @Column(name = "project_name")
+    var projectName: String? = null
 
 }

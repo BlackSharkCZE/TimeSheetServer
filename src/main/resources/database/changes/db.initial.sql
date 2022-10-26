@@ -60,12 +60,6 @@ ALTER TABLE "rate" ADD CONSTRAINT "rate_company_id_fkey" FOREIGN KEY ("company_i
 -- changeset jiri:1611904497273-22
 ALTER TABLE "requisition" ADD CONSTRAINT "requisition_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "company" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
 
--- changeset jiri:1611904497273-23
-ALTER TABLE "static_invoice" ADD CONSTRAINT "static_invoice_issuer_id_fkey" FOREIGN KEY ("issuer_id") REFERENCES "company" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
-
--- changeset jiri:1611904497273-24
-ALTER TABLE "static_invoice" ADD CONSTRAINT "static_invoice_recipient_id_fkey" FOREIGN KEY ("recipient_id") REFERENCES "company" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
-
 -- changeset jiri:1611904497273-25
 CREATE VIEW "v_timeline_agg" AS SELECT comp.id AS company_id,
                                        comp.company_name,
