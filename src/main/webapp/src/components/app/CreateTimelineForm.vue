@@ -1,95 +1,99 @@
 <template>
-  <Panel header="Create Project">
 
-    <div>Error: {{ errorMessage }}</div>
+  <Panel class="mt-2 mb-2">
 
     <Message v-if="errorMessage!=null" severity="error" :closable="false">{{ errorMessage }}</Message>
 
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
+      <div class="card">
+        <div class="formgrid grid">
+          <div class="field col-1">
+            <label for="date">Date <span v-if="v$.date.required">*</span></label>
+            <Calendar id="date"
+                      dateFormat="dd.mm.yy"
+                      :class="{'p-invalid':v$.date.$invalid && submitted}"
+                      v-model="v$.date.$model"/>
+            <small v-if="v$.date.$invalid && submitted"
+                   class="p-error">{{ v$.date.required.$message.replace('Value', 'Date') }}</small>
+          </div>
 
+          <div class="field col-1">
+            <label for="fromTime">From Time <span v-if="v$.fromTime.required">*</span></label>
+            <Calendar id="fromTime"
+                      dateFormat="HH:MM"
+                      :class="{'p-invalid':v$.fromTime.$invalid && submitted}"
+                      :timeOnly="true"
+                      hourFormat="24"
+                      :stepMinute="15"
+                      v-model="v$.fromTime.$model"/>
+            <small v-if="v$.fromTime.$invalid && submitted"
+                   class="p-error">{{ v$.fromTime.required.$message.replace('Value', 'Time from') }}</small>
+          </div>
 
-      <div class="field">
-        <label for="date">Date <span v-if="v$.date.required">*</span></label>
-        <Calendar id="date"
-                  dateFormat="dd.mm.yy"
-                  :class="{'p-invalid':v$.date.$invalid && submitted}"
-                  v-model="v$.date.$model"/>
-        <small v-if="v$.date.$invalid && submitted"
-               class="p-error">{{ v$.date.required.$message.replace('Value', 'Date') }}</small>
+          <div class="field col-1">
+            <label for="toTime">From Time <span v-if="v$.toTime.required">*</span></label>
+            <Calendar id="toTime"
+                      dateFormat="HH:MM"
+                      :class="{'p-invalid':v$.toTime.$invalid && submitted}"
+                      :timeOnly="true"
+                      hourFormat="24"
+                      :stepMinute="15"
+                      v-model="v$.toTime.$model"/>
+            <small v-if="v$.toTime.$invalid && submitted"
+                   class="p-error">{{ v$.toTime.required.$message.replace('Value', 'Time to') }}</small>
+          </div>
+
+          <div class="field col-1">
+            <label for="toTime">Pause <span v-if="v$.toTime.required">*</span></label>
+            <InputNumber v-model="v$.pause.$model"
+                         id="pause"
+                         :min="0"
+                         :step="15"
+                         :allowEmpty="false"
+                         showButtons
+                         buttonLayout="horizontal"
+                         decrementButtonClass="p-button-danger"
+                         incrementButtonClass="p-button-success"
+                         incrementButtonIcon="pi pi-plus"
+                         decrementButtonIcon="pi pi-minus"
+                         suffix=" min"
+                         mode="decimal"/>
+            <small v-if="v$.toTime.$invalid && submitted"
+                   class="p-error">{{ v$.toTime.required.$message.replace('Value', 'Pause') }}</small>
+          </div>
+
+          <project-field
+              class="col-2"
+              id="project"
+              label="Project"
+              v-model="formData.project"
+              :vualidate="v$.project"
+              :submitted="submitted">
+          </project-field>
+
+          <input-field id="note"
+                       label="Note"
+                       :vualidate="v$.note"
+                       :submitted="submitted"
+                       v-model="formData.note"/>
+
+          <div class="field col-1">
+            <label>&nbsp;</label>
+            <Button type="submit" label="Pridat" class="p-button-lg"/>
+          </div>
+
+        </div>
       </div>
-
-      <div class="field">
-        <label for="fromTime">From Time <span v-if="v$.fromTime.required">*</span></label>
-        <Calendar id="fromTime"
-                  dateFormat="HH:MM"
-                  :class="{'p-invalid':v$.fromTime.$invalid && submitted}"
-                  :timeOnly="true"
-                  hourFormat="24"
-                  :stepMinute="15"
-                  v-model="v$.fromTime.$model"/>
-        <small v-if="v$.fromTime.$invalid && submitted"
-               class="p-error">{{ v$.fromTime.required.$message.replace('Value', 'Time from') }}</small>
-      </div>
-
-      <div class="field">
-        <label for="toTime">From Time <span v-if="v$.toTime.required">*</span></label>
-        <Calendar id="toTime"
-                  dateFormat="HH:MM"
-                  :class="{'p-invalid':v$.toTime.$invalid && submitted}"
-                  :timeOnly="true"
-                  hourFormat="24"
-                  :stepMinute="15"
-                  v-model="v$.toTime.$model"/>
-        <small v-if="v$.toTime.$invalid && submitted"
-               class="p-error">{{ v$.toTime.required.$message.replace('Value', 'Time to') }}</small>
-      </div>
-
-      <div class="field">
-        <label for="toTime">Pause <span v-if="v$.toTime.required">*</span></label>
-        <InputNumber v-model="v$.pause.$model"
-                     id="pause"
-                     :min="0"
-                     :step="15"
-                     :allowEmpty="false"
-                     showButtons
-                     buttonLayout="horizontal"
-                     decrementButtonClass="p-button-danger"
-                     incrementButtonClass="p-button-success"
-                     incrementButtonIcon="pi pi-plus"
-                     decrementButtonIcon="pi pi-minus"
-                     suffix=" min"
-                     mode="decimal"/>
-        <small v-if="v$.toTime.$invalid && submitted"
-               class="p-error">{{ v$.toTime.required.$message.replace('Value', 'Pause') }}</small>
-      </div>
-
-
-      <project-field
-          id="project"
-          label="Project"
-          v-model="formData.project"
-          :vualidate="v$.project"
-          :submitted="submitted">
-      </project-field>
-
-      <input-field id="note"
-                   label="Note"
-                   :vualidate="v$.note"
-                   :submitted="submitted"
-                   v-model="formData.note"/>
-
-      <Button type="submit" label="Pridat" class="mt-2"/>
     </form>
   </Panel>
-
 </template>
 
 <script lang="ts" setup>
 import Button from 'primevue/button'
-import Panel from 'primevue/panel'
 import Calendar from 'primevue/calendar'
 import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
+import Panel from 'primevue/panel'
 
 import {AxiosStatic} from "axios";
 import {inject, onMounted, reactive, ref} from "vue";
@@ -176,7 +180,6 @@ function saveTimeline() {
         emits('itemCreated', response.data)
         submitted.value = false
         clearFormData()
-
 
 
       } else {

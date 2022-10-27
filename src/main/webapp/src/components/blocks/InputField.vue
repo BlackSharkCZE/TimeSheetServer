@@ -1,13 +1,13 @@
 <template>
 
-  <div class="field">
+  <div class="field col">
     <label :for="id">{{ props.label }} <span v-if="vualidate.required">*</span></label>
     <InputText
         :id="id"
         :class="{'p-invalid':vualidate.$invalid && props.submitted}"
         v-on:change="processValueChange"
         v-on:keyup="processValueChange"
-        class="p-inputtext-sm" v-model="mv"/>
+        class="p-inputtext" v-model="mv"/>
     <small v-if="vualidate.$invalid && props.submitted"
            class="p-error">{{ vualidate.required.$message.replace('Value', props.label) }}</small>
   </div>

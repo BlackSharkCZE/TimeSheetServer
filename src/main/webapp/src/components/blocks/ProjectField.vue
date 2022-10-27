@@ -1,6 +1,6 @@
 <template>
 
-  <div class="field">
+  <div class="field" :class="props.class">
     <label :for="props.id">{{ props.label }} <span v-if="vualidate.required">*</span></label>
     <Dropdown :id="props.id"
               :class="{'p-invalid':vualidate.$invalid && submitted}"
@@ -44,7 +44,8 @@ type InputFieldProps = {
   label: string
   modelValue: any
   submitted: boolean,
-  vualidate: any
+  vualidate: any,
+  class: string
 }
 
 // Define props
