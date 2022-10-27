@@ -19,8 +19,6 @@
 
       <Button type="submit" label="Pridat" class="mt-2"/>
     </form>
-
-    {{ formData }}
   </Panel>
 </template>
 

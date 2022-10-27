@@ -23,7 +23,6 @@ import { useUserStore } from "@/stores/UserStore";
 const app: Vue.App = createApp(App)
     .use(keycloakPlugin, {
         onReady: (_keycloak: Keycloak) => {
-            console.log('Keycloak authenticated: ', _keycloak.authenticated)
             if (!_keycloak.authenticated) {
                 _keycloak.login()
             }

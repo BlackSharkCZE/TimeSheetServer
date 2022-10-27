@@ -1,43 +1,97 @@
 <template>
-
-  <div id="nav">
-    <router-link to="/">Home</router-link>
-    |
-    <router-link to="/about">About</router-link>
-    |
-    <router-link to="/private/companies/create">Create Company</router-link>
-    |
-    <router-link to="/private/companies/list">List Companies</router-link>
-    |
-    <router-link to="/private/rate/create">Create Rate</router-link>
-    |
-    <router-link to="/private/home">Private Home</router-link>
-    |
-    <router-link to="/private/requisition/list">Smlouvy</router-link>
-    |
-    <router-link to="/private/requisition/create">Pridat smlouvu</router-link>
-    |
-    <router-link to="/private/project/create">Pridat projekt</router-link>
-|
-    <router-link to="/private/dashboard">Dashboard</router-link>
-
-  </div>
-
-  <Message :closable="false"  v-if="noPrimaryCompany" severity="warn">You do not have set primary company.</Message>
-
+  <MegaMenu :model="items"></MegaMenu>
+  <Message :closable="false" v-if="noPrimaryCompany" severity="warn">
+    You do not have set primary company.
+    <router-link style="color:#343434" to="/private/companies/create">Please add company here</router-link>
+  </Message>
   <router-view/>
-
 </template>
 
 <script lang="ts" setup>
 import Message from 'primevue/message'
 import {useUserStore} from "@/stores/UserStore";
-import {computed} from "vue";
+import {computed, ref} from "vue";
+
+import MegaMenu from 'primevue/megamenu';
+
 const store = useUserStore()
 
-const noPrimaryCompany = computed(()=> {
+const noPrimaryCompany = computed(() => {
   return store.userDetail.company === undefined || store.userDetail.company === null
 })
+
+const items = ref([
+  {
+    label: 'Dashboard', icon: 'pi pi-fw pi-video', to: '/private/dashboard'
+  },
+  {
+    label: 'Fakturace', icon: 'pi pi-fw pi-users',
+    items: [
+      [
+        {
+          label: 'User 1',
+          items: [{label: 'User 1.1', to: "/"}, {label: 'User 1.2', to: "/"}]
+        },
+        {
+          label: 'User 2',
+          items: [{label: 'User 2.1', to: "/"}, {label: 'User 2.2', to: "/"}]
+        },
+      ],
+      [
+        {
+          label: 'User 3',
+          items: [{label: 'User 3.1', to: "/"}, {label: 'User 3.2', to: "/"}]
+        },
+        {
+          label: 'User 4',
+          items: [{label: 'User 4.1', to: "/"}, {label: 'User 4.2', to: "/"}]
+        }
+      ],
+      [
+        {
+          label: 'User 5', to: "/",
+          items: [{label: 'User 5.1', to: "/"}, {label: 'User 5.2', to: "/"}]
+        },
+        {
+          label: 'User 6', to: "/",
+          items: [{label: 'User 6.1', to: "/"}, {label: 'User 6.2', to: "/"}]
+        }
+      ]
+    ]
+  },
+  {
+    label: 'Konfigurace', icon: 'pi pi-fw pi-calendar',
+    items: [
+      [
+        {
+          label: 'Společnosti',
+          items: [
+            {label: 'Přehled společností', to: '/private/companies/list'},
+            {label: 'Přidat společnost', to: '/private/companies/create'}]
+        },
+        {
+          label: 'Smlouvy',
+          items: [
+            {label: 'Přehled smluv', to: '/private/requisition/list'},
+            {label: 'Přidat smlouvu', to: '/private/requisition/create'}]
+        },
+        {
+          label: 'Projekty',
+          items: [
+            {label: 'Přehled projektů', to: '/private/project/list'},
+            {label: 'Přidat projekt', to: '/private/project/create'}]
+        },
+        {
+          label: 'Rates',
+          items: [
+            {label: 'Správa rates', to: '/private/rate/create'}
+          ]
+        }
+      ],
+
+    ]
+  }
+])
 
 </script>
 

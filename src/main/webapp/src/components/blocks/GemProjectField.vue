@@ -1,44 +1,42 @@
 <template>
 
-  <Dropdown
-      id="rootProject"
-      v-model="selectedRootProject"
-      :options="gmRootProject"
-      :filter="true"
-      :filterFields="['text']"
-      optionLabel="text"
-      placeholder="Select root project"
-      @change="handleRootProjectChange"
-      :showClear="true">
-  </Dropdown>
-
-  <Dropdown
-      id="rootProject"
-      v-model="selectedProject"
-      :options="gmProject"
-      :filter="true"
-      :filterFields="['text']"
-      optionLabel="text"
-      placeholder="Select project"
-      @change="handleProjectChange"
-      :showClear="true">
-  </Dropdown>
-
   <div class="card">
-    <div class="flex flex-row flex-wrap card-container blue-container">
+    <div class="flex gap-2 flex-row flex-wrap card-container blue-container">
       <div
-          class="flex align-items-center justify-content-center w-4rem h-4rem bg-blue-500 font-bold text-white border-round m-2">
+          class="align-items-center justify-content-center">
+        <Dropdown
+            style="width:16rem"
+            id="rootProject"
+            v-model="selectedRootProject"
+            :options="gmRootProject"
+            :filter="true"
+            :filterFields="['text']"
+            :autoFilterFocus="true"
+            :autoOptionFocus="false"
+            optionLabel="text"
+            placeholder="Select root project"
+            @change="handleRootProjectChange"
+            :showClear="true">
+        </Dropdown>
+      </div>
+      <div
+          class="align-items-center justify-content-center">
+        <Dropdown
+            style="width:16rem"
+            id="rootProject"
+            v-model="selectedProject"
+            :options="gmProject"
+            :filter="true"
+            :filterFields="['text']"
+            :autoFilterFocus="true"
+            :autoOptionFocus="false"
+            optionLabel="text"
+            placeholder="Select project"
+            @change="handleProjectChange"
+            :showClear="true">
+        </Dropdown>
+      </div>
 
-
-      </div>
-      <div
-          class="flex align-items-center justify-content-center w-4rem h-4rem bg-blue-500 font-bold text-white border-round m-2">
-        2
-      </div>
-      <div
-          class="flex align-items-center justify-content-center w-4rem h-4rem bg-blue-500 font-bold text-white border-round m-2">
-        3
-      </div>
     </div>
   </div>
 
