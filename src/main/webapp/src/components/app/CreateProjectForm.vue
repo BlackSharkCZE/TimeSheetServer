@@ -1,23 +1,29 @@
 <template>
-  <Panel header="Create Project">
+  <Panel header="Create Project" :toggleable="true" :collapsed="true" class="mt-2 mb-2">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
+      <div class="card">
+        <div class="formgrid grid">
+          <company-field
+              class="col-2"
+              id="company"
+              label="Company"
+              v-model="formData.company"
+              :vualidate="v$.company"
+              :submitted="submitted">
+          </company-field>
+          <input-field id="name"
+                       class="col-2"
+                       label="Project name"
+                       :vualidate="v$.name"
+                       :submitted="submitted"
+                       v-model="formData.name"/>
 
-      <company-field
-          id="company"
-          label="Company"
-          v-model="formData.company"
-          :vualidate="v$.company"
-          :submitted="submitted">
-
-      </company-field>
-
-      <input-field id="name"
-                   label="Project name"
-                   :vualidate="v$.name"
-                   :submitted="submitted"
-                   v-model="formData.name"/>
-
-      <Button type="submit" label="Pridat" class="mt-2"/>
+          <div class="field col-1">
+            <label>&nbsp;</label>
+            <Button type="submit" label="Create" class="p-button-lg"/>
+          </div>
+        </div>
+      </div>
     </form>
   </Panel>
 </template>
@@ -27,7 +33,7 @@ import Button from 'primevue/button'
 import Panel from 'primevue/panel'
 
 import {AxiosStatic} from "axios";
-import {inject, reactive, ref} from "vue";
+import {defineEmits, inject, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -61,6 +67,8 @@ const axios = inject<AxiosStatic>('axios')
 const router = useRouter()
 const v$ = useVuelidate(rules, formData)
 
+// Define emits
+const emits = defineEmits(['itemCreated'])
 
 // Define functions
 function handleSubmit(isFormValid: boolean) {
@@ -79,9 +87,7 @@ function saveProject() {
     if (response.status >= 200 && response.status <= 299) {
 
       if (response.data.id > 0) {
-        router.push({
-          path: '/private/project/list'
-        })
+        emits('itemCreated', response.data)
       } else {
         console.error("Can not save project. Invalid response", response)
       }

@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 
-import {inject, onMounted, ref} from 'vue'
+import {defineExpose, inject, onMounted, ref} from 'vue'
 import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
@@ -95,10 +95,10 @@ function mapFilterToDataTablePayload(vueFilter: any): any {
     const key = keys[a]
     const {value: _value, matchMode} = vueFilter[keys[a]]
 
-    if (_value.length>0) {
+    if (_value.length > 0) {
       filter[key] = {
         type: getFilterType(matchMode),
-        value: '%'+_value+'%'
+        value: '%' + _value + '%'
       }
     }
   }
@@ -106,11 +106,19 @@ function mapFilterToDataTablePayload(vueFilter: any): any {
 }
 
 function getFilterType(vueType: string): string {
-  switch(vueType.toUpperCase()) {
-    case 'CONTAINS': return 'like'
-    default: return '='
+  switch (vueType.toUpperCase()) {
+    case 'CONTAINS':
+      return 'like'
+    default:
+      return '='
   }
 }
+
+function reload() {
+  loadData(mapFilterToDataTablePayload(filters.value))
+}
+
+defineExpose({reload})
 
 
 </script>

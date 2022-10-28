@@ -1,29 +1,38 @@
 <template>
-  <Panel header="Create Rate">
+  <Panel header="Create Rate" :toggleable="true" :collapsed="true" class="mt-2 mb-2">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
-      <company-field id="company"
-                     v-model="formData.company"
-                     :vualidate="v$.company"
-                     :submitted="submitted"
-                     label="Company"></company-field>
+      <div class="card">
+        <div class="formgrid grid">
+          <company-field id="company"
+                         class="col-2"
+                         v-model="formData.company"
+                         :vualidate="v$.company"
+                         :submitted="submitted"
+                         label="Company"></company-field>
 
-      <div class="field">
-        <label for="since">Plate od <span v-if="v$.since.required">*</span></label>
-        <calendar id="since"
-                  :class="{'p-invalid':v$.since.$invalid && submitted}"
-                  v-model="formData.since"/>
-        <small v-if="v$.$invalid && submitted"
-               class="p-error">{{ v$.since.required.$message.replace('Value', 'Platne od') }}</small>
+          <div class="field col-2">
+            <label for="since">Plate od <span v-if="v$.since.required">*</span></label>
+            <calendar id="since"
+                      :class="{'p-invalid':v$.since.$invalid && submitted}"
+                      v-model="formData.since"/>
+            <small v-if="v$.$invalid && submitted"
+                   class="p-error">{{ v$.since.required.$message.replace('Value', 'Platne od') }}</small>
+          </div>
+
+          <input-field id="amount"
+                       class="col-2"
+                       label="Castka za MD"
+                       :vualidate="v$.amount"
+                       :submitted="submitted"
+                       v-model="formData.amount"/>
+
+          <div class="field col-1">
+            <label>&nbsp;</label>
+            <Button type="submit" label="Pridat" class="p-button-lg"/>
+          </div>
+        </div>
       </div>
-
-      <input-field id="amount"
-                   label="Castka za MD"
-                   :vualidate="v$.amount"
-                   :submitted="submitted"
-                   v-model="formData.amount"/>
-
-      <Button type="submit" label="Pridat" class="mt-2"/>
     </form>
   </Panel>
 </template>
@@ -64,6 +73,9 @@ const rules = {
   amount: {required}
 }
 
+// Define emits
+const emits = defineEmits(['itemCreated'])
+
 // Inject dependencies
 const axios = inject<AxiosStatic>('axios')
 
@@ -82,13 +94,9 @@ function handleSubmit(isFormValid: boolean) {
 }
 
 function saveRate() {
-  let path = "/rate/create"
-
-  axios?.post(path, buildData()).then((response) => {
+  axios?.post("/rate/create", buildData()).then((response) => {
     if (response.status >= 200 && response.status <= 299) {
-      router.push({
-        path: '/private/rate/list'
-      })
+      emits('itemCreated', response.data)
     } else {
       // message.error('Ulozeni spolecnosti se nezdarilo!')
       console.error(response)

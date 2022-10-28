@@ -2,15 +2,11 @@ import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
 import Home from '../views/Home.vue'
 import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
 import PrivateHome from '@/views/private/PrivateHome.vue'
-import ListCompanyView from '@/views/private/company/ListCompaniesView.vue'
-import CreateCompanyView from '@/views/private/company/CreateCompanyView.vue'
-import CreateRateView from '@/views/private/rate/CreateRateView.vue'
-import ListRateView from '@/views/private/rate/ListRateView.vue'
-import CreateRequisitionView from '@/views/private/requisition/CreateRequisitionView.vue'
-import ListRequisitionView from '@/views/private/requisition/ListRequisitionView.vue'
-import CreateProjectView from '@/views/private/project/CreateProjectView.vue'
-import ListProjectView from '@/views/private/project/ListProjectView.vue'
 import DashboardView from '@/views/private/dashboard/DashboardView.vue'
+import CompanyView from '@/views/private/company/CompanyView.vue'
+import RequistionView from '@/views/private/requisition/RequistionView.vue'
+import ProjectView from '@/views/private/project/ProjectView.vue'
+import RateView from '@/views/private/rate/RateView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -44,58 +40,20 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: 'rate',
-                children: [
-                    {
-                        path: 'create',
-                        component: CreateRateView
-                    },
-                    {
-                        path: 'list',
-                        component: ListRateView
-                    },
-
-                ]
+                component: RateView
             },
             {
                 path: 'companies',
-                children: [
-                    {
-                        path: 'create',
-                        component: CreateCompanyView
-                    },
-                    {
-                        path: 'list',
-                        component: ListCompanyView
-                    }
-                ]
+                component: CompanyView
             },
             {
                 path: 'requisition',
-                children: [
-                    {
-                        path: 'create',
-                        component: CreateRequisitionView
-                    },
-                    {
-                        path: 'list',
-                        component: ListRequisitionView
-                    },
-
-                ]
+                component: RequistionView
             },
             {
                 path: 'project',
-                children: [
-                    {
-                        path: 'create',
-                        component: CreateProjectView
-                    },
-                    {
-                        path: 'list',
-                        component: ListProjectView
-                    }
-                ]
-            },
+                component: ProjectView
+            }
         ]
     }
 ]

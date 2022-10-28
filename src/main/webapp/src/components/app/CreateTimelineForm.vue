@@ -43,7 +43,7 @@
                    class="p-error">{{ v$.toTime.required.$message.replace('Value', 'Time to') }}</small>
           </div>
 
-          <div class="field col-1">
+          <div class="field col-2">
             <label for="toTime">Pause <span v-if="v$.toTime.required">*</span></label>
             <InputNumber v-model="v$.pause.$model"
                          id="pause"
@@ -72,6 +72,7 @@
           </project-field>
 
           <input-field id="note"
+                       class="col-4"
                        label="Note"
                        :vualidate="v$.note"
                        :submitted="submitted"
@@ -79,7 +80,7 @@
 
           <div class="field col-1">
             <label>&nbsp;</label>
-            <Button type="submit" label="Pridat" class="p-button-lg"/>
+            <Button type="submit" label="Add" class="p-button-lg"/>
           </div>
 
         </div>

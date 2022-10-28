@@ -66,20 +66,19 @@ const items = ref([
         {
           label: 'Společnosti',
           items: [
-            {label: 'Přehled společností', to: '/private/companies/list'},
-            {label: 'Přidat společnost', to: '/private/companies/create'}]
+            {label: 'Správa společností', to: '/private/companies'}
+          ]
         },
         {
           label: 'Smlouvy',
           items: [
-            {label: 'Přehled smluv', to: '/private/requisition/list'},
-            {label: 'Přidat smlouvu', to: '/private/requisition/create'}]
+            {label: 'Správa smluv', to: '/private/requisition'}
+          ]
         },
         {
           label: 'Projekty',
           items: [
-            {label: 'Přehled projektů', to: '/private/project/list'},
-            {label: 'Přidat projekt', to: '/private/project/create'}]
+            {label: 'Správa projektů', to: '/private/project'}]
         },
         {
           label: 'Rates',

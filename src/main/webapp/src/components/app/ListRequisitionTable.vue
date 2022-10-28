@@ -30,10 +30,8 @@
 
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-
 import moment from "moment";
-
-import {inject, onMounted, ref} from "vue";
+import {defineExpose, inject, onMounted, ref} from "vue";
 import {AxiosStatic} from "axios";
 
 // Define injects
@@ -72,6 +70,12 @@ function loadData(filterData: any = {}) {
     loading.value = false
   })
 }
+
+function reload() {
+  loadData()
+}
+
+defineExpose({reload})
 
 </script>
 

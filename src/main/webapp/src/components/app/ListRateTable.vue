@@ -1,5 +1,4 @@
 <template>
-
   <DataTable
       :page="pageIndex+1"
       ref="dt"
@@ -28,7 +27,7 @@ import Column from "primevue/column";
 
 import moment from "moment";
 
-import {inject, onMounted, ref} from "vue";
+import {inject, onMounted, ref, defineExpose} from "vue";
 import {AxiosStatic} from "axios";
 
 // Define injects
@@ -46,7 +45,6 @@ const totalRecords = ref<number>(0)
 onMounted(() => {
   loadData()
 })
-
 
 // Define methods
 function formatTimestamp(input: string): string {
@@ -67,6 +65,12 @@ function loadData(filterData: any = {}) {
     loading.value = false
   })
 }
+
+function reload() {
+  loadData()
+}
+
+defineExpose({reload})
 
 </script>
 

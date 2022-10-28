@@ -1,68 +1,76 @@
 <template>
-  <Panel header="Create Requisition">
+  <Panel header="Create Requisition" :toggleable="true" :collapsed="true" class="mt-2 mb-2">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
-      <company-field
-          id="company"
-          label="Company"
-          v-model="formData.company"
-          :vualidate="v$.company"
-          :submitted="submitted"></company-field>
+      <div class="card">
+        <div class="formgrid grid">
 
-      <div class="field">
-        <FileUpload name="file"
-                    ref="fileUpload"
-                    :showUploadButton="false"
-                    :showCancelButton="false"
-                    :multiple="false"
-                    url="/requisition/create"
-                    @upload="uploadDone"
-                    @select="fileSelected"
-                    @before-upload="beforeUploadHandler"/>
+          <company-field
+              id="company"
+              class="col-2`"
+              label="Company"
+              v-model="formData.company"
+              :vualidate="v$.company"
+              :submitted="submitted"></company-field>
+
+          <div class="field col-1">
+            <label>File *</label>
+            <FileUpload name="file"
+                        ref="fileUpload"
+                        mode="basic"
+                        class="p-button-lg"
+                        :showUploadButton="false"
+                        :showCancelButton="false"
+                        :multiple="false"
+                        url="/requisition/create"
+                        @upload="uploadDone"
+                        @select="fileSelected"
+                        @before-upload="beforeUploadHandler"/>
+          </div>
+
+          <input-field id="orderNumber"
+                       class="col-1"
+                       label="Order number"
+                       :vualidate="v$.orderNumber"
+                       :submitted="submitted"
+                       v-model="formData.orderNumber"/>
+
+          <div class="field col-1">
+            <label for="startDate">Start date <span v-if="v$.startDate.required">*</span></label>
+            <calendar id="startDate"
+                      dateFormat="yy-mm-dd"
+                      :class="{'p-invalid':v$.startDate.$invalid && submitted}"
+                      v-model="v$.startDate.$model"/>
+            <small v-if="v$.startDate.$invalid && submitted"
+                   class="p-error">{{ v$.startDate.required.$message.replace('Value', 'Start date') }}</small>
+          </div>
+
+          <div class="field col-1">
+            <label for="endDate">End date <span v-if="v$.endDate.required">*</span></label>
+            <calendar id="endDate"
+                      dateFormat="yy-mm-dd"
+                      :class="{'p-invalid':v$.endDate.$invalid && submitted}"
+                      v-model="v$.endDate.$model"/>
+            <small v-if="v$.endDate.$invalid && submitted"
+                   class="p-error">{{ v$.endDate.required.$message.replace('Value', 'End date') }}</small>
+          </div>
+
+          <input-field id="note"
+                       class="col-5"
+                       label="Note"
+                       :vualidate="v$.note"
+                       :submitted="submitted"
+                       v-model="formData.note"/>
+
+          <div class="field col-1">
+            <label>&nbsp;</label>
+            <Button type="submit" label="Pridat" class="p-button-lg"/>
+          </div>
+        </div>
       </div>
-
-
-      <input-field id="note"
-                   label="Note"
-                   :vualidate="v$.note"
-                   :submitted="submitted"
-                   v-model="formData.note"/>
-
-      <input-field id="orderNumber"
-                   label="Order number"
-                   :vualidate="v$.orderNumber"
-                   :submitted="submitted"
-                   v-model="formData.orderNumber"/>
-
-
-      <div class="field">
-        <label for="startDate">Start date <span v-if="v$.startDate.required">*</span></label>
-        <calendar id="startDate"
-                  dateFormat="yy-mm-dd"
-                  :class="{'p-invalid':v$.startDate.$invalid && submitted}"
-                  v-model="v$.startDate.$model"/>
-        <small v-if="v$.startDate.$invalid && submitted"
-               class="p-error">{{ v$.startDate.required.$message.replace('Value', 'Start date') }}</small>
-      </div>
-
-      <div class="field">
-        <label for="endDate">End date <span v-if="v$.endDate.required">*</span></label>
-        <calendar id="endDate"
-                  dateFormat="yy-mm-dd"
-                  :class="{'p-invalid':v$.endDate.$invalid && submitted}"
-                  v-model="v$.endDate.$model"/>
-        <small v-if="v$.endDate.$invalid && submitted"
-               class="p-error">{{ v$.endDate.required.$message.replace('Value', 'End date') }}</small>
-      </div>
-
-
-      <Button type="submit" label="Pridat" class="mt-2"/>
     </form>
 
   </Panel>
-
-  {{ formData }}
-
 </template>
 
 <script lang="ts" setup>
@@ -72,7 +80,7 @@ import Calendar from "primevue/calendar";
 import FileUpload, {FileUploadBeforeUploadEvent, FileUploadSelectEvent} from "primevue/fileupload";
 
 import {AxiosStatic} from "axios";
-import {inject, reactive, ref} from "vue";
+import {inject, reactive, ref, defineEmits} from "vue";
 import {useRouter} from "vue-router";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -112,6 +120,9 @@ const rules = {
   endDate: {required},
 }
 
+// Define emits
+const emits = defineEmits(['itemCreated'])
+
 // Inject dependencies
 const axios = inject<AxiosStatic>('axios')
 
@@ -143,9 +154,7 @@ function fileSelected(event: FileUploadSelectEvent) {
 }
 
 function uploadDone() {
-  router.push({
-    path: '/private/requisition/list'
-  })
+  emits('itemCreated', {})
 }
 
 function handleSubmit(isFormValid: boolean) {

@@ -1,84 +1,113 @@
 <template>
-  <Panel header="Create company">
+  <Panel header="Create company" :toggleable="true" :collapsed="true" class="mt-2 mb-2">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
-      <div class="field">
-        <label for="ic">IC</label>
-        <div class="p-inputgroup" id="ic">
-          <InputText
-              :class="{'p-invalid':v$.ic.$invalid}"
-              class="p-inputtext-sm" v-model="v$.ic.$model"/>
-          <Button icon="pi pi-search" class="p-button-warning" @click="loadDataFromAres"/>
+      <div class="card">
+        <div class="formgrid grid">
+
+          <div class="field col-1">
+            <label for="ic">IČ</label>
+            <div class="p-inputgroup" id="ic">
+              <InputText
+                  :class="{'p-invalid':v$.ic.$invalid}"
+                  v-model="v$.ic.$model"/>
+              <Button icon="pi pi-search" class="p-button-warning" @click="loadDataFromAres"/>
+            </div>
+            <small v-if="v$.ic.$invalid && submitted"
+                   class="p-error">{{ v$.ic.required.$message.replace('Value', 'IC') }}</small>
+          </div>
+
+          <input-field id="companyName"
+                       class="col-2"
+                       label="Company Name 2"
+                       :vualidate="v$.companyName"
+                       :submitted="submitted"
+                       v-model="formData.companyName">
+          </input-field>
+
+          <input-field id="dic"
+                       class="col-2"
+                       label="DIC"
+                       :vualidate="v$.dic"
+                       :submitted="submitted"
+                       v-model="formData.dic"/>
+          <div class="field col-1">
+            <label>&nbsp;</label>
+            <div class="mt-3">
+              Platce DPH: &nbsp;<InputSwitch v-model="formData.platceDph"/>
+            </div>
+
+          </div>
         </div>
-        <small v-if="v$.ic.$invalid && submitted"
-               class="p-error">{{ v$.ic.required.$message.replace('Value', 'IC') }}</small>
+
+        <div class="formgrid grid">
+          <input-field id="okres"
+                       class="col-2"
+                       label="Okres"
+                       :vualidate="v$.okres"
+                       :submitted="submitted"
+                       v-model="formData.okres"/>
+
+          <input-field id="obec"
+                       class="col-2"
+                       label="Obec"
+                       :vualidate="v$.obec"
+                       :submitted="submitted"
+                       v-model="formData.obec"/>
+
+          <input-field id="castObce"
+                       class="col-2"
+                       label="Cast obce"
+                       :vualidate="v$.castObce"
+                       :submitted="submitted"
+                       v-model="formData.castObce"/>
+          <input-field id="ulice"
+                       class="col-2"
+                       label="Ulice"
+                       :vualidate="v$.ulice"
+                       :submitted="submitted"
+                       v-model="formData.ulice"/>
+
+          <input-field id="cisloDomu"
+                       class="col-1"
+                       label="Cislo Domu"
+                       :vualidate="v$.cisloDomu"
+                       :submitted="submitted"
+                       v-model="formData.cisloDomu"/>
+        </div>
+
+        <div class="formgrid grid">
+          <input-field id="email"
+                       class="col-2"
+                       label="E-mail"
+                       :vualidate="v$.email"
+                       :submitted="submitted"
+                       v-model="formData.email"/>
+
+          <input-field id="phone"
+                       class="col-2"
+                       label="Phone"
+                       :vualidate="v$.phone"
+                       :submitted="submitted"
+                       v-model="formData.phone"/>
+
+          <input-field id="bankAccountNumber"
+                       class="col-2"
+                       label="Cislo uctu"
+                       :vualidate="v$.bankAccountNumber"
+                       :submitted="submitted"
+                       v-model="formData.bankAccountNumber"/>
+
+          <div class="field col-1">
+            <label>&nbsp;</label>
+            <Button type="submit" label="Create" class="p-button-lg"/>
+          </div>
+
+        </div>
+
       </div>
-      <input-field id="companyName"
-                   label="Company Name 2"
-                   :vualidate="v$.companyName"
-                   :submitted="submitted"
-                   v-model="formData.companyName">
-      </input-field>
 
-      <input-field id="dic"
-                   label="DIC"
-                   :vualidate="v$.dic"
-                   :submitted="submitted"
-                   v-model="formData.dic"/>
 
-      <input-field id="okres"
-                   label="Okres"
-                   :vualidate="v$.okres"
-                   :submitted="submitted"
-                   v-model="formData.okres"/>
-
-      <input-field id="obec"
-                   label="Obec"
-                   :vualidate="v$.obec"
-                   :submitted="submitted"
-                   v-model="formData.obec"/>
-
-      <input-field id="castObce"
-                   label="Cast obce"
-                   :vualidate="v$.castObce"
-                   :submitted="submitted"
-                   v-model="formData.castObce"/>
-      <input-field id="ulice"
-                   label="Ulice"
-                   :vualidate="v$.ulice"
-                   :submitted="submitted"
-                   v-model="formData.ulice"/>
-
-      <input-field id="cisloDomu"
-                   label="Cislo Domu"
-                   :vualidate="v$.cisloDomu"
-                   :submitted="submitted"
-                   v-model="formData.cisloDomu"/>
-
-      <input-field id="email"
-                   label="E-mail"
-                   :vualidate="v$.email"
-                   :submitted="submitted"
-                   v-model="formData.email"/>
-
-      <input-field id="phone"
-                   label="Phone"
-                   :vualidate="v$.phone"
-                   :submitted="submitted"
-                   v-model="formData.phone"/>
-
-      <input-field id="bankAccountNumber"
-                   label="Cislo uctu"
-                   :vualidate="v$.bankAccountNumber"
-                   :submitted="submitted"
-                   v-model="formData.bankAccountNumber"/>
-
-      <div class="field">
-        Platce DPH:
-        <InputSwitch v-model="formData.platceDph"/>
-      </div>
-
-      <Button type="submit" label="Submit" class="mt-2"/>
     </form>
 
   </Panel>
@@ -162,6 +191,8 @@ const router = useRouter()
 const v$ = useVuelidate(rules, formData)
 const userStore = useUserStore()
 
+// Define emits
+const emits = defineEmits(['companyCreated'])
 
 // Define functions
 function handleSubmit(isFormValid: boolean) {
@@ -181,14 +212,29 @@ function saveCompany() {
     if (response.status >= 200 && response.status <= 299) {
       if (primary)
         userStore.setCompany(response.data)
-      router.push({
-        path: '/private/companies/list'
-      })
+      emits('companyCreated', response.data)
+      resetForm()
     } else {
       // message.error('Ulozeni spolecnosti se nezdarilo!')
       console.error(response)
     }
   })
+}
+
+function resetForm() {
+  formData.ic = null
+  formData.companyName = null
+  formData.dic = null
+  formData.okres = null
+  formData.obec = null
+  formData.castObce = null
+  formData.ulice = null
+  formData.cisloDomu = null
+  formData.psc = null
+  formData.email = null
+  formData.phone = null
+  formData.bankAccountNumber = null
+  submitted.value = false
 }
 
 function buildData(): any {
