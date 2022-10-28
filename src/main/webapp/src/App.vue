@@ -83,7 +83,7 @@ const items = ref([
         {
           label: 'Rates',
           items: [
-            {label: 'Správa rates', to: '/private/rate/create'}
+            {label: 'Správa rates', to: '/private/rate'}
           ]
         }
       ],
