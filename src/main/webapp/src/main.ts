@@ -13,7 +13,8 @@ import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
 
 import PrimeVue from 'primevue/config'
-import 'primevue/resources/themes/mdc-dark-indigo/theme.css'
+// import 'primevue/resources/themes/md-dark-indigo/theme.css'
+ import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.min.css'

@@ -1,27 +1,2 @@
 // Define palette
 @import "_palette.scss";
-
-
-// define colors for component from palette
-$navigation-current-highlight-color: red;
-$navigation-current-text-background: inherited;
-$navigation-text-background: inherited;
-
-$bs-table-text-color: #42b983;
-$bs-table-border-color: black;
-
-$bs-table-title-background:#343334;
-$bs-table-title-color: white;
-
-$bs-table-header-background: #f9f5d7;
-$bs-table-header-color: #2a687a;
-
-$bs-table-navigation-color: green;
-$bs-table-navigation-background: #fefe11;
-$bs-table-navigation-padding: 0.4rem;
-
-$bs-table-row-background: brown;
-$bs-table-alt-row-background: green;
-
-$bs-table-footer-background: red;
-$bs-table-footer-color: white;

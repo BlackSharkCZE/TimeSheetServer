@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
 
-import {inject, onMounted, ref} from 'vue'
+import {inject, onMounted, ref, defineExpose} from 'vue'
 import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'

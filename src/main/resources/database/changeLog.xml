@@ -11,5 +11,6 @@
 	<include file="changes/2.2.0.xml" relativeToChangelogFile="true" />
 	<include file="changes/2.3.0.xml" relativeToChangelogFile="true" />
 	<include file="changes/2.4.0.xml" relativeToChangelogFile="true" />
+	<include file="changes/last-data-insert.sql" relativeToChangelogFile="true" />
 	<include file="changes/3.0.0.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
