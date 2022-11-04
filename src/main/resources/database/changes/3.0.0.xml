@@ -21,6 +21,10 @@
             <column name="id" value="1" type="int" />
             <column name="subject" value="88e26f39-f7e9-4229-8817-7a8c26183a05" type="varchar(256)" />
         </insert>
+        <insert tableName="subject">
+            <column name="id" value="2" type="int" />
+            <column name="subject" value="11e26f39-f7e9-4229-8817-7a8c26183a22" type="varchar(256)" />
+        </insert>
     </changeSet>
 
     <changeSet id="3" author="jiri">
@@ -48,6 +52,10 @@
             <column name="project_name" type="varchar(256)" />
             <column name="description" type="varchar(256)" />
         </addColumn>
+    </changeSet>
+
+    <changeSet id="6" author="jiri">
+        <sql> update timeline set subject_id=2 where project_id = 18</sql>
     </changeSet>
 
 

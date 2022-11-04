@@ -54,7 +54,9 @@
                    placeholder="Search by note"/>
       </template>
     </Column>
-    <Column field="pause" header="Pause"></Column>
+
+    <Column field="writers" header="WRITERS"/>
+
   </DataTable>
 </template>
 
