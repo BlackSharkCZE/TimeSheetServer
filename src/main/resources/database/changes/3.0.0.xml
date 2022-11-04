@@ -5,7 +5,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="1" author="jiri">
-        <createSequence sequenceName="subject_id_seq" cacheSize="1" incrementBy="1"/>
+        <createSequence sequenceName="subject_id_seq" cacheSize="1" incrementBy="1" startValue="2"/>
         <createTable tableName="subject">
             <column name="id" defaultValueSequenceNext="subject_id_seq" type="int">
                 <constraints primaryKey="true" nullable="false"/>
@@ -17,25 +17,36 @@
     </changeSet>
 
     <changeSet id="2" author="jiri">
-        <addColumn tableName="rate">
-            <column name="subject_id" type="int">
-                <constraints referencedTableName="subject" foreignKeyName="rate_subject_fk" referencedColumnNames="id" nullable="false" />
-            </column>
-        </addColumn>
+        <insert tableName="subject">
+            <column name="id" value="1" type="int" />
+            <column name="subject" value="88e26f39-f7e9-4229-8817-7a8c26183a05" type="varchar(256)" />
+        </insert>
     </changeSet>
 
     <changeSet id="3" author="jiri">
-        <addColumn tableName="timeline">
-            <column name="subject_id" type="int">
-                <constraints referencedTableName="subject" foreignKeyName="timeline_subject_fk" referencedColumnNames="id" nullable="false" />
+        <addColumn tableName="rate">
+            <column name="subject_id" type="int" defaultValue="1">
+                <constraints referencedTableName="subject"
+                             foreignKeyName="rate_subject_fk"
+                             referencedColumnNames="id"
+                             nullable="false" />
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="4" author="jiri">
+        <addColumn tableName="timeline">
+            <column name="subject_id" type="int" defaultValue="1">
+                <constraints referencedTableName="subject" foreignKeyName="timeline_subject_fk" referencedColumnNames="id" nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="5" author="jiri">
         <addColumn tableName="remote_write_settings">
             <column name="root_project_name" type="varchar(256)" />
             <column name="project_name" type="varchar(256)" />
+            <column name="description" type="varchar(256)" />
         </addColumn>
     </changeSet>
 

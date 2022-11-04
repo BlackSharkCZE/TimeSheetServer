@@ -10,7 +10,11 @@ import CreateCompanyForm from '@/components/app/CreateCompanyForm.vue'
 import ListCompaniesTable from "@/components/app/ListCompaniesTable.vue";
 import {ref} from 'vue'
 
+// Define template refs
 const companiesTable = ref()
+
+// Define properties
+const formCollapsed = ref<boolean>(true)
 
 // Define functions
 function companyCreatedHandler(item: any) {

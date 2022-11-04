@@ -1,6 +1,6 @@
 <template>
 
-  <div class="field" :class="props.class">
+  <div :class="props.class">
     <label :for="id">{{ props.label }} <span v-if="vualidate.required">*</span></label>
     <InputText
         :id="id"
@@ -26,7 +26,7 @@ type InputFieldProps = {
   modelValue: any
   submitted: boolean,
   vualidate: any,
-  class: string
+  class?: string
 }
 
 // Define props

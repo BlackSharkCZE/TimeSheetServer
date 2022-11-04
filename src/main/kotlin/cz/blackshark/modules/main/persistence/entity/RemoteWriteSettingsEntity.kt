@@ -37,4 +37,7 @@ class RemoteWriteSettingsEntity {
     @Column(name = "project_name")
     var projectName: String? = null
 
+    @Column(name = "description")
+    var description: String? = null
+
 }

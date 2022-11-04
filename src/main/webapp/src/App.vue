@@ -2,7 +2,7 @@
   <MegaMenu :model="items"></MegaMenu>
   <Message :closable="false" v-if="noPrimaryCompany" severity="warn">
     You do not have set primary company.
-    <router-link style="color:#343434" to="/private/companies/create">Please add company here</router-link>
+    <router-link style="color:#343434" to="/private/companies">Please add company here</router-link>
   </Message>
   <router-view/>
 </template>
@@ -60,30 +60,37 @@ const items = ref([
     ]
   },
   {
-    label: 'Konfigurace', icon: 'pi pi-fw pi-calendar',
+    label: 'Configuration', icon: 'pi pi-fw pi-calendar',
     items: [
       [
         {
-          label: 'Společnosti',
+          label: 'Companies',
           items: [
-            {label: 'Správa společností', to: '/private/companies'}
+            {label: 'Manage companies', to: '/private/companies'}
           ]
         },
         {
-          label: 'Smlouvy',
+          label: 'Requisition',
           items: [
-            {label: 'Správa smluv', to: '/private/requisition'}
+            {label: 'Manage requisition', to: '/private/requisition'}
           ]
         },
         {
-          label: 'Projekty',
+          label: 'Projects',
           items: [
-            {label: 'Správa projektů', to: '/private/project'}]
+            {label: 'Manage projects', to: '/private/project'}]
         },
         {
           label: 'Rates',
           items: [
-            {label: 'Správa rates', to: '/private/rate'}
+            {label: 'Manage rates', to: '/private/rate'}
+          ]
+        }
+      ,
+        {
+          label: 'Remote Writers',
+          items: [
+            {label: 'Manage remote writers', to: '/private/writers'}
           ]
         }
       ],

@@ -1,5 +1,5 @@
 <template>
-  <Panel header="Create company" :toggleable="true" :collapsed="true" class="mt-2 mb-2">
+  <Panel header="Create company" :toggleable="true" :collapsed="collapsed" class="mt-2 mb-2">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
       <div class="card">
@@ -130,6 +130,10 @@ import InputField from "@/components/blocks/InputField.vue";
 import {useUserStore} from "@/stores/UserStore";
 
 // Define types
+type ComponentProps = {
+  collapsed?: boolean
+}
+
 type FormData = {
   ic: string | null
   companyName: string | null,
@@ -145,6 +149,12 @@ type FormData = {
   phone: string | null,
   bankAccountNumber: string | null
 }
+
+// Define component properties
+const props = withDefaults(defineProps<ComponentProps>(), {
+  collapsed: true
+})
+
 
 // Define component data
 const formData = reactive<FormData>({

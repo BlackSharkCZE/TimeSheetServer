@@ -1,6 +1,9 @@
 <template>
 
+  <Message v-if="companies.length==0" severity="info" :closable="false">There is not any company in database.</Message>
+
   <DataTable
+      v-if="companies.length>0"
       :page="pageIndex+1"
       ref="dt"
       dataKey="id"
@@ -46,6 +49,7 @@ import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
 import Column from 'primevue/column';
+import Message from 'primevue/message';
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')

@@ -1,6 +1,9 @@
 <template>
 
+  <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
+
   <DataTable
+      v-if="timelines.length>0"
       :rowHover="true"
       :page="pageIndex+1"
       ref="dt"
@@ -61,6 +64,7 @@ import {inject, onMounted, ref} from 'vue'
 import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
 import Column from 'primevue/column';
 import moment from "moment";
 

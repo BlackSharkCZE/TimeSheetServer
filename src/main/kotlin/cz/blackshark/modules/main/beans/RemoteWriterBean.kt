@@ -23,6 +23,8 @@ class RemoteWriterBean @Inject constructor(
 
 ) {
 
+    fun getSupportedWriters(): List<String> = listOf("GEM_TIMESHEET","DRMAX_JIRA")
+
     fun findAll(): List<RemoteWriteSettingsEntity> = remoteWriteSettingsRepository.findAll().list()
 
     fun upsert(item: RemoteWriteSettingsEntity): RemoteWriteSettingsEntity {

@@ -4,9 +4,10 @@ import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
 import PrivateHome from '@/views/private/PrivateHome.vue'
 import DashboardView from '@/views/private/dashboard/DashboardView.vue'
 import CompanyView from '@/views/private/company/CompanyView.vue'
-import RequistionView from '@/views/private/requisition/RequistionView.vue'
+import RequisitionView from '@/views/private/requisition/RequisitionView.vue'
 import ProjectView from '@/views/private/project/ProjectView.vue'
 import RateView from '@/views/private/rate/RateView.vue'
+import RemoteWritersView from '@/views/private/writers/RemoteWritersView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -48,11 +49,15 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: 'requisition',
-                component: RequistionView
+                component: RequisitionView
             },
             {
                 path: 'project',
                 component: ProjectView
+            },
+            {
+                path: 'writers',
+                component: RemoteWritersView
             }
         ]
     }

@@ -1,6 +1,9 @@
 <template>
 
+  <Message :closable="false" v-if="projects.length==0" severity="info">There is not any projects in database</Message>
+
   <DataTable
+      v-if="projects.length>0"
       :page="pageIndex+1"
       ref="dt"
       dataKey="id"
@@ -41,6 +44,7 @@ import {defineExpose, inject, onMounted, ref} from 'vue'
 import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
 import Column from 'primevue/column';
 
 // Define injects
