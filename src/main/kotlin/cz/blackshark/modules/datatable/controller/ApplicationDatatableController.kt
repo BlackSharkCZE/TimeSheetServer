@@ -4,10 +4,10 @@ import cz.blackshark.modules.datatable.domain.DataTableResponse
 import cz.blackshark.modules.datatable.domain.FilterSetting
 import cz.blackshark.modules.datatable.domain.Paginator
 import cz.blackshark.modules.main.beans.RemoteWriteSettingsBean
-import cz.blackshark.modules.main.beans.SubjectBean
 import cz.blackshark.modules.main.converter.CompanyMapper
 import cz.blackshark.modules.main.converter.ProjectMapper
 import cz.blackshark.modules.main.dto.TimelineVo
+import cz.blackshark.modules.main.http.controller.AbstractBaseController
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.entity.ProjectEntity
@@ -23,7 +23,6 @@ import io.quarkus.panache.common.Sort
 import io.quarkus.security.Authenticated
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
-import org.eclipse.microprofile.jwt.JsonWebToken
 import java.io.InvalidClassException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -43,17 +42,19 @@ import kotlin.reflect.jvm.jvmErasure
 @Path("/datatable")
 @Produces(MediaType.APPLICATION_JSON)
 @Authenticated
-class ApplicationDatatableController @Inject constructor(
-    val timelineRepository: TimelineRepository,
-    val invoiceRepository: InvoiceRepository,
-    val companyRepository: CompanyRepository,
-    val projectRepository: ProjectRepository,
-    val remoteWriterSettingsBean: RemoteWriteSettingsBean,
-    val subjectBean: SubjectBean
-) {
+class ApplicationDatatableController: AbstractBaseController() {
 
     @Inject
-    lateinit var jwtToken: JsonWebToken
+    lateinit var timelineRepository: TimelineRepository
+    @Inject
+    lateinit var invoiceRepository: InvoiceRepository
+    @Inject
+    lateinit var companyRepository: CompanyRepository
+    @Inject
+    lateinit var projectRepository: ProjectRepository
+    @Inject
+    lateinit var remoteWriterSettingsBean: RemoteWriteSettingsBean
+
 
     @Path("{resource}")
     @POST
@@ -68,8 +69,7 @@ class ApplicationDatatableController @Inject constructor(
         filter: String
     ): DataTableResponse<Any> {
 
-        val subject = subjectBean.findByRemoteId(jwtToken.subject)
-            ?: throw NotAuthorizedException("Subject not found in database")
+        val subject = retrieveSubject()
 
         val filterJson = Json.decodeValue(filter) as JsonObject  // prichozi JSON String
         val filterMap = mutableMapOf<String, FilterSetting>()    // pozadovana mapa
