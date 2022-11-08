@@ -1,0 +1,176 @@
+<template>
+
+  <Panel header="Add invoice item"
+         :collapsed="true"
+         :toggleable="true  ">
+
+    <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
+
+      <div class="card">
+        <div class="formgrid grid">
+          <input-field id="orderNumber"
+                       class="col-2"
+                       label="Order number"
+                       :vualidate="v$.orderNumber"
+                       :submitted="submitted"
+                       v-model="formData.orderNumber"/>
+
+          <input-field id="note"
+                       class="col-4"
+                       label="Note"
+                       :vualidate="v$.note"
+                       :submitted="submitted"
+                       v-model="formData.note"/>
+
+          <input-field-num id="amount"
+                           class="col-1"
+                           label="amount"
+                           :vualidate="v$.amount"
+                           :submitted="submitted"
+                           v-model="formData.amount"/>
+
+          <input-field-num id="vatrate"
+                           class="col-1"
+                           label="Vat rate"
+                           :vualidate="v$.vatRate"
+                           :submitted="submitted"
+                           v-model="formData.vatRate"/>
+
+          <div class="field col-1">
+
+            <Button type="submit" label="Pridat"/>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+  </Panel>
+
+  <Card class="mt-2">
+    <template #content>
+      <div class="grid  font-bold">
+        <div class="col-1">no.</div>
+        <div class="col-2">ORDER NUMBER</div>
+        <div class="col-5">NOTE</div>
+        <div class="col-2 text-right">PRICE</div>
+        <div class="col-2 text-right">PRICE + VAT</div>
+      </div>
+      <div v-for="(i, index) in props.items" v-bind:key="i.id" class="grid border-bottom-1 border-100">
+        <div class="col-1">{{ index + 1 }}</div>
+        <div class="col-2">{{ i.requisition?.customerNumber || 'n/a' }}</div>
+        <div class="col-5">{{ i.requisition?.note || i.note }}</div>
+        <div class="col-2 text-right">{{ i.price.toFixed(2) }}</div>
+        <div class="col-2 text-right">{{ i.totalPrice.toFixed(2) }}</div>
+      </div>
+    </template>
+  </Card>
+
+</template>
+
+<script lang="ts" setup>
+import {defineEmits, defineProps, inject, onMounted, reactive, ref} from 'vue'
+import {InvoiceItem} from "@/components/blocks/Types";
+import Card from "primevue/card";
+import Panel from "primevue/panel";
+import Button from "primevue/button";
+import {minValue, required} from "@vuelidate/validators";
+import useVuelidate from "@vuelidate/core";
+import InputField from "@/components/blocks/InputField.vue";
+import InputFieldNum from "@/components/blocks/InputFieldNum.vue";
+import {AxiosStatic} from "axios";
+
+// Define emits
+const emits = defineEmits(['itemCreated'])
+
+// Define type
+interface Properties {
+  items: InvoiceItem[] | null
+  invoiceId: number
+}
+
+type FormData = {
+  orderNumber: any | null
+  note: string | null,
+  amount: number
+  vatRate: number
+}
+
+const rules = {
+  orderNumber: {required},
+  note: {required},
+  amount: {required, minValue: minValue(1)},
+  vatRate: {required, minValue: minValue(0)}
+}
+
+// Define component properties
+const props = defineProps<Properties>()
+
+// Define component values
+const invoiceItem = ref()
+const loading = ref<boolean>(true)
+const dt = ref(null);
+const pageIndex = ref<number>(0)
+const pageSize = ref<number>(25)
+const totalRecords = ref<number>(0)
+
+const axios = inject<AxiosStatic>('axios')
+
+const formData = reactive<FormData>({
+  orderNumber: null,
+  note: null,
+  amount: 0,
+  vatRate: 0
+})
+
+const formRef = ref(null)
+const submitted = ref<boolean>(false)
+const v$ = useVuelidate(rules, formData)
+
+
+// Define lifecycle hooks
+onMounted(() => {
+  if (props.items != null && props.items.length > 0) {
+    invoiceItem.value = props.items
+    loading.value = false
+    totalRecords.value = props.items.length
+  }
+})
+
+// Define functions
+function handleSubmit(isFormValid: boolean) {
+  submitted.value = true
+  if (isFormValid) {
+    saveItem()
+  } else {
+    console.error('Form is not valid!')
+  }
+}
+
+function saveItem() {
+  axios?.post("/invoice/detail/" + props.invoiceId + '/add-item', buildData()).then((response: any) => {
+    if (response.status >= 200 && response.status <= 299) {
+      emits('itemCreated', response.data)
+    } else {
+      // message.error('Ulozeni spolecnosti se nezdarilo!')
+      console.error(response)
+    }
+  })
+}
+
+function buildData(): any {
+  const pvv: number = formData.vatRate * formData.amount
+  return {
+    description: formData.note,
+    price: formData.amount,
+    vatRate: formData.vatRate,
+    vatAmount: pvv - formData.amount,
+    priceWithVat: pvv
+  }
+}
+
+</script>
+
+<style scoped>
+
+</style>

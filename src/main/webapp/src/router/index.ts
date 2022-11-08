@@ -8,6 +8,8 @@ import RequisitionView from '@/views/private/requisition/RequisitionView.vue'
 import ProjectView from '@/views/private/project/ProjectView.vue'
 import RateView from '@/views/private/rate/RateView.vue'
 import RemoteWritersView from '@/views/private/writers/RemoteWritersView.vue'
+import InvoiceView from '@/views/private/invoices/InvoiceView.vue'
+import InvoiceDetail from '@/views/private/invoices/InvoiceDetail.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -35,6 +37,15 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'home',
                 component: PrivateHome,
             },
+            {
+                path: 'invoices',
+                component: InvoiceView,
+            },
+            {
+                path: "invoices/:number",
+                component: InvoiceDetail
+            },
+
             {
                 path: 'dashboard',
                 component: DashboardView
