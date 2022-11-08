@@ -13,6 +13,7 @@ import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
 
 import PrimeVue from 'primevue/config'
+import ConfirmationSerice from 'primevue/confirmationservice'
 // import 'primevue/resources/themes/md-dark-indigo/theme.css'
  import 'primevue/resources/themes/rhea/theme.css'
  // import 'primevue/resources/themes/saga-blue/theme.css'
@@ -49,7 +50,7 @@ const app: Vue.App = createApp(App)
                 }
             }).then(response => {
                 store.storeUser(response.data)
-                app.use(PrimeVue)
+                app.use(PrimeVue).use(ConfirmationSerice)
 
                 app.mount("#app")
             })

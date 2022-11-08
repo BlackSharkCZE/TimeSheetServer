@@ -40,5 +40,6 @@ export type InvoiceItem = {
     price: number,
     totalPrice: number,
     vat: number,
-    requisition: Requisition
+    requisition: Requisition,
+    note: string
 }

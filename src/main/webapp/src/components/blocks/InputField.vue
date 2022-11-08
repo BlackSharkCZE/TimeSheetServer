@@ -7,7 +7,8 @@
         :class="{'p-invalid':vualidate.$invalid && props.submitted}"
         v-on:change="processValueChange"
         v-on:keyup="processValueChange"
-        class="p-inputtext" v-model="mv"/>
+        class="p-inputtext"
+        v-model="mv"/>
     <small v-if="vualidate.$invalid && props.submitted"
            class="p-error">{{ vualidate.required.$message.replace('Value', props.label) }}</small>
   </div>
@@ -15,8 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-
-import {defineEmits, defineProps, ref, watch, withDefaults} from 'vue'
+import {defineEmits, defineProps, onMounted, ref, watch, withDefaults} from 'vue'
 import InputText from 'primevue/inputtext'
 
 // Define types
@@ -33,6 +33,11 @@ type InputFieldProps = {
 const props = withDefaults(defineProps<InputFieldProps>(), {
   submitted: false,
   class: ''
+})
+
+// Define hooks
+onMounted(() => {
+  mv.value = props.modelValue
 })
 
 // Define emits

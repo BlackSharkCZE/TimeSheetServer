@@ -4,6 +4,7 @@
     <label :for="id">{{ props.label }} <span v-if="vualidate.required">*</span></label>
     <InputNumber
         mode="decimal"
+        :suffix="props.suffix"
         :minFractionDigits="2"
         :id="id"
         :class="{'p-invalid':vualidate.$invalid && props.submitted}"
@@ -17,7 +18,7 @@
 
 <script lang="ts" setup>
 
-import {defineEmits, defineProps, ref, watch, withDefaults} from 'vue'
+import {defineEmits, defineProps, onMounted, ref, watch, withDefaults} from 'vue'
 import InputNumber, {InputNumberInputEvent} from 'primevue/inputnumber'
 
 // Define types
@@ -27,13 +28,20 @@ type InputFieldProps = {
   modelValue: any
   submitted: boolean,
   vualidate: any,
-  class?: string
+  class?: string,
+  suffix?: string
 }
 
 // Define props
 const props = withDefaults(defineProps<InputFieldProps>(), {
   submitted: false,
   class: ''
+
+})
+
+// Define lifecycle hooks
+onMounted(() => {
+  mv.value = props.modelValue
 })
 
 // Define emits

@@ -13,7 +13,9 @@
     <div v-if="items.length>0">
       <invoice-items
           @itemCreated="itemCreatedHandler"
-          :items="items" :invoice-id="parseInt(router.currentRoute.value.params.number)"></invoice-items>
+          :items="items"
+          :invoice-number="invoice.number"
+          :invoice-id="parseInt(router.currentRoute.value.params.number)"></invoice-items>
     </div>
 
     <div class="mt-2 text-right">

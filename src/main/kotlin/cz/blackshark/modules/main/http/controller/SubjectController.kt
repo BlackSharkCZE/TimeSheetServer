@@ -37,5 +37,4 @@ class SubjectController  {
         val subjectEntity = subjectBean.findOrCreateSubject(jwt.subject)
         return SubjectDetailVo(jwt.subject, context.userPrincipal.name, subjectEntity.id!!, company)
     }
-
 }
