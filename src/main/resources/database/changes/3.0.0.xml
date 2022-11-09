@@ -58,5 +58,10 @@
         <sql> update timeline set subject_id=2 where project_id = 18</sql>
     </changeSet>
 
+    <changeSet id="7" author="jiri">
+        <comment>Create view for billing</comment>
+        <sql>create or replace view v_billing as select * from timeline where invoice_item_id is null and from_time > '2020-05-04 04:30:00.000000 +00:00'</sql>
+    </changeSet>
+
 
 </databaseChangeLog>

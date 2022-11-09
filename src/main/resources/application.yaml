@@ -13,7 +13,7 @@ quarkus:
       certificate:
         key-store-file-type: JKS
         key-store-password: ${KEYSTORE_PASSWORD}
-        key-store-alias: ${KEYSTORE_CERT_ALIAS}
+        #rkey-store-alias: ${KEYSTORE_CERT_ALIAS}
         key-store-file: ${KEYSTORE_PATH}
     ssl-port: ${SERVER_SSL_PORT:8443}
     insecure-requests: redirect

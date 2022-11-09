@@ -10,6 +10,7 @@ import RateView from '@/views/private/rate/RateView.vue'
 import RemoteWritersView from '@/views/private/writers/RemoteWritersView.vue'
 import InvoiceView from '@/views/private/invoices/InvoiceView.vue'
 import InvoiceDetail from '@/views/private/invoices/InvoiceDetail.vue'
+import BillingView from '@/views/private/billing/BillingView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -69,7 +70,11 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'writers',
                 component: RemoteWritersView
-            }
+            },
+            {
+                path: 'billing',
+                component: BillingView
+            },
         ]
     }
 ]

@@ -98,8 +98,7 @@ import Message from 'primevue/message'
 import Panel from 'primevue/panel'
 
 import {AxiosStatic} from "axios";
-import {inject, onMounted, reactive, ref} from "vue";
-import {useRouter} from "vue-router";
+import {inject, onMounted, reactive, ref, defineEmits} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {minValue, required} from "@vuelidate/validators";
 import InputField from "@/components/blocks/InputField.vue";
@@ -125,9 +124,7 @@ const formData = reactive<FormData>({
   pause: 30
 })
 
-const formRef = ref(null)
 const submitted = ref<boolean>(false)
-const fromTimeSent = ref<Date>(new Date())
 const errorMessage = ref<string | null>(null)
 
 const rules = {
@@ -143,7 +140,6 @@ const rules = {
 const axios = inject<AxiosStatic>('axios')
 
 // Define used properties
-const router = useRouter()
 const v$ = useVuelidate(rules, formData)
 
 // Define emits
@@ -211,10 +207,10 @@ function clearFormData() {
 
 function buildData(): any {
 
-  const fromTime: Date = new Date(formData.date!!)
-  fromTime.setHours(formData.fromTime!!.getHours(), formData.fromTime!!.getMinutes())
-  const toTime: Date = new Date(formData.date!!)
-  toTime.setHours(formData.toTime!!.getHours(), formData.toTime!!.getMinutes())
+  const fromTime: Date = new Date(formData.date as Date)
+  fromTime.setHours((formData.fromTime as Date).getHours(), (formData.fromTime as Date).getMinutes())
+  const toTime: Date = new Date(formData.date as Date)
+  toTime.setHours((formData.toTime as Date).getHours(), (formData.toTime as Date).getMinutes())
 
   const x = {
     projectId: formData.project.id,
