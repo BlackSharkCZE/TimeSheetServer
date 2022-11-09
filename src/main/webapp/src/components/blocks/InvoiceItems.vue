@@ -1,8 +1,9 @@
 <template>
   <ConfirmDialog></ConfirmDialog>
   <Panel header="Add invoice item"
+         class="mt-2"
          :collapsed="true"
-         :toggleable="true  ">
+         :toggleable="true">
 
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 

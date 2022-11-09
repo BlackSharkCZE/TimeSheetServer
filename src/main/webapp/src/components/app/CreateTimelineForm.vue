@@ -7,6 +7,7 @@
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
       <div class="card">
         <div class="formgrid grid">
+
           <div class="field col-1">
             <label for="date">Date <span v-if="v$.date.required">*</span></label>
             <Calendar id="date"
@@ -72,7 +73,7 @@
           </project-field>
 
           <input-field id="note"
-                       class="col-4"
+                       class="field col-4"
                        label="Note"
                        :vualidate="v$.note"
                        :submitted="submitted"
@@ -80,7 +81,7 @@
 
           <div class="field col-1">
             <label>&nbsp;</label>
-            <Button type="submit" label="Add" class="p-button-lg"/>
+            <Button type="submit" label="Add"/>
           </div>
 
         </div>

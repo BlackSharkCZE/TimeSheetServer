@@ -49,7 +49,7 @@
 
         <div class="align-items-center justify-content-center">
           <label>&nbsp;</label>
-          <Button type="submit" label="Add" class="p-button-lg p-button-success"/>
+          <Button type="submit" label="Add"/>
         </div>
       </div>
 

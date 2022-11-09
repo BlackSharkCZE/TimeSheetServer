@@ -19,7 +19,7 @@
     <Column header="#">
       <template #body="{data}">
         <router-link :to="'/private/invoices/'+data.id">
-          <i class="pi pi-folder-open"></i>
+          <i class="pi-folder-open pi text-cyan-700"></i>
         </router-link>
 
       </template>
