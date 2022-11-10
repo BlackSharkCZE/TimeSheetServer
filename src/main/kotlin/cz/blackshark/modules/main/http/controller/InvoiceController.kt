@@ -9,6 +9,7 @@ import cz.blackshark.modules.main.persistence.dao.InvoiceDao
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
+import io.quarkus.security.Authenticated
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput
 import org.jboss.resteasy.spi.HttpResponseCodes
 import java.math.BigDecimal
@@ -21,16 +22,29 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Path("/invoice")
-class InvoiceController @Inject constructor(
-    val logger: org.jboss.logging.Logger,
-    val invoiceRepository: InvoiceRepository,
-    val companyRepository: CompanyRepository,
-    val invoiceDao: InvoiceDao,
-    val invoiceBean: InvoiceBean,
-    val jasperReportGenerator: JasperReportGenerator,
-    val invoiceDetailController: InvoiceDetailController,
-    val invoiceUploadBean: InvoiceUploadBean
-) {
+@Authenticated
+class InvoiceController : AbstractBaseController() {
+
+
+    @Inject
+    lateinit var logger: org.jboss.logging.Logger
+    @Inject
+    lateinit var invoiceRepository: InvoiceRepository
+    @Inject
+    lateinit var companyRepository: CompanyRepository
+    @Inject
+    lateinit var invoiceDao: InvoiceDao
+    @Inject
+    lateinit var invoiceBean: InvoiceBean
+    @Inject
+    lateinit var jasperReportGenerator: JasperReportGenerator
+    @Inject
+    lateinit var invoiceDetailController: InvoiceDetailController
+    @Inject
+    lateinit var invoiceUploadBean: InvoiceUploadBean
+    @Inject
+    lateinit var invoiceGenerateController: InvoiceGenerateController
+
 
     @Path("detail")
     fun getInvocieDetail(): InvoiceDetailController {
@@ -106,6 +120,11 @@ class InvoiceController @Inject constructor(
             BigDecimal.valueOf(res.sumOf { it.workTime.toDouble() }),
             BigDecimal.valueOf(res.sumOf { it.rate.divide(mdHours).times(it.workTime).toDouble() })
         )
+    }
+
+    @Path("/v2")
+    fun getInvoiceGenerate(): InvoiceGenerateController {
+        return invoiceGenerateController
     }
 
     @GET

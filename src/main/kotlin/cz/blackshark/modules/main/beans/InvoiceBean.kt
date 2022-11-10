@@ -1,12 +1,16 @@
 package cz.blackshark.modules.main.beans
 
 import cz.blackshark.config.ApplicationConfig
+import cz.blackshark.modules.main.domains.InvoiceItem
+import cz.blackshark.modules.main.persistence.dao.BillingDao
 import cz.blackshark.modules.main.persistence.dao.InvoiceDao
 import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceItemEntity
 import cz.blackshark.modules.main.persistence.entity.RequisitionEntity
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
+import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceItemRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
 import cz.blackshark.modules.main.persistence.repository.RequisitionRepository
@@ -18,6 +22,8 @@ import java.time.LocalDate
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.transaction.Transactional
+import javax.ws.rs.BadRequestException
+import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 @ApplicationScoped
@@ -30,8 +36,50 @@ class InvoiceBean @Inject constructor(
     private val invoiceDao: InvoiceDao,
     private val logger: Logger,
     private val jasperReportGenerator: JasperReportGenerator,
-    private val appConfig: ApplicationConfig
+    private val appConfig: ApplicationConfig,
+    private val companyRepository: CompanyRepository,
+    private val billingDao: BillingDao
 ) {
+
+    fun generateInvoice(subject: SubjectEntity, companyId: Long, issueDate: LocalDate): InvoiceEntity {
+        val recipient = companyRepository.findById(companyId) ?: throw BadRequestException("Company not found!")
+        val issuer = companyRepository.findPrimaryCompany()
+            ?: throw InternalServerErrorException("Primary company does not exists!")
+        val invoiceNumber = invoiceNumberGenerator.getNextNumber(issuer.id!!)
+            ?: throw InternalServerErrorException("Can not get new invoice number!")
+        val requisition =
+            requisitionRepository.findNewest(companyId) ?: throw InternalServerErrorException("Requisition not found.")
+
+        val iEntity = InvoiceEntity()
+        iEntity.issuerCompany = issuer
+        iEntity.recipientCompany = recipient
+        iEntity.issueDate = issueDate
+        iEntity.paymentDate = issueDate.plusDays(14)
+        iEntity.vatPaymentDate = issueDate
+        iEntity.number = invoiceNumber
+
+        invoiceRepository.persistAndFlush(iEntity)
+        logger.infof("New invoice created: %s", iEntity)
+
+
+        val billing = billingDao.getBillingList(subject, companyId)
+        billing.forEach {
+            val calcVat =if (issuer.platceDph) BigDecimal(1.21); else BigDecimal.ONE
+            val invoiceItemEntity = InvoiceItemEntity().apply {
+                this.invoiceEntity = iEntity
+                this.requisition = requisition
+                if (issuer.platceDph) this.vat = BigDecimal(1.21); else BigDecimal.ZERO
+                this.price = it.earn
+                this.totalPrice = it.earn.times(calcVat)
+                this.vat = this.totalPrice.minus(price)
+            }
+            invoiceItemRepository.persistAndFlush(invoiceItemEntity)
+            billingDao.markTimeline(subject, companyId, invoiceItemEntity.id!!)
+        }
+
+        return invoiceRepository.findById(iEntity.id!!)
+
+    }
 
     fun generateInvoice(
         fromDate: LocalDate,
@@ -86,7 +134,7 @@ class InvoiceBean @Inject constructor(
                 receiverCompanyEntity.id!!
             )
         if (requisition == null) {
-            logger.error("Can not find requistion for the company ${receiverCompanyEntity.id}")
+            logger.error("Can not find requisition for the company ${receiverCompanyEntity.id}")
             return null
         }
 

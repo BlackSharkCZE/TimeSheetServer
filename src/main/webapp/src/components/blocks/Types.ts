@@ -43,3 +43,12 @@ export type InvoiceItem = {
     requisition: Requisition,
     note: string
 }
+
+export type Billing = {
+    companyName: string,
+    companyId: number,
+    workTime: number,
+    earn: number,
+    note: string
+}
+

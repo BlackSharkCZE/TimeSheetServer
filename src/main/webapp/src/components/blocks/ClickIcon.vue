@@ -1,5 +1,8 @@
 <template>
-    
+  <i class="i-button pi text-red-900 cursor-pointer"
+     :class="props.icon || 'pi-trash'"
+     @click="processClick()">
+  </i>
 </template>
 
 <script lang="ts" setup>
@@ -16,11 +19,11 @@ const props = withDefaults(defineProps<Properties>(), {
 })
 
 // Define emits
-const emits = defineEmits(['confirmed', 'canceled'])
+const emits = defineEmits(['click'])
 
 // Define functions
-function processIconClick() {
-	console.log('Here we are!')
+function processClick() {
+	emits('click')
 }
 
 </script>

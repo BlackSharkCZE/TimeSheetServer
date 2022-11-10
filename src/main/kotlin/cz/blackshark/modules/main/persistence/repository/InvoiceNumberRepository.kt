@@ -26,7 +26,7 @@ open class InvoiceNumberRepository @Inject constructor(
 		val connection = kotlinDbUtils.datasource.connection
 
 		try {
-			connection.autoCommit = false
+//			connection.autoCommit = false
 			val pstm = connection.prepareStatement(
 				"select prefix, company_id, current_val from invoice_number where company_id=? for update",
 				ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE
@@ -42,7 +42,7 @@ open class InvoiceNumberRepository @Inject constructor(
 				res.updateLong("current_val", i.currentValue + 1)
 				res.updateRow()
 			}
-			connection.commit()
+//			connection.commit()
 			pstm.close()
 			res.close()
 			return i
