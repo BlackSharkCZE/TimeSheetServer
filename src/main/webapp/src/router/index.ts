@@ -11,6 +11,7 @@ import RemoteWritersView from '@/views/private/writers/RemoteWritersView.vue'
 import InvoiceView from '@/views/private/invoices/InvoiceView.vue'
 import InvoiceDetail from '@/views/private/invoices/InvoiceDetail.vue'
 import BillingView from '@/views/private/billing/BillingView.vue'
+import AddInvoiceView from '@/views/private/invoices/AddInvoiceView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -44,9 +45,13 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: "invoices/:number",
+                name: "invoiceDetail",
                 component: InvoiceDetail
             },
-
+            {
+                path: "invoices-add",
+                component: AddInvoiceView
+            },
             {
                 path: 'dashboard',
                 component: DashboardView

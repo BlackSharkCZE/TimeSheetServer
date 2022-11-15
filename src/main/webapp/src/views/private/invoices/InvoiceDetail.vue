@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div v-if="items.length>0">
+    <div v-if="invoice != null">
       <invoice-items
           @itemCreated="itemCreatedHandler"
           :items="items"

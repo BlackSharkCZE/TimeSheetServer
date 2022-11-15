@@ -36,7 +36,12 @@ const items = ref([
     icon: 'pi pi-fw pi-users',
     items: [
       {label: 'Billing', to: '/private/billing'},
-      {label: 'Invoice list', to: '/private/invoices'}
+      {
+        label: 'Invoice list', items: [
+          {label: 'Invoice list', to: '/private/invoices'},
+          {label: 'Upload invoice', to: '/private/invoices-add'}
+        ]
+      }
     ]
   },
   {

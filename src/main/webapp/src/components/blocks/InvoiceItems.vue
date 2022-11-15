@@ -2,7 +2,7 @@
   <ConfirmDialog></ConfirmDialog>
   <Panel header="Add invoice item"
          class="mt-2"
-         :collapsed="true"
+         :collapsed="items.length>0"
          :toggleable="true">
 
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
@@ -47,7 +47,7 @@
     </form>
   </Panel>
 
-  <Card class="mt-2">
+  <Card class="mt-2" v-if="items && items.length>0">
     <template #content>
       <div class="grid font-bold">
         <div class="col-1">#</div>
@@ -94,7 +94,7 @@ const emits = defineEmits(['itemCreated'])
 
 // Define type
 interface Properties {
-  items: InvoiceItem[] | null
+  items: InvoiceItem[]
   invoiceId: number,
   invoiceNumber: string,
 }

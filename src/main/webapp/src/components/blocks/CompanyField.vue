@@ -64,7 +64,6 @@ const companies = ref([])
 
 // Define functions
 function processChange(event: DropdownChangeEvent) {
-  console.log('Valu change: ', mv.value)
   emits('update:modelValue', mv.value)
 }
 

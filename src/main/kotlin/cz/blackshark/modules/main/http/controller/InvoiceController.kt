@@ -4,12 +4,16 @@ import cz.blackshark.modules.commons.model.RestResponse
 import cz.blackshark.modules.main.beans.InvoiceBean
 import cz.blackshark.modules.main.beans.InvoiceUploadBean
 import cz.blackshark.modules.main.beans.JasperReportGenerator
+import cz.blackshark.modules.main.dto.InvoiceRequest
 import cz.blackshark.modules.main.dto.InvoiceSummaryPreviewVo
+import cz.blackshark.modules.main.dto.RequisitionRequest
+import cz.blackshark.modules.main.exceptions.CompanyExcetption
 import cz.blackshark.modules.main.persistence.dao.InvoiceDao
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
 import io.quarkus.security.Authenticated
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput
 import org.jboss.resteasy.spi.HttpResponseCodes
 import java.math.BigDecimal
@@ -20,6 +24,7 @@ import javax.validation.Valid
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import kotlin.jvm.Throws
 
 @Path("/invoice")
 @Authenticated
@@ -167,6 +172,22 @@ class InvoiceController : AbstractBaseController() {
     @Transactional
     fun uploadInvoice(body: MultipartFormDataInput): RestResponse<InvoiceEntity> {
         val res = invoiceUploadBean.processUpload(body)
+        return if (res.isError) {
+            RestResponse(false, res.errorCode, null, null)
+        } else {
+            RestResponse(true, "Invoice created", res.entity, HttpResponseCodes.SC_OK)
+        }
+    }
+
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("upload2")
+    @Transactional
+    @Throws(CompanyExcetption::class)
+    fun uploadInvoiceV2(@Valid @MultipartForm invoiceRequest: InvoiceRequest): RestResponse<InvoiceEntity> {
+        val res = invoiceUploadBean.processUpload2(invoiceRequest)
         return if (res.isError) {
             RestResponse(false, res.errorCode, null, null)
         } else {
