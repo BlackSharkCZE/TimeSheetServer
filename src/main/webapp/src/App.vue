@@ -29,23 +29,23 @@ const noPrimaryCompany = computed(() => {
 
 const items = ref([
   {
-    label: 'Dashboard', icon: 'pi pi-fw pi-video', to: '/private/dashboard'
+    label: 'Dashboard', icon: 'pi pi-fw pi-calendar', to: '/private/dashboard'
   },
   {
-    label: 'Invoice',
-    icon: 'pi pi-fw pi-users',
+    label: 'Accounting',
+    icon: 'pi pi-fw pi-money-bill',
     items: [
       {label: 'Billing', to: '/private/billing'},
       {
-        label: 'Invoice list', items: [
-          {label: 'Invoice list', to: '/private/invoices'},
+        label: 'Invoices', items: [
+          {label: 'List invoice', to: '/private/invoices'},
           {label: 'Upload invoice', to: '/private/invoices-add'}
         ]
       }
     ]
   },
   {
-    label: 'Configuration', icon: 'pi pi-fw pi-calendar',
+    label: 'Configuration', icon: 'pi pi-fw pi-wrench',
     items: [
       {label: 'Manage companies', to: '/private/companies'},
       {label: 'Manage requisition', to: '/private/requisition'},
