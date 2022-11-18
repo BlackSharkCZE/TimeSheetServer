@@ -2,8 +2,10 @@ package cz.blackshark.modules.main.http.controller
 
 import com.fasterxml.jackson.annotation.JsonView
 import cz.blackshark.modules.main.beans.DphBean
+import cz.blackshark.modules.main.dto.DphInvoiceSumPreviewVo
 import cz.blackshark.modules.main.dto.VatReport
 import cz.blackshark.modules.main.http.views.Views
+import io.quarkus.security.Authenticated
 import org.jboss.logging.Logger
 import java.time.LocalDate
 import javax.inject.Inject
@@ -14,10 +16,23 @@ import javax.ws.rs.core.Response
 @Path("dph")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-class DphController @Inject constructor(
-    private val logger: Logger,
-    private val dphBean: DphBean
-) {
+@Authenticated
+class DphController: AbstractBaseController() {
+
+    @Inject
+    private lateinit var logger: Logger
+    @Inject
+    private lateinit var dphBean: DphBean
+
+
+    @GET
+    @Path("issued-invoice")
+    fun getAllInvoiceOverview(): List<DphInvoiceSumPreviewVo> = dphBean.getAllIssuedInvoice()
+
+    @GET
+    @Path("received-invoice")
+    fun getAllReceivedOverview(): List<DphInvoiceSumPreviewVo> = dphBean.getAllReceivedInvoice()
+
 
     /**
      * Download all invoice for the DPH for at the given month
@@ -54,7 +69,8 @@ class DphController @Inject constructor(
     @JsonView(Views.Simple::class)
     fun getVatReport(
         @PathParam("year") year: Int,
-        @PathParam("company") companyID: Long) : VatReport {
+        @PathParam("company") companyID: Long
+    ): VatReport {
         logger.infof("Generate invoice sum for tax for year $year and company ${companyID}")
         return dphBean.generateTaxReport(year, companyID)
 

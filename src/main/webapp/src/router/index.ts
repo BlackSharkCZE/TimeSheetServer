@@ -12,6 +12,7 @@ import InvoiceView from '@/views/private/invoices/InvoiceView.vue'
 import InvoiceDetail from '@/views/private/invoices/InvoiceDetail.vue'
 import BillingView from '@/views/private/billing/BillingView.vue'
 import AddInvoiceView from '@/views/private/invoices/AddInvoiceView.vue'
+import DphView from '@/views/private/dph/DphView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -35,6 +36,10 @@ const routes: Array<RouteRecordRaw> = [
             authRequired: true
         },
         children: [
+            {
+              path: 'dph',
+              component: DphView
+            },
             {
                 path: 'home',
                 component: PrivateHome,

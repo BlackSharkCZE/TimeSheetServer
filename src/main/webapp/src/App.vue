@@ -41,7 +41,9 @@ const items = ref([
           {label: 'List invoice', to: '/private/invoices'},
           {label: 'Upload invoice', to: '/private/invoices-add'}
         ]
-      }
+      },
+      {label: 'DPH', to: '/private/dph'}
+
     ]
   },
   {

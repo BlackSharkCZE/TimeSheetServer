@@ -1,8 +1,12 @@
 package cz.blackshark.modules.main.beans
 
 import cz.blackshark.modules.main.converter.InvoiceMapper
+import cz.blackshark.modules.main.dto.DphInvoiceSumPreviewVo
 import cz.blackshark.modules.main.dto.VatReport
+import cz.blackshark.modules.main.exceptions.CompanyExcetption
+import cz.blackshark.modules.main.persistence.dao.DphDao
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
+import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
@@ -15,7 +19,9 @@ import javax.inject.Inject
 @ApplicationScoped
 class DphBean @Inject constructor(
     private val invoiceBean: InvoiceBean,
-    private val invoiceRepository: InvoiceRepository
+    private val invoiceRepository: InvoiceRepository,
+    private val companyRepository: CompanyRepository,
+    private val dphDao: DphDao
 ) {
 
     fun createInvoiceZip(companyID: Long, month: LocalDate): ByteArray {
@@ -79,5 +85,17 @@ class DphBean @Inject constructor(
             zip.write(f)
             zip.closeEntry()
         }
+    }
+
+    fun getAllIssuedInvoice(): List<DphInvoiceSumPreviewVo> {
+        val company = companyRepository.findPrimaryCompany() ?: throw CompanyExcetption("Primary company not found")
+        return dphDao.findIssuedInvoices(company.id!!)
+
+    }
+
+    fun getAllReceivedInvoice(): List<DphInvoiceSumPreviewVo> {
+        val company = companyRepository.findPrimaryCompany() ?: throw CompanyExcetption("Primary company not found")
+        return dphDao.findReceivedInvoices(company.id!!)
+
     }
 }
