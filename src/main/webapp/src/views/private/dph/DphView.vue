@@ -8,48 +8,102 @@
       <div class="card">
         <div class="formgrid grid">
 
-          <div class="field col-2">
+          <div class="field col-6 sm:col-4 md:col-3 lg:col-2 xl:col-1">
             <Dropdown v-model="formData.year" :options="computedYears"/>
           </div>
 
-          <div class="field col-2">
+          <div class="field col-6 sm:col-4 md:col-3 lg:col-2 xl:col-1">
             <Dropdown v-model="formData.month" optionLabel="value" :options="computedMonths"/>
           </div>
 
-          <div class="field col-2">
-
+          <div class="field col-6 sm:col-2 md:col-3 lg:col-2 xl:col-1">
             <Button type="submit" label="Select"/>
           </div>
+
+          <div class="field col-6 sm:col-3 md:col-3 lg:col-2 xl:col-1">
+            <Button icon="pi pi-download" type="button" label="Download" @click="processContentDownload()"/>
+          </div>
+
         </div>
       </div>
     </form>
   </Panel>
 
 
-  <h2>DPH view</h2>
-  <div>
-    MinYear: {{ minYear }}
-  </div>
-  <div>
-    MaxYear: {{ maxYear }}
-  </div>
-  <div>
-    FormData: {{ formData }}
-  </div>
+  <DataTable
+      class="mt-2"
+      :rowHover="true"
+      ref="dt"
+      dataKey="id"
+      :value="fii"
+      :totalRecords="fii.length">
 
-  <div>
-    <h3>Issued</h3>
-    {{ fii }}
-  </div>
-  <div>
-    <h3>Received</h3>
-    {{ fri }}
-  </div>
+    <template #header>
+      <div class="text-left">
+        <h3 class="m-0">Issued invoices</h3>
+      </div>
+    </template>
 
-  <ul>
-    <li v-for="i in (maxYear-minYear+1)" v-bind:key="i">{{ minYear + i - 1 }}</li>
-  </ul>
+    <Column field="number" header="NUMBER"></Column>
+    <Column field="issueDate" header="ISSUE DATE"></Column>
+    <Column field="vatPaymentDate" header="VAT PAYMENT DATE"></Column>
+    <Column field="paymentDate" header="PAYMENT DATE"></Column>
+    <Column field="issuerName" header="ISSUER"></Column>
+    <Column field="recipientName" header="RECIPIENT"></Column>
+    <Column header="PRICE">
+      <template #body="{data}">
+        {{ formatPrice(data.price) }}
+      </template>
+    </Column>
+    <Column header="TOTAL PRICE">
+      <template #body="{data}">
+        {{ formatPrice(data.totalPrice) }}
+      </template>
+    </Column>
+    <Column header="VAT">
+      <template #body="{data}">
+        {{ formatPrice(data.vatAmount) }}
+      </template>
+    </Column>
+  </DataTable>
 
+
+  <DataTable
+      class="mt-2"
+      :rowHover="true"
+      ref="dt"
+      dataKey="id"
+      :value="fri"
+      :totalRecords="fri.length">
+
+    <template #header>
+      <div class="text-left">
+        <h3 class="m-0">Received invoices</h3>
+      </div>
+    </template>
+
+    <Column field="number" header="NUMBER"></Column>
+    <Column field="issueDate" header="ISSUE DATE"></Column>
+    <Column field="vatPaymentDate" header="VAT PAYMENT DATE"></Column>
+    <Column field="paymentDate" header="PAYMENT DATE"></Column>
+    <Column field="issuerName" header="ISSUER"></Column>
+    <Column field="recipientName" header="RECIPIENT"></Column>
+    <Column header="PRICE">
+      <template #body="{data}">
+        {{ formatPrice(data.price) }}
+      </template>
+    </Column>
+    <Column header="TOTAL PRICE">
+      <template #body="{data}">
+        {{ formatPrice(data.totalPrice) }}
+      </template>
+    </Column>
+    <Column header="VAT">
+      <template #body="{data}">
+        {{ formatPrice(data.vatAmount) }}
+      </template>
+    </Column>
+  </DataTable>
 
 </template>
 
@@ -60,6 +114,10 @@ import moment from "moment";
 import Dropdown from "primevue/dropdown";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import {formatPrice} from "@/services/FormatService";
+import {useUserStore} from "@/stores/UserStore";
 
 // Define types
 type MonthType = {
@@ -92,6 +150,8 @@ const formData = reactive<FormData>({
   month: {index: 0, value: 'Leden'},
 })
 
+const store = useUserStore()
+
 
 // Define lifecycle hooks
 onMounted(() => {
@@ -115,7 +175,7 @@ const responseProcessor = (response: AxiosResponse<any, any>, data: Ref, type: s
       maxYear.value = Math.min(maxYear.value, firstRecord.year())
       formData.year = Math.max(maxYear.value)
 
-      switch(type) {
+      switch (type) {
         case 'i':
           fii.value = filterBySelectedDate(data.value);
           break;
@@ -138,6 +198,25 @@ function filterBySelectedDate(input: Array<any>): Array<any> {
   return input.filter(value => {
     const m = moment(value.issueDate)
     return m.month() == formData.month.index && m.year() == formData.year
+  })
+}
+
+function processContentDownload() {
+
+  const path = formData.year+'-'+(formData.month.index + 1).toString(10).padStart(2,'0')+'-01'
+
+  axios?.get('/dph/download/' + path + '/' + store.userDetail.company.id, {
+    responseType: 'blob'
+  }).then(response => {
+    const objectURL = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = objectURL
+    link.setAttribute('download', 'dph-' + path + '.zip')
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(link.href)
+
   })
 }
 

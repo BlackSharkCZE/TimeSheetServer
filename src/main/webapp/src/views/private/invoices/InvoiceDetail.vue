@@ -80,11 +80,6 @@ function downloadInvoice() {
     link.setAttribute('download', invoice.value.number + '.pdf')
     document.body.appendChild(link)
     link.click()
-    // link.dispatchEvent(new MouseEvent('click', {
-    //   bubbles: true,
-    //   cancelable: true,
-    //   view: window
-    // }))
     link.remove()
     window.URL.revokeObjectURL(link.href)
 
