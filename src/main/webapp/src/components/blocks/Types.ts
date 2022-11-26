@@ -52,3 +52,9 @@ export type Billing = {
     note: string
 }
 
+export type RemoteWriterTimestamp = {
+    id: number,
+    name: string,
+    success: boolean,
+    timestamp: Date
+}

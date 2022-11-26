@@ -1,5 +1,5 @@
 <template>
-  <i class="i-button pi text-red-900 cursor-pointer"
+  <i class="i-button pi text-red-500 cursor-pointer"
      :class="props.icon || 'pi-trash'"
      @click="processClick()">
   </i>

@@ -1,9 +1,8 @@
 <template>
-
+  <ConfirmDialog></ConfirmDialog>
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
 
   <DataTable
-      v-if="timelines.length>0"
       :rowHover="true"
       :page="pageIndex+1"
       ref="dt"
@@ -55,20 +54,27 @@
       </template>
     </Column>
 
-    <Column field="writers" header="WRITERS"/>
+    <Column field="writers" header="WRITERS">
+      <template #body="{data}">
+        <writers-marker :settings="data.remoteWriteTimestamp || null" :writers="data.writers || null"
+                        @click="writeRowToRemote(data)"></writers-marker>
+      </template>
+    </Column>
 
   </DataTable>
 </template>
 
 <script lang="ts" setup>
 
-import {inject, onMounted, ref, defineExpose} from 'vue'
+import {defineExpose, inject, onMounted, ref} from 'vue'
 import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Column from 'primevue/column';
 import moment from "moment";
+import WritersMarker from "@/components/blocks/WritersMarker.vue";
+import ConfirmDialog from "primevue/confirmdialog";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
@@ -94,6 +100,20 @@ onMounted(() => {
 function reloadTable() {
   console.log('Reload table invoked!')
   loadData(mapFilterToDataTablePayload(filters.value))
+}
+
+function writeRowToRemote(data: any) {
+  const id = data.id
+  axios?.post("/timeline/remote-write/" + id, {}).then(response => {
+    console.log(response.data)
+    if (response.status === 200 && response.data.success === true) {
+      console.log('Wrote')
+    } else {
+      console.error('Can not write to remote writer')
+    }
+  })
+
+  console.log('Processing remote data: ', data)
 }
 
 function loadData(filterData: any = {}) {
