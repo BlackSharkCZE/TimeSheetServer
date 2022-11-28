@@ -3,6 +3,7 @@ package cz.blackshark.modules.main.persistence.dao
 import cz.blackshark.modules.main.dto.EarningVo
 import cz.blackshark.modules.main.dto.ReportVo
 import cz.blackshark.modules.main.persistence.Sql
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import java.math.BigDecimal
 import java.time.LocalDate
 import javax.enterprise.context.ApplicationScoped
@@ -70,8 +71,8 @@ class ReportDao {
         }.getOrElse(0) { BigDecimal.ZERO }
     }
 
-    fun getEarning(fromDate: LocalDate, toDate: LocalDate): List<EarningVo> {
-        return kotlinDbUtils.loadData(Sql.WorkTime.EARNING, mapOf("fromTime" to fromDate, "toTime" to toDate)) { rs ->
+    fun getEarning(fromDate: LocalDate, toDate: LocalDate, subject: SubjectEntity): List<EarningVo> {
+        return kotlinDbUtils.loadData(Sql.WorkTime.EARNING, mapOf("fromTime" to fromDate, "toTime" to toDate, "subject" to subject.id)) { rs ->
             EarningVo(
                 rs.getBigDecimal("price"),
                 rs.getLong("company_id"),

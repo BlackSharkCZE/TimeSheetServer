@@ -67,8 +67,9 @@ from (
          where r.valid_since < from_time
            and cast(vt.from_time as date) >= :fromTime
            and cast(vt.to_time as date) <= :toTime
+		   and vt.subject_id = :subject
          group by vt.company_id, vt.company_name, vt.project_id, vt.name, vt.timeline_id, vt.from_time, vt.invoice_item_id,
-                  vt.to_time, vt.work_time
+                  vt.to_time, vt.work_time, vt.subject_id
          order by vt.from_time
      ) xxx
 group by xxx.company_id, xxx.company_name;""".trimIndent()

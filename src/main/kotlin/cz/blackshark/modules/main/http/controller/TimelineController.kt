@@ -12,11 +12,9 @@ import cz.blackshark.modules.main.persistence.RepositoryResult
 import cz.blackshark.modules.main.persistence.dao.ReportDao
 import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.RemoteWriteTimestampEntity
-import cz.blackshark.modules.main.persistence.repository.ProjectRepository
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import io.quarkus.security.Authenticated
 import io.vertx.core.json.JsonObject
-import org.eclipse.microprofile.jwt.JsonWebToken
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
@@ -31,16 +29,13 @@ import kotlin.streams.toList
 
 @Path("/timeline")
 @Authenticated
-class TimelineController {
+class TimelineController: AbstractBaseController() {
 
     @Inject
     lateinit var timelineRepository: TimelineRepository
 
     @Inject
     lateinit var timelineDao: TimelineDao
-
-    @Inject
-    lateinit var projectRepository: ProjectRepository
 
     @Inject
     lateinit var reportDao: ReportDao
@@ -54,8 +49,8 @@ class TimelineController {
     @Inject
     lateinit var remoteWriteSettingsBean: RemoteWriteSettingsBean
 
-    @Inject
-    private lateinit var jwtToken: JsonWebToken
+    /*@Inject
+    private lateinit var jwtToken: JsonWebToken*/
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -154,10 +149,10 @@ class TimelineController {
         @QueryParam("from") fromDate: LocalDate?,
         @QueryParam("to") toDate: LocalDate?
     ): List<EarningVo> {
-
+        val subject = retrieveSubject()
         val selectFromDate = fromDate ?: LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
         val selectToDate = toDate ?: LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
-        return reportDao.getEarning(selectFromDate, selectToDate)
+        return reportDao.getEarning(selectFromDate, selectToDate, subject)
     }
 
     @GET

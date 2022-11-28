@@ -14,15 +14,13 @@ import Keycloak from "keycloak-js";
 
 import PrimeVue from 'primevue/config'
 import ConfirmationSerice from 'primevue/confirmationservice'
-// import 'primevue/resources/themes/md-dark-indigo/theme.css'
- import 'primevue/resources/themes/bootstrap4-dark-blue/theme.css'
- // import 'primevue/resources/themes/rhea/theme.css'
- // import 'primevue/resources/themes/saga-blue/theme.css'
+import 'primevue/resources/themes/bootstrap4-dark-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.min.css'
 
-import { useUserStore } from "@/stores/UserStore";
+import {useUserStore} from "@/stores/UserStore";
+import {UserInfo, useUserInfo} from "@/stores/InfoStore";
 
 const app: Vue.App = createApp(App)
     .use(keycloakPlugin, {
@@ -37,6 +35,7 @@ const app: Vue.App = createApp(App)
                 .use(pinia)
 
             const store = useUserStore()
+            const userInfo = useUserInfo()
             app.config.globalProperties.axios.interceptors.request.use((config: AxiosRequestConfig) => {
                 config.headers = {
                     'Content-type': 'application/json',
@@ -51,9 +50,29 @@ const app: Vue.App = createApp(App)
                 }
             }).then(response => {
                 store.storeUser(response.data)
-                app.use(PrimeVue).use(ConfirmationSerice)
+            })
 
+            const from = moment().add(-1, 'month').startOf('month').format('YYYY-MM-DD')
+            const to = moment().add(-1, 'month').format('YYYY-MM-DD')
+
+            axios.get(`/timeline/earning?from=${from}&to=${to}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + _keycloak.token
+                }
+            }).then(response => {
+                if (response.status == 200) {
+                    const dataToStore = {
+                        initialized: true,
+                        fromTime: from,
+                        toTime: to,
+                        earnings: response.data
+                    } as UserInfo
+                    userInfo.storeUserInfo(dataToStore)
+                }
+                app.use(PrimeVue).use(ConfirmationSerice)
                 app.mount("#app")
             })
+
+
         }
     })

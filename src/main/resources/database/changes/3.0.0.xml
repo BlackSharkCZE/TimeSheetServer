@@ -63,5 +63,22 @@
         <sql>create or replace view v_billing as select * from timeline where invoice_item_id is null and from_time > '2020-05-04 04:30:00.000000 +00:00'</sql>
     </changeSet>
 
-
+    <changeSet id="8" author="jiri">
+        <createView viewName="v_timeline_agg" replaceIfExists="true">
+            SELECT comp.id AS company_id,
+                   comp.company_name,
+                   proj.id AS project_id,
+                   proj.name,
+                   t.id AS timeline_id,
+                   t.from_time,
+                   t.to_time,
+                   ((t.to_time - t.from_time) - make_interval(mins => t.pause)) AS work_time,
+                   t.invoice_item_id,
+                   t.subject_id
+            FROM ((company comp
+                JOIN project proj ON ((comp.id = proj.company_id)))
+                JOIN timeline t ON ((proj.id = t.project_id)))
+            WHERE (((t.to_time - t.from_time) - make_interval(mins => t.pause)) > '00:00:00'::interval)
+        </createView>
+    </changeSet>
 </databaseChangeLog>

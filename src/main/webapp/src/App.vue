@@ -4,7 +4,7 @@
       <img alt="logo" src="/img/icon.png" height="36" class="mr-2">
     </template>
     <template #end>
-      <InputText placeholder="Search" type="text"/>
+      <UserInfo></UserInfo>
     </template>
   </Menubar>
   <Message :closable="false" v-if="noPrimaryCompany" severity="warn">
@@ -20,6 +20,7 @@ import {useUserStore} from "@/stores/UserStore";
 import {computed, ref} from "vue";
 import Menubar from "primevue/menubar";
 import InputText from "primevue/inputtext";
+import UserInfo from "@/components/blocks/UserInfo.vue";
 
 const store = useUserStore()
 

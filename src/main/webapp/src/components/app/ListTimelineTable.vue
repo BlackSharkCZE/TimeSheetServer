@@ -42,7 +42,7 @@
       <template #filter="{filterModel,filterCallback}">
         <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
                    class="p-column-filter p-inputtext-sm"
-                   placeholder="Search by project name"/>
+                   placeholder="Project name"/>
       </template>
     </Column>
 
