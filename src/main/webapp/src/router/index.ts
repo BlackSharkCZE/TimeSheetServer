@@ -18,8 +18,7 @@ import DphView from '@/views/private/dph/DphView.vue'
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        name: 'Home',
-        component: Home
+        component: DashboardView
     },
     {
         path: '/about',
@@ -59,6 +58,7 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: 'dashboard',
+                name: 'dashboard',
                 component: DashboardView
             },
             {

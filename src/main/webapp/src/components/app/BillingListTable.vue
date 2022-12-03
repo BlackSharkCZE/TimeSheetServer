@@ -1,5 +1,10 @@
 <template>
   <ConfirmDialog></ConfirmDialog>
+
+  <Panel header="Select month" class="mt-2">
+    <MonthSelector v-model="selectedMonth" @change="monthSelected"></MonthSelector>
+  </Panel>
+
   <DataTable
       :page="pageIndex+1"
       ref="dt"
@@ -34,13 +39,16 @@ import ConfirmDialog from "primevue/confirmdialog";
 import DataTable from "primevue/datatable";
 import Button from "primevue/button";
 import Column from "primevue/column";
+import Panel from 'primevue/panel'
 import {inject, onMounted, ref} from "vue";
 import {AxiosStatic} from "axios";
-import {Billing} from "@/components/blocks/Types";
+import {Billing, SelectedMonthType} from "@/components/blocks/Types";
 import {formatWorkTime, formatPrice} from "@/services/FormatService";
 import ClickIcon from "@/components/blocks/ClickIcon.vue";
 import {useConfirm} from "primevue/useconfirm";
 import {useRouter} from "vue-router";
+import MonthSelector from "@/components/blocks/MonthSelector.vue";
+import {previousMonth, buildMoment} from "@/components/blocks/Functions";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
@@ -54,6 +62,7 @@ const pageSize = ref<number>(25)
 const totalRecords = ref<number>(0)
 const confirm = useConfirm()
 const router = useRouter()
+const selectedMonth = ref<SelectedMonthType>(previousMonth())
 
 // Define lifecycle hooks
 onMounted(() => {
@@ -74,13 +83,13 @@ function handleClick(input: Billing) {
 }
 
 function generateInvoice(input: Billing) {
-  const issueDate = moment().subtract(1,'months').endOf('month').format('YYYY-MM-DD');
+  const issueDate = buildMoment(selectedMonth.value).endOf('month').format('YYYY-MM-DD');
   axios?.get('/invoice/v2/generate?companyID='+input.companyId+'&issueDate='+issueDate)
       .then(response=>{
         if (response.status === 200) {
           const invoice = response.data.data
           router.push({
-            path: '/private/invoices' + invoice.id
+            path: '/private/invoices/' + invoice.id
           })
         } else {
           console.error('Can not generate invoice!')
@@ -90,7 +99,8 @@ function generateInvoice(input: Billing) {
 
 function loadData(filterData: any = {}) {
   loading.value = true
-  axios?.get("/billing/list")
+  const issueDate = buildMoment(selectedMonth.value).endOf('month').format('YYYY-MM-DD');
+  axios?.get("/billing/list?to="+issueDate)
       .then((response) => {
         if (response.status === 200) {
           items.value = response.data
@@ -103,7 +113,9 @@ function loadData(filterData: any = {}) {
   })
 }
 
-
+function monthSelected(data: SelectedMonthType) {
+  loadData()
+}
 
 </script>
 

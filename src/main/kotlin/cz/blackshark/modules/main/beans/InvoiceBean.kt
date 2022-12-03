@@ -62,7 +62,7 @@ class InvoiceBean @Inject constructor(
         logger.infof("New invoice created: %s", iEntity)
 
 
-        val billing = billingDao.getBillingList(subject, companyId)
+        val billing = billingDao.getBillingList(subject, companyId, issueDate)
         billing.forEach {
             val calcVat =if (issuer.platceDph) BigDecimal(1.21); else BigDecimal.ONE
             val invoiceItemEntity = InvoiceItemEntity().apply {
@@ -74,7 +74,7 @@ class InvoiceBean @Inject constructor(
                 this.vat = this.totalPrice.minus(price)
             }
             invoiceItemRepository.persistAndFlush(invoiceItemEntity)
-            billingDao.markTimeline(subject, companyId, invoiceItemEntity.id!!)
+            billingDao.markTimeline(subject, companyId, invoiceItemEntity.id!!, issueDate)
         }
 
         return invoiceRepository.findById(iEntity.id!!)

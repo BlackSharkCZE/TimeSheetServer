@@ -9,10 +9,10 @@ export type GemProject = {
 export type Company = {
     bankAccountNumber: string
     castObce: string,
-    cisloDomu : string,
+    cisloDomu: string,
     companyName: string,
     dic: string,
-    email : string,
+    email: string,
     ic: string,
     id: number,
     obec: string,
@@ -36,7 +36,7 @@ export type Requisition = {
 }
 
 export type InvoiceItem = {
-    id : number,
+    id: number,
     price: number,
     totalPrice: number,
     vat: number,
@@ -58,3 +58,16 @@ export type RemoteWriterTimestamp = {
     success: boolean,
     timestamp: Date
 }
+
+export type MonthType = {
+    index: number,
+    value: string
+}
+
+export type SelectedMonthType = {
+    month: MonthType,
+    year: number
+}
+
+
+export const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec']

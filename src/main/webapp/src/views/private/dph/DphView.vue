@@ -118,18 +118,14 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import {formatPrice} from "@/services/FormatService";
 import {useUserStore} from "@/stores/UserStore";
+import {MonthType, months} from "@/components/blocks/Types";
 
 // Define types
-type MonthType = {
-  index: number,
-  value: string
-}
+
 type FormData = {
   year: number
   month: MonthType
 }
-
-const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec']
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')

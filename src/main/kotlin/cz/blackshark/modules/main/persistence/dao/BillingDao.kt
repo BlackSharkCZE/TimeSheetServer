@@ -3,6 +3,7 @@ package cz.blackshark.modules.main.persistence.dao
 import cz.blackshark.modules.main.dto.BillingLineVo
 import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import org.jboss.logging.Logger
+import java.time.LocalDate
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.persistence.EntityManager
@@ -17,10 +18,11 @@ class BillingDao {
     @Inject
     private lateinit var entityManager: EntityManager
 
-    fun getBillingList(subjectEntity: SubjectEntity): List<BillingLineVo> {
+    fun getBillingList(subjectEntity: SubjectEntity, toDate: LocalDate): List<BillingLineVo> {
         try {
             val res = entityManager.createNativeQuery(BILLING_LIST, "BillingLineVoMapping")
                 .setParameter("subjectID", subjectEntity.id)
+                .setParameter("toDate", toDate.plusDays(1))
                 .resultList
             return res as List<BillingLineVo>
         } catch (e: Exception) {
@@ -29,11 +31,12 @@ class BillingDao {
         }
     }
 
-    fun getBillingList(subjectEntity: SubjectEntity, companyId: Long): List<BillingLineVo> {
+    fun getBillingList(subjectEntity: SubjectEntity, companyId: Long, toDate: LocalDate): List<BillingLineVo> {
         try {
             val res = entityManager.createNativeQuery(BILLING_LIST_FOR_COMPANY, "BillingLineVoMapping")
                 .setParameter("subjectID", subjectEntity.id)
                 .setParameter("companyID", companyId)
+                .setParameter("toDate", toDate.plusDays(1))
                 .resultList
             return res as List<BillingLineVo>
         } catch (e: Exception) {
@@ -42,13 +45,14 @@ class BillingDao {
         }
     }
 
-    fun markTimeline(subject: SubjectEntity, companyId: Long, invoiceItemId: Long): Boolean {
+    fun markTimeline(subject: SubjectEntity, companyId: Long, invoiceItemId: Long, toDate: LocalDate): Boolean {
 
         try {
             return entityManager.createNativeQuery(UPDATE_TIMELINE_WITH_INVOICE_ITEM)
                 .setParameter("subjectID", subject.id)
                 .setParameter("companyID", companyId)
-                .setParameter("invoiceItemID", companyId)
+                .setParameter("invoiceItemID", invoiceItemId)
+                .setParameter("toDate", toDate.plusDays(1))
                 .executeUpdate() > 0
         } catch (e: Exception) {
             logger.error("Can not update timeline with invoice item", e)
@@ -75,7 +79,7 @@ class BillingDao {
                     from rate
                         where subject_id = :subjectID
                             order by company_id, valid_since desc) rate_limited on rate_limited.company_id = c.id
-        where b.subject_id = :subjectID
+        where b.subject_id = :subjectID and b.to_time < :toDate
         group by c.company_name, c.id, requisition_limited.note, rate_limited.rate
         order by c.company_name
 """
@@ -97,7 +101,7 @@ class BillingDao {
                     from rate
                         where subject_id = :subjectID and company_id = :companyID
                             order by company_id, valid_since desc) rate_limited on rate_limited.company_id = c.id
-        where b.subject_id = :subjectID
+        where b.subject_id = :subjectID and b.to_time < :toDate
         group by c.company_name, c.id, requisition_limited.note, rate_limited.rate
         order by c.company_name
 """
@@ -109,7 +113,7 @@ class BillingDao {
                     from v_billing b
                       join project p on b.project_id = p.id
                       join company c on p.company_id = c.id
-                        where b.subject_id = :subjectID
+                        where b.subject_id = :subjectID and b.to_time < :toDate
                         and c.id = :companyID)
         """
 
