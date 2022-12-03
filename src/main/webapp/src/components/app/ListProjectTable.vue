@@ -3,6 +3,7 @@
   <Message :closable="false" v-if="projects.length==0" severity="info">There is not any projects in database</Message>
 
   <DataTable
+      class="mt-2 mb-2"
       v-if="projects.length>0"
       :page="pageIndex+1"
       ref="dt"

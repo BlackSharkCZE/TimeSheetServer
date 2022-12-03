@@ -1,8 +1,7 @@
 <template>
-  <div class="card-container flex align-items-left justify-content-start">
+  <div v-if="writers != null && writers.length>0" class="card-container flex align-items-left justify-content-start">
     <div
         :class="{'text-red-500': !w.success, 'text-green-500': w.success}"
-        v-if="writers != null && writers.length>0"
         v-for="(w, index) in writerDef"
         v-bind:key="index">{{ w.name }}
       <span class="mr-1" v-if="index<writerDef.length-1"> |</span>
@@ -62,11 +61,11 @@ function initialize() {
   if (props.writers != null && props.writers.length > 0) {
     const result = [] as WriterDef[]
     for (let i = 0; i < props.writers.length; i++) {
-      const writer = props.writers[i]!!
+      const writer = props.writers[i]
       result.push({
         name: props.writers[i],
         last: i == props.writers.length - 1,
-        success: props.settings?.filter(item => item.name == props.writers!![i])[0]?.success || false
+        success: props.settings?.filter(item => item.name == props.writers[i])[0]?.success || false
       } as WriterDef)
     }
 

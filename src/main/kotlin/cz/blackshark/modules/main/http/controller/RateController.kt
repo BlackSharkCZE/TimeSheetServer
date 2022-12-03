@@ -18,28 +18,24 @@ import javax.ws.rs.core.SecurityContext
 @Path("rate")
 @Authenticated
 @RequestScoped
-class RateController @Inject constructor(
-    private val logger: Logger,
-    private val rateBean: RateBean,
-
-    ) {
+class RateController: AbstractBaseController() {
 
     @Inject
-    private lateinit var jwt: JsonWebToken
+    private lateinit var rateBean: RateBean
 
     @POST
     @Path("/create")
     @Throws(TsException::class)
     @Transactional
     fun creteRate(@Context context: SecurityContext, rateVo: RateVo): RateVo {
-        return rateBean.createRate(rateVo, jwt.subject!!)
+        return rateBean.createRate(rateVo, retrieveSubject())
     }
 
     @GET
     @Path("/list")
     @Throws(TsException::class)
     fun getAllUserRates(): List<RateVo> {
-        return rateBean.findForSubject(jwt.subject!!)
+        return rateBean.findForSubject(retrieveSubject())
     }
 
 

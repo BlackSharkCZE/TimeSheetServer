@@ -1,6 +1,7 @@
 <template>
-
-  <create-company-form @companyCreated="companyCreatedHandler"></create-company-form>
+  <IsAdmin>
+    <create-company-form @companyCreated="companyCreatedHandler"></create-company-form>
+  </IsAdmin>
   <list-companies-table ref="companiesTable"></list-companies-table>
 
 </template>
@@ -9,6 +10,7 @@
 import CreateCompanyForm from '@/components/app/CreateCompanyForm.vue'
 import ListCompaniesTable from "@/components/app/ListCompaniesTable.vue";
 import {ref} from 'vue'
+import IsAdmin from "@/components/blocks/IsAdmin.vue";
 
 // Define template refs
 const companiesTable = ref()

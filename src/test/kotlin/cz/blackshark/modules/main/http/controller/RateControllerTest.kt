@@ -25,7 +25,7 @@ import javax.inject.Inject
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response.Status
 
-@QuarkusTest
+//@QuarkusTest
 class RateControllerTest {
 
     @Inject
@@ -34,7 +34,7 @@ class RateControllerTest {
     @InjectMock
     private lateinit var rateBean: RateBean
 
-    @Test
+//    @Test
     @TestSecurity(user = "testUser", roles = ["role1"])
     @JwtSecurity(
         claims = [
@@ -44,7 +44,7 @@ class RateControllerTest {
             Claim(key = "subject", value = "subject1234")
         ]
     )
-    fun `creat rate without any data in database`() {
+    fun `create rate without any data in database`() {
         val rateVo = RateVo(null, BigDecimal(7000), ZonedDateTime.now(), 1)
         Given {
             relaxedHTTPSValidation()

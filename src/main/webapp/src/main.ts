@@ -33,7 +33,6 @@ const app: Vue.App = createApp(App)
             app.use(router)
                 .use(VueAxios, axios)
                 .use(pinia)
-
             const store = useUserStore()
             const userInfo = useUserInfo()
             app.config.globalProperties.axios.interceptors.request.use((config: AxiosRequestConfig) => {

@@ -1,5 +1,5 @@
 <template>
-  <Panel header="Create Project" :toggleable="true" :collapsed="true" class="mt-2 mb-2">
+  <Panel header="Create Project" :toggleable="true" :collapsed="true" class="mt-2">
     <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
       <div class="card">
         <div class="formgrid grid">

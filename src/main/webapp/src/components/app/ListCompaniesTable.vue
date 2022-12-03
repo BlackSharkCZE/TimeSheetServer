@@ -3,6 +3,7 @@
   <Message v-if="companies.length==0" severity="info" :closable="false">There is not any company in database.</Message>
 
   <DataTable
+      class="mt-2 mb-2"
       v-if="companies.length>0"
       :page="pageIndex+1"
       ref="dt"

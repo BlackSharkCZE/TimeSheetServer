@@ -5,8 +5,10 @@ import cz.blackshark.modules.main.dto.ProjectVo
 import cz.blackshark.modules.main.persistence.entity.ProjectEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.ProjectRepository
+import io.quarkus.security.Authenticated
 import io.vertx.core.json.JsonArray
 import org.slf4j.LoggerFactory
+import javax.annotation.security.RolesAllowed
 import javax.enterprise.inject.Instance
 import javax.inject.Inject
 import javax.transaction.Transactional
@@ -15,6 +17,7 @@ import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 
 @Path("/project")
+@Authenticated
 class ProjectController {
 
     companion object {
@@ -48,6 +51,7 @@ class ProjectController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
+    @RolesAllowed("role-admin")
     fun save(@Valid projectVo: ProjectVo): ProjectVo {
         val company = companyRepository.findById(projectVo.companyID)
         if (company == null) {

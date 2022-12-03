@@ -1,5 +1,5 @@
 <template>
-    <Panel header="Create company" :toggleable="true" :collapsed="collapsed" class="mt-2 mb-2">
+    <Panel header="Create company" :toggleable="true" :collapsed="collapsed"  class="mt-2">
         <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid">
 
             <div class="card">

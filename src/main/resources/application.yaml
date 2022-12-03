@@ -9,15 +9,7 @@ quarkus:
     port: ${SERVER_PORT:8883}
     cors:
       ~: true
-    ssl:
-      certificate:
-        key-store-file-type: JKS
-        key-store-password: ${KEYSTORE_PASSWORD}
-        #rkey-store-alias: ${KEYSTORE_CERT_ALIAS}
-        key-store-file: ${KEYSTORE_PATH}
-    ssl-port: ${SERVER_SSL_PORT:8443}
-    insecure-requests: redirect
-    host: timesheet.local.cz
+    host: ${HOST_NAME:timesheet.local.cz}
   oidc:
     auth-server-url: ${QUARKUS_REALM}
     client-id: ${QUARKUS_CLIENT_ID}
@@ -48,13 +40,13 @@ quarkus:
     level: WARN
     min-level: TRACE
     console:
-      level: INFO
+      level: FATAL
       format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
     category:
       "cz.blackshark.http.filter":
-        level: TRACE
+        level: WARN
       "org.jboss.resteasy.client":
-        level: DEBUG
+        level: WARN
     file:
       enable: true
       level: WARN
@@ -67,14 +59,6 @@ quarkus:
     migrate-at-start: true
     change-log: database/changeLog.xml
     database-change-log-table-name: databasechangelog
-  keycloak:
-    admin-client:
-      server-url: ${QUARKUS_ADMIN_URL}
-      username: ${QUARKUS_ADMIN_USERNAME}
-      password: ${QUARKUS_ADMIN_PASSWORD}
-      client-id: ${QUARKUS_ADMIN_CLIENT_ID}
-      client-secret: ${QUARKUS_ADMIN_CLIENT_SECRET}
-      realm: ${QUARKUS_ADMIN_REALM}
 application:
   jax-rs-date-format: yyyy-MM-dd
   file-storage-path: ${FILE_STORAGE_PATH}
@@ -94,9 +78,6 @@ drmax-jira/mp-rest/scope: "javax.inject.Singleton"
 
 gem-timesheet/mp-rest/url: ${GEM_TIMESHEET_URL}
 gem-timesheet/mp-rest/scope: "javax.inject.Singleton"
-
-
-
 
 "%test":
   quarkus:

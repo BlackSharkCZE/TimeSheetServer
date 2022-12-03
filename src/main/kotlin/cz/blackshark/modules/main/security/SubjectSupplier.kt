@@ -33,7 +33,7 @@ class SubjectSupplier : Supplier<SecurityIdentity> {
                 val subjectMap = mutableMapOf<String, Any>()
                 if (it.principal is OidcJwtCallerPrincipal) {
                     val strSubject = (it.principal as OidcJwtCallerPrincipal).claims.subject
-                    val subject = subjectBean.findByRemoteId(strSubject)
+                    val subject = subjectBean.findOrCreateSubject(strSubject)
                     subjectMap[SUBJECT_KEY] = subject
                 }
                 val builder = QuarkusSecurityIdentity.builder()

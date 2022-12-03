@@ -2,8 +2,8 @@ package cz.blackshark.modules.main.beans
 
 import cz.blackshark.modules.main.dto.RateVo
 import cz.blackshark.modules.main.exceptions.CompanyExcetption
-import cz.blackshark.modules.main.exceptions.SubjectExcetption
 import cz.blackshark.modules.main.persistence.entity.RateEntity
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.RateRepository
 import io.quarkus.panache.common.Sort
@@ -19,9 +19,8 @@ class RateBean @Inject constructor(
     private val rateRepository: RateRepository
 ) {
 
-    fun createRate(rateVo: RateVo, subject: String): RateVo {
-        logger.info("Create rate for subject $subject with data $rateVo")
-        val subjectEntity = subjectBean.findByRemoteId(subject) ?: throw SubjectExcetption("Subject not found!")
+    fun createRate(rateVo: RateVo, subjectEntity: SubjectEntity): RateVo {
+        logger.info("Create rate for subject $subjectEntity with data $rateVo")
         val company = companyRepository.findByIdOptional(rateVo.companyId).orElseGet { null }
             ?: throw CompanyExcetption("Company not found!")
 
@@ -37,10 +36,8 @@ class RateBean @Inject constructor(
         return RateVo(rate.id, rateVo.rate, rateVo.validSince, company.id!!)
     }
 
-    fun findForSubject(subject: String): List<RateVo> {
-        logger.info("Search for Rate for subject $subject")
-        val subjectEntity = subjectBean.findByRemoteId(subject) ?: throw SubjectExcetption("Subject not found!")
-
+    fun findForSubject(subjectEntity: SubjectEntity): List<RateVo> {
+        logger.info("Search for Rate for subject $subjectEntity")
         return rateRepository
             .find(
                 "subject.id",

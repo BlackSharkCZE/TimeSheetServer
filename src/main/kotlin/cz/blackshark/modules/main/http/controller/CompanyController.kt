@@ -7,6 +7,7 @@ import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.timesheet.commons.domain.CompanyVo
 import io.quarkus.security.Authenticated
 import org.eclipse.microprofile.jwt.JsonWebToken
+import javax.annotation.security.RolesAllowed
 import javax.inject.Inject
 import javax.transaction.Transactional
 import javax.validation.Valid
