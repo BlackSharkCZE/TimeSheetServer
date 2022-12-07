@@ -2,8 +2,10 @@ package cz.blackshark.modules.main.persistence.dao
 
 import cz.blackshark.modules.main.dto.BillingLineVo
 import cz.blackshark.modules.main.persistence.entity.SubjectEntity
+import io.quarkus.logging.Log
 import org.jboss.logging.Logger
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.persistence.EntityManager
@@ -33,6 +35,14 @@ class BillingDao {
 
     fun getBillingList(subjectEntity: SubjectEntity, companyId: Long, toDate: LocalDate): List<BillingLineVo> {
         try {
+            Log.infof(
+                "Get billing for subject %d and company %d to date: %s",
+                subjectEntity.id,
+                companyId,
+                toDate.plusDays(1).format(
+                    DateTimeFormatter.ISO_LOCAL_DATE
+                )
+            )
             val res = entityManager.createNativeQuery(BILLING_LIST_FOR_COMPANY, "BillingLineVoMapping")
                 .setParameter("subjectID", subjectEntity.id)
                 .setParameter("companyID", companyId)

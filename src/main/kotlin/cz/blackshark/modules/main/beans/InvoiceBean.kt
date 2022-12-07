@@ -1,9 +1,7 @@
 package cz.blackshark.modules.main.beans
 
 import cz.blackshark.config.ApplicationConfig
-import cz.blackshark.modules.main.domains.InvoiceItem
 import cz.blackshark.modules.main.persistence.dao.BillingDao
-import cz.blackshark.modules.main.persistence.dao.InvoiceDao
 import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
@@ -33,7 +31,6 @@ class InvoiceBean @Inject constructor(
     private val invoiceItemRepository: InvoiceItemRepository,
     private val requisitionRepository: RequisitionRepository,
     private val timelineDao: TimelineDao,
-    private val invoiceDao: InvoiceDao,
     private val logger: Logger,
     private val jasperReportGenerator: JasperReportGenerator,
     private val appConfig: ApplicationConfig,
@@ -64,14 +61,14 @@ class InvoiceBean @Inject constructor(
 
         val billing = billingDao.getBillingList(subject, companyId, issueDate)
         billing.forEach {
-            val calcVat =if (issuer.platceDph) BigDecimal(1.21); else BigDecimal.ONE
+            val calcVat = if (issuer.platceDph) BigDecimal(1.21); else BigDecimal.ONE
             val invoiceItemEntity = InvoiceItemEntity().apply {
                 this.invoiceEntity = iEntity
                 this.requisition = requisition
                 if (issuer.platceDph) this.vat = BigDecimal(1.21); else BigDecimal.ZERO
                 this.price = it.earn
                 this.totalPrice = it.earn.times(calcVat)
-                this.vat = this.totalPrice.minus(price)
+                this.vat = calcVat
             }
             invoiceItemRepository.persistAndFlush(invoiceItemEntity)
             billingDao.markTimeline(subject, companyId, invoiceItemEntity.id!!, issueDate)
@@ -82,10 +79,7 @@ class InvoiceBean @Inject constructor(
     }
 
     fun generateInvoice(
-        fromDate: LocalDate,
-        toDate: LocalDate,
-        receiverCompanyEntity: CompanyEntity,
-        issuerEntity: CompanyEntity
+        fromDate: LocalDate, toDate: LocalDate, receiverCompanyEntity: CompanyEntity, issuerEntity: CompanyEntity
     ): InvoiceEntity? {
         val invoiceNumber = invoiceNumberGenerator.getNextNumber(issuerEntity.id!!)
         if (invoiceNumber != null) {

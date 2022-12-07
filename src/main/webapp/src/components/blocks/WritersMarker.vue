@@ -7,7 +7,7 @@
       <span class="mr-1" v-if="index<writerDef.length-1"> |</span>
     </div>
 
-    <div v-if="allSuccess">
+    <div v-if="!allSuccess">
       <span class="m-1"> |</span>
       <ClickIcon icon="pi pi-upload" @click="remoteWriteRequest()"></ClickIcon>
     </div>
@@ -23,8 +23,6 @@ import {RemoteWriterTimestamp} from "@/components/blocks/Types";
 import {onMounted, ref, defineProps, defineEmits} from "vue";
 import ClickIcon from "@/components/blocks/ClickIcon.vue";
 import {useConfirm} from "primevue/useconfirm";
-import ConfirmDialog from "primevue/confirmdialog";
-import {formatPrice} from "@/services/FormatService";
 
 interface PropsInterface {
   writers: string[] | null,
@@ -65,7 +63,7 @@ function initialize() {
       result.push({
         name: props.writers[i],
         last: i == props.writers.length - 1,
-        success: props.settings?.filter(item => item.name == props.writers[i])[0]?.success || false
+        success: props.settings?.filter(item => item.name == writer)[0]?.success || false
       } as WriterDef)
     }
 

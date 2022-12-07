@@ -3,6 +3,8 @@
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
 
   <DataTable
+      class="p-datatable-sm"
+      :auto-layout="true"
       :rowHover="true"
       :page="pageIndex+1"
       ref="dt"
@@ -27,18 +29,18 @@
       <template #body="{data}">{{ getDate(data.fromTime) }}</template>
     </Column>
 
-    <Column header="From time">
+    <Column header="From">
       <template #body="{data}">{{ getTime(data.fromTime) }}</template>
     </Column>
 
-    <Column header="To time">
+    <Column header="To">
       <template #body="{data}">{{ getTime(data.toTime) }}</template>
     </Column>
 
     <Column field="pause" header="Pause"></Column>
     <Column field="workTime" header="Worktime"></Column>
 
-    <Column field="projectName" header="Project" filterMatchMode="startsWith" ref="projectName">
+    <Column field="projectName" header="Project" filterMatchMode="startsWith" :showFilterMenu="false" ref="projectName">
       <template #filter="{filterModel,filterCallback}">
         <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
                    class="p-column-filter p-inputtext-sm"
@@ -46,7 +48,7 @@
       </template>
     </Column>
 
-    <Column field="note" header="Note">
+    <Column field="note" header="Note" :showFilterMenu="false">
       <template #filter="{filterModel,filterCallback}">
         <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
                    class="p-column-filter p-inputtext-sm"
@@ -54,7 +56,7 @@
       </template>
     </Column>
 
-    <Column field="writers" header="WRITERS">
+    <Column field="writers" header="Writers">
       <template #body="{data}">
         <writers-marker :settings="data.remoteWriteTimestamp || null" :writers="data.writers || null"
                         @click="writeRowToRemote(data)"></writers-marker>

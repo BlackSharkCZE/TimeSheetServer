@@ -64,7 +64,8 @@ class TimelineController: AbstractBaseController() {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     fun saveTimeline(@Valid timeline: TimelineVo): OperationResult {
-        return timelineBean.saveUpdate(timeline, jwtToken.subject)
+
+        return timelineBean.saveUpdate(timeline, retrieveSubject())
     }
 
     @DELETE
@@ -95,7 +96,7 @@ class TimelineController: AbstractBaseController() {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     fun updateTimeline(@Valid timeline: TimelineVo): OperationResult {
-        return timelineBean.saveUpdate(timeline, jwtToken.subject)
+        return timelineBean.saveUpdate(timeline, retrieveSubject())
     }
 
 

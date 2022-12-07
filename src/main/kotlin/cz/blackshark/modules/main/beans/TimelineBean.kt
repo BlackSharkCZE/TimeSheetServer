@@ -4,24 +4,22 @@ import cz.blackshark.modules.main.domains.OperationResult
 import cz.blackshark.modules.main.domains.ValidationError
 import cz.blackshark.modules.main.dto.TimelineVo
 import cz.blackshark.modules.main.factories.TimelineEntityFactory
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.modules.main.persistence.repository.ProjectRepository
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.InternalServerErrorException
 
 @ApplicationScoped
 class TimelineBean @Inject constructor(
     internal val timelineRepository: TimelineRepository,
-    internal val projectRepository: ProjectRepository,
-    private val subjectBean: SubjectBean
+    internal val projectRepository: ProjectRepository
 ) {
 
-    fun saveUpdate(timelineVo: TimelineVo, subject: String): OperationResult {
+    fun saveUpdate(timelineVo: TimelineVo, subjectEntity: SubjectEntity): OperationResult {
 
-        val subjectEntity = subjectBean.findByRemoteId(subject) ?: throw NotAuthorizedException("Subject not found in database")
-
-        val validationResult = validate(timelineVo)
+        val validationResult = validate(timelineVo, subjectEntity)
         if (validationResult.isNotEmpty()) {
             return OperationResult(false, null, validationResult)
         } else {
@@ -58,14 +56,17 @@ class TimelineBean @Inject constructor(
         }
     }
 
-    fun validate(timelineVo: TimelineVo): List<ValidationError> {
+    fun validate(timelineVo: TimelineVo, subjectEntity: SubjectEntity): List<ValidationError> {
         val res = mutableListOf<ValidationError>()
 
-        if (timelineRepository.isTimeAlreadyUsed(timelineVo.fromTime, timelineVo.id)) {
+        val subjectId =
+            subjectEntity.id ?: throw InternalServerErrorException("Can not validate timeline. SubjectID is null!")
+
+        if (timelineRepository.isTimeAlreadyUsed(timelineVo.fromTime, timelineVo.id, subjectId)) {
             res.add(ValidationError(TimelineVo::class.java, "fromTime", "fromTime is alredy used in timeline"))
         }
 
-        if (timelineRepository.isTimeAlreadyUsed(timelineVo.toTime, timelineVo.id)) {
+        if (timelineRepository.isTimeAlreadyUsed(timelineVo.toTime, timelineVo.id, subjectId)) {
             res.add(ValidationError(TimelineVo::class.java, "toTime", "toTime is alredy used in timeline"))
         }
 

@@ -8,7 +8,7 @@
       <div class="card">
         <div class="formgrid grid">
 
-          <div class="field col-1">
+          <div class="field col-12 md:col-6 sm:col-6 lg:col-1">
             <label for="date">Date <span v-if="v$.date.required">*</span></label>
             <Calendar id="date"
                       dateFormat="dd.mm.yy"
@@ -18,7 +18,7 @@
                    class="p-error">{{ v$.date.required.$message.replace('Value', 'Date') }}</small>
           </div>
 
-          <div class="field col-1">
+          <div class="field col-12 md:col-6 sm:col-6 lg:col-1">
             <label for="fromTime">From Time <span v-if="v$.fromTime.required">*</span></label>
             <Calendar id="fromTime"
                       dateFormat="HH:MM"
@@ -31,8 +31,8 @@
                    class="p-error">{{ v$.fromTime.required.$message.replace('Value', 'Time from') }}</small>
           </div>
 
-          <div class="field col-1">
-            <label for="toTime">From Time <span v-if="v$.toTime.required">*</span></label>
+          <div class="field col-12 md:col-6 sm:col-6 lg:col-1">
+            <label for="toTime">To Time <span v-if="v$.toTime.required">*</span></label>
             <Calendar id="toTime"
                       dateFormat="HH:MM"
                       :class="{'p-invalid':v$.toTime.$invalid && submitted}"
@@ -44,7 +44,7 @@
                    class="p-error">{{ v$.toTime.required.$message.replace('Value', 'Time to') }}</small>
           </div>
 
-          <div class="field col-2">
+          <div class="field col-12 md:col-6 sm:col-6 lg:col-2">
             <label for="toTime">Pause <span v-if="v$.toTime.required">*</span></label>
             <InputNumber v-model="v$.pause.$model"
                          id="pause"
@@ -64,7 +64,7 @@
           </div>
 
           <project-field
-              class="col-2"
+              class="col-12 md:col-6 sm:col-6 lg:col-2"
               id="project"
               label="Project"
               v-model="formData.project"
@@ -73,13 +73,13 @@
           </project-field>
 
           <input-field id="note"
-                       class="field col-4"
+                       class="field col-12 md:col-10 sm:col-10 lg:col-4"
                        label="Note"
                        :vualidate="v$.note"
                        :submitted="submitted"
                        v-model="formData.note"/>
 
-          <div class="field col-1">
+          <div class="field col-12 md:col-2 sm:col-2 lg:col-1">
             <label>&nbsp;</label>
             <Button type="submit" label="Add"/>
           </div>

@@ -4,6 +4,10 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
+### TODO
+
+* `07.12.2022`: Execute remote writer does not mark row as wrote without table refresh
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
