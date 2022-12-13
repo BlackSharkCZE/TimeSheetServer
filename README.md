@@ -7,6 +7,12 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 ### TODO
 
 * `07.12.2022`: Execute remote writer does not mark row as wrote without table refresh
+* `08.12.2022`: Create script to database backup.
+* `08.12.2022`: Pridat zpetnou vazbu pri zapisu vykazu do vzdaleneho systemu
+* `09.12.2022`: ( SOLVED )Spatne detekovany prekryv casu, kdyz jsou to ruzne projekty (chyba dat v databazi - pridane vteriny u timestammp)
+* `09.12.2022`: Editace timeline
+* `09.12.2022`: Spatne informace v summary v prvem hornim rohu
+ 
 
 ## Running the application in dev mode
 

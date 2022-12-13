@@ -37,10 +37,10 @@ quarkus:
       - exception
       - description
   log:
-    level: WARN
-    min-level: TRACE
+    level: DEBUG
+    min-level: DEBUG
     console:
-      level: FATAL
+      level: INFO
       format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
     category:
       "cz.blackshark.http.filter":
@@ -49,7 +49,7 @@ quarkus:
         level: WARN
     file:
       enable: true
-      level: WARN
+      level: DEBUG
       path: log/app.log
       format: "%d{YYYY-MM-dd'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
       rotation:
@@ -82,8 +82,8 @@ gem-timesheet/mp-rest/scope: "javax.inject.Singleton"
 "%test":
   quarkus:
     log:
-      level: INFO
-      min-level: DEBUG
+      level: DEBUG
+      min-level: TRACE
       file:
         format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %X{X_CORRELATION_ID} [%c{3.}] (%t) %s%e%n"
         path: "log/aps_poc_log.log"

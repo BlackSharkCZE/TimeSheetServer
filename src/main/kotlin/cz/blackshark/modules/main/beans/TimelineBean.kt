@@ -63,11 +63,11 @@ class TimelineBean @Inject constructor(
             subjectEntity.id ?: throw InternalServerErrorException("Can not validate timeline. SubjectID is null!")
 
         if (timelineRepository.isTimeAlreadyUsed(timelineVo.fromTime, timelineVo.id, subjectId)) {
-            res.add(ValidationError(TimelineVo::class.java, "fromTime", "fromTime is alredy used in timeline"))
+            res.add(ValidationError(TimelineVo::class.java, "fromTime", "fromTime is already used in timeline"))
         }
 
         if (timelineRepository.isTimeAlreadyUsed(timelineVo.toTime, timelineVo.id, subjectId)) {
-            res.add(ValidationError(TimelineVo::class.java, "toTime", "toTime is alredy used in timeline"))
+            res.add(ValidationError(TimelineVo::class.java, "toTime", "toTime is already used in timeline"))
         }
 
         return res

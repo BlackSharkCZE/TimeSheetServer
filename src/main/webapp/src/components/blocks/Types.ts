@@ -69,5 +69,9 @@ export type SelectedMonthType = {
     year: number
 }
 
+export type ErrorType = {
+    show: boolean,
+    message: string | null
+}
 
 export const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec']

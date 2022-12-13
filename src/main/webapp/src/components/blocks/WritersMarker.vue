@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 
 import {RemoteWriterTimestamp} from "@/components/blocks/Types";
-import {onMounted, ref, defineProps, defineEmits} from "vue";
+import {defineEmits, defineProps, onMounted, ref, watch} from "vue";
 import ClickIcon from "@/components/blocks/ClickIcon.vue";
 import {useConfirm} from "primevue/useconfirm";
 
@@ -54,6 +54,11 @@ onMounted(() => {
   initialize()
 })
 
+// Define watch
+watch(() => props.settings, (current, prev) => {
+  initialize()
+})
+
 // Define function
 function initialize() {
   if (props.writers != null && props.writers.length > 0) {
@@ -67,7 +72,7 @@ function initialize() {
       } as WriterDef)
     }
 
-    allSuccess.value = !(result.some( it => it.success === false))
+    allSuccess.value = !(result.some(it => it.success === false))
     writerDef.value = result
   }
 }

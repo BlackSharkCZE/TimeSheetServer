@@ -1,6 +1,7 @@
 <template>
   <ConfirmDialog></ConfirmDialog>
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
+  <Message v-if="error.show" severity="error" :closable="true" @close="error.show=false">{{error.message}}: {{error.show}}</Message>
 
   <DataTable
       class="p-datatable-sm"
@@ -68,8 +69,8 @@
 
 <script lang="ts" setup>
 
-import {defineExpose, inject, onMounted, ref} from 'vue'
-import {AxiosStatic} from "axios";
+import {defineExpose, inject, onMounted, reactive, ref} from 'vue'
+import {AxiosResponse, AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
@@ -77,6 +78,7 @@ import Column from 'primevue/column';
 import moment from "moment";
 import WritersMarker from "@/components/blocks/WritersMarker.vue";
 import ConfirmDialog from "primevue/confirmdialog";
+import {ErrorType, RemoteWriterTimestamp} from "@/components/blocks/Types";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
@@ -92,6 +94,8 @@ const filters = ref({
   note: {value: '', matchMode: 'contains'},
   projectName: {value: '', matchMode: 'contains'}
 })
+
+const error = reactive<ErrorType>({show:false, message: null})
 
 // Define lifecycle hooks
 onMounted(() => {
@@ -109,13 +113,25 @@ function writeRowToRemote(data: any) {
   axios?.post("/timeline/remote-write/" + id, {}).then(response => {
     console.log(response.data)
     if (response.status === 200 && response.data.success === true) {
-      console.log('Wrote')
+      processSuccessWrite(response.data)
     } else {
-      console.error('Can not write to remote writer')
+      processErrorWrite(response.data)
     }
   })
+}
 
-  console.log('Processing remote data: ', data)
+function processSuccessWrite(data: any) {
+  let row = timelines.value.filter(it => {
+    return it.id == data.id;
+  })[0]
+
+  row.remoteWriteTimestamp = data.list
+
+}
+
+function processErrorWrite(data: any) {
+  error.show = true;
+  error.message = data.list
 }
 
 function loadData(filterData: any = {}) {
