@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import {defineEmits, defineProps, inject, onMounted, reactive, ref} from 'vue'
+import {computed, defineEmits, defineProps, inject, onMounted, reactive, ref} from 'vue'
 import {InvoiceItem} from "@/components/blocks/Types";
 import Card from "primevue/card";
 import Panel from "primevue/panel";
@@ -131,7 +131,6 @@ const formRef = ref(null)
 const submitted = ref<boolean>(false)
 const v$ = useVuelidate(rules, formData)
 const confirm = useConfirm()
-
 
 // Define lifecycle hooks
 onMounted(() => {

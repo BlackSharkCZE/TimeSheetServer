@@ -51,8 +51,8 @@ const app: Vue.App = createApp(App)
                 store.storeUser(response.data)
             })
 
-            const from = moment().add(-1, 'month').startOf('month').format('YYYY-MM-DD')
-            const to = moment().add(-1, 'month').format('YYYY-MM-DD')
+            const from = moment().add(0, 'month').startOf('month').format('YYYY-MM-DD')
+            const to = moment().add(0, 'month').endOf('month').format('YYYY-MM-DD')
 
             axios.get(`/timeline/earning?from=${from}&to=${to}`, {
                 headers: {

@@ -1,5 +1,5 @@
 export type GemProject = {
-    key: number,
+    id: number,
     text: string,
     parentId: number | null,
     projects: Array<GemProject> | null,

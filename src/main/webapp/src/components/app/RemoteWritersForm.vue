@@ -184,12 +184,18 @@ function clearFormData() {
 
 function buildData(): any {
   const x = {
-    projectRootId: formData.rootProject?.key,
-    projectId: formData.project?.key,
+    projectRootId: formData.rootProject?.id,
+    projectId: formData.project?.id,
     keyPattern: formData.pattern,
     remoteWriterList: formData.writers?.join(";"),
-    tagId: formData.tag?.key
+    tagId: formData.tag?.id,
+    description: formData.description
   }
+
+  console.log('Data to write:', x)
+  console.log('Form data:', formData)
+
+
   return x
 }
 

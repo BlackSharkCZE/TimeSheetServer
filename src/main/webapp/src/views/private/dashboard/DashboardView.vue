@@ -15,7 +15,6 @@ const createTimelineForm = ref<any>(null)
 
 // Define methods
 function itemCreatedHandler(row: any) {
-  console.log('Component instance: ', createTimelineForm.value)
   createTimelineForm.value.reloadTable()
 }
 

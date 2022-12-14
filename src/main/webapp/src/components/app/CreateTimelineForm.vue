@@ -105,17 +105,10 @@ import InputField from "@/components/blocks/InputField.vue";
 import ProjectField from "@/components/blocks/ProjectField.vue";
 
 // Define types
-type FormData = {
-  project: any | null,
-  date: Date | null,
-  fromTime: Date | null,
-  toTime: Date | null,
-  note: string | null,
-  pause: number
-}
+import {FormDataType, TimelineRules} from "@/components/blocks/TimelineDefs";
 
 // Define component data
-const formData = reactive<FormData>({
+const formData = reactive<FormDataType>({
   project: null,
   date: new Date(),
   fromTime: null,
@@ -127,20 +120,11 @@ const formData = reactive<FormData>({
 const submitted = ref<boolean>(false)
 const errorMessage = ref<string | null>(null)
 
-const rules = {
-  project: {required},
-  note: {required},
-  date: {required},
-  fromTime: {required},
-  toTime: {required},
-  pause: {required, minValue: minValue(0)},
-}
-
 // Inject dependencies
 const axios = inject<AxiosStatic>('axios')
 
 // Define used properties
-const v$ = useVuelidate(rules, formData)
+const v$ = useVuelidate(TimelineRules, formData)
 
 // Define emits
 const emits = defineEmits(['itemCreated'])

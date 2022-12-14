@@ -3,6 +3,8 @@
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
   <Message v-if="error.show" severity="error" :closable="true" @close="error.show=false">{{error.message}}: {{error.show}}</Message>
 
+  <TimelineRowEdit v-model:display="displayEdit" v-model:row="selectedRow"></TimelineRowEdit>
+
   <DataTable
       class="p-datatable-sm"
       :auto-layout="true"
@@ -21,6 +23,13 @@
       @filter="onFilter($event)"
       :loading="loading">
 
+    <Column header="#">
+      <template #body="{data}">
+        <i class="i-button pi cursor-pointer pi-pencil text-blue-500"
+           @click="editItem(data)">
+        </i>
+      </template>
+    </Column>
 
     <Column header="Day">
       <template #body="{data}">{{ getDay(data) }}</template>
@@ -79,6 +88,7 @@ import moment from "moment";
 import WritersMarker from "@/components/blocks/WritersMarker.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import {ErrorType, RemoteWriterTimestamp} from "@/components/blocks/Types";
+import TimelineRowEdit from "@/components/blocks/TimelineRowEdit.vue";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
@@ -94,6 +104,9 @@ const filters = ref({
   note: {value: '', matchMode: 'contains'},
   projectName: {value: '', matchMode: 'contains'}
 })
+const displayEdit = ref<boolean>(false)
+const selectedRow = ref<any|null>(null)
+
 
 const error = reactive<ErrorType>({show:false, message: null})
 
@@ -127,6 +140,11 @@ function processSuccessWrite(data: any) {
 
   row.remoteWriteTimestamp = data.list
 
+}
+
+function editItem(row: any) {
+  selectedRow.value = row
+  displayEdit.value = true
 }
 
 function processErrorWrite(data: any) {
