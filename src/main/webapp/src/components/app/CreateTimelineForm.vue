@@ -156,9 +156,6 @@ function saveTimeline() {
   errorMessage.value = null
   axios?.post(path, buildData()).then((response) => {
     if (response.status >= 200 && response.status <= 299) {
-
-      console.log('Response data: ', response.data)
-
       if (response.data.itemID > 0) {
         emits('itemCreated', response.data)
         submitted.value = false

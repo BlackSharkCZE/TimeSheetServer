@@ -117,7 +117,6 @@ function calculateTotalPrice(items: any[], field: string): number {
 }
 
 function reloadTable() {
-  console.log('Reload table invoked!')
   loadData(mapFilterToDataTablePayload(filters.value))
 }
 
@@ -160,8 +159,6 @@ function onFilter(event: DataTableFilterEvent) {
 function mapFilterToDataTablePayload(vueFilter: any): any {
   const filter: any = {}
   const keys = Object.keys(vueFilter)
-
-  console.log(vueFilter)
 
   for (let a = 0; a < keys.length; a++) {
     const key = keys[a]

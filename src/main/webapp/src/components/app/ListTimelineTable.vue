@@ -131,7 +131,6 @@ function reloadTable() {
 function writeRowToRemote(data: any) {
   const id = data.id
   axios?.post("/timeline/remote-write/" + id, {}).then(response => {
-    console.log(response.data)
     // TODO update parser according to real response from backend Map<String, RestResponse<RemoteWriteTimestampEntity?>?>
     if (response.status === 200 && response.data.success === true) {
       processSuccessWrite(response.data)

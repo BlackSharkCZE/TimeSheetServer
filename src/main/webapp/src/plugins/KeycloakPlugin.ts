@@ -1,13 +1,12 @@
 import {App, Plugin} from "vue";
 import Keycloak, {KeycloakInitOptions} from "keycloak-js";
 
-
 const keycloakOptions: KeycloakInitOptions = {
     onLoad: 'check-sso',
     redirectUri: window.location.href,
     silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
 }
-const location = document.location.protocol + '//' + document.location.host + '/data/keycloak.json'
+const location = 'keycloak-config'
 const keycloak = new Keycloak(location)
 
 const keycloakPlugin: Plugin = {

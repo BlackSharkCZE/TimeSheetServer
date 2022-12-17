@@ -156,7 +156,6 @@ function fileSelected(event: FileUploadSelectEvent) {
 
 function uploadDone(response: FileUploadUploadEvent) {
   const result = JSON.parse(response.xhr.response)
-  console.log('New invoice ID: ', result.data.id)
   if (result.success) {
     router.push({
       name: "invoiceDetail",

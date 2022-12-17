@@ -15,7 +15,6 @@ const writersTable = ref()
 
 // Define functions
 function handleItemCreated(item: any) {
-  console.log('New item created. Reload table!')
   writersTable.value.reload()
 }
 

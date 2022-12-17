@@ -145,10 +145,6 @@ function filterWriter(event: AutoCompleteCompleteEvent) {
 
 function handleSubmit(isFormValid: boolean) {
   submitted.value = true
-  v$.value.$validate().then(result => {
-    console.log('Validation result : ', v$.value.$errors)
-
-  })
   if (isFormValid) {
     saveSettings()
   } else {
@@ -164,7 +160,6 @@ function saveSettings() {
       if (response.data.id > 0) {
         emits('itemCreated', response.data)
         submitted.value = false
-        clearFormData()
       } else {
 
         if (response.data.success == false) {
@@ -178,10 +173,6 @@ function saveSettings() {
   })
 }
 
-function clearFormData() {
-  console.log('clear form data')
-}
-
 function buildData(): any {
   const x = {
     projectRootId: formData.rootProject?.id,
@@ -191,11 +182,6 @@ function buildData(): any {
     tagId: formData.tag?.id,
     description: formData.description
   }
-
-  console.log('Data to write:', x)
-  console.log('Form data:', formData)
-
-
   return x
 }
 

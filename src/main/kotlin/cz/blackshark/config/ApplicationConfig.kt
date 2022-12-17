@@ -9,5 +9,6 @@ interface ApplicationConfig {
     @WithDefault("yyyy-MM-dd")
     fun jaxRsDateFormat(): String
     fun fileStoragePath(): String
+    fun keycloakConfig(): String
 
 }

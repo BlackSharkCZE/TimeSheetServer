@@ -22,7 +22,6 @@ const keycloak = inject<Keycloak>('keycloak')
 
 // Define computed
 const hasAnyRole = computed(() => {
-  console.log()
   return props.roles.filter(role => {
     return keycloak?.hasRealmRole(role)
   }).length > 0

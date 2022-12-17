@@ -77,7 +77,6 @@ function loadCompanies() {
 
 // Define hooks
 watch(() => props.modelValue, (current, prev) => {
-  console.log('ModelValue for ProjectField changed to ', current)
   mv.value = current
 })
 

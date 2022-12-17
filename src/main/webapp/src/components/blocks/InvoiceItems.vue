@@ -159,7 +159,7 @@ function callRemoteDelete(item: InvoiceItem) {
         if (response.status >= 200 && response.status <= 299) {
           emits('itemCreated', response.data)
         } else {
-          console.log('Can not delete item from invoice!')
+          console.error('Can not delete item from invoice!')
         }
       })
 }
