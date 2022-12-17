@@ -20,6 +20,8 @@ import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.min.css'
 
 import {useUserStore} from "@/stores/UserStore";
+import {useDataStore} from "@/stores/DataStore";
+
 import {UserInfo, useUserInfo} from "@/stores/InfoStore";
 
 const app: Vue.App = createApp(App)
@@ -35,6 +37,7 @@ const app: Vue.App = createApp(App)
                 .use(pinia)
             const store = useUserStore()
             const userInfo = useUserInfo()
+            const dataStore = useDataStore()
             app.config.globalProperties.axios.interceptors.request.use((config: AxiosRequestConfig) => {
                 config.headers = {
                     'Content-type': 'application/json',
@@ -50,6 +53,8 @@ const app: Vue.App = createApp(App)
             }).then(response => {
                 store.storeUser(response.data)
             })
+
+            dataStore.load()
 
             const from = moment().add(0, 'month').startOf('month').format('YYYY-MM-DD')
             const to = moment().add(0, 'month').endOf('month').format('YYYY-MM-DD')

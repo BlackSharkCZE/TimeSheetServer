@@ -3,7 +3,9 @@
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
   <Message v-if="error.show" severity="error" :closable="true" @close="error.show=false">{{error.message}}: {{error.show}}</Message>
 
-  <TimelineRowEdit v-model:display="displayEdit" v-model:row="selectedRow"></TimelineRowEdit>
+  <TimelineRowEdit
+      @update:row="handleRowUpdate"
+      v-model:display="displayEdit" v-model:row="selectedRow"></TimelineRowEdit>
 
   <DataTable
       class="p-datatable-sm"
@@ -89,12 +91,13 @@ import WritersMarker from "@/components/blocks/WritersMarker.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import {ErrorType, RemoteWriterTimestamp} from "@/components/blocks/Types";
 import TimelineRowEdit from "@/components/blocks/TimelineRowEdit.vue";
+import {TimelineType} from "@/components/blocks/TimelineDefs";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
 
 // Define properties
-const timelines = ref<any[]>([])
+const timelines = ref<TimelineType[]>([])
 const loading = ref<boolean>(true)
 const dt = ref(null);
 const pageIndex = ref<number>(0)
@@ -116,8 +119,12 @@ onMounted(() => {
 })
 
 // Define methods
+
+function handleRowUpdate(row: TimelineType) {
+  loadData()
+}
+
 function reloadTable() {
-  console.log('Reload table invoked!')
   loadData(mapFilterToDataTablePayload(filters.value))
 }
 
@@ -125,6 +132,7 @@ function writeRowToRemote(data: any) {
   const id = data.id
   axios?.post("/timeline/remote-write/" + id, {}).then(response => {
     console.log(response.data)
+    // TODO update parser according to real response from backend Map<String, RestResponse<RemoteWriteTimestampEntity?>?>
     if (response.status === 200 && response.data.success === true) {
       processSuccessWrite(response.data)
     } else {

@@ -6,6 +6,12 @@ export type GemProject = {
     tags: Array<GemProject> | null,
 }
 
+export type TimesheetProject = {
+    id: number,
+    name: string,
+    company: Company
+}
+
 export type Company = {
     bankAccountNumber: string
     castObce: string,

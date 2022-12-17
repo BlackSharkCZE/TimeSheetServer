@@ -17,7 +17,7 @@ class TimelineBean @Inject constructor(
     internal val projectRepository: ProjectRepository
 ) {
 
-    fun saveUpdate(timelineVo: TimelineVo, subjectEntity: SubjectEntity): OperationResult {
+    fun saveUpdate(timelineVo: TimelineVo, subjectEntity: SubjectEntity): OperationResult<TimelineVo> {
 
         val validationResult = validate(timelineVo, subjectEntity)
         if (validationResult.isNotEmpty()) {
@@ -50,7 +50,7 @@ class TimelineBean @Inject constructor(
                         listOf(ValidationError(TimelineVo::class.java, "id", "Save TimelineEntity failed"))
                     )
                 } else {
-                    return OperationResult(true, entity.id, listOf())
+                    return OperationResult(true, entity.id, listOf(), timelineVo.copy(id = entity.id))
                 }
             }
         }

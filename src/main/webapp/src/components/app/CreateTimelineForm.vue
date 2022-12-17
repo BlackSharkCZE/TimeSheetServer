@@ -98,17 +98,18 @@ import Message from 'primevue/message'
 import Panel from 'primevue/panel'
 
 import {AxiosStatic} from "axios";
-import {inject, onMounted, reactive, ref, defineEmits} from "vue";
+import {defineEmits, inject, onMounted, reactive, ref} from "vue";
 import useVuelidate from "@vuelidate/core";
-import {minValue, required} from "@vuelidate/validators";
 import InputField from "@/components/blocks/InputField.vue";
 import ProjectField from "@/components/blocks/ProjectField.vue";
 
 // Define types
 import {FormDataType, TimelineRules} from "@/components/blocks/TimelineDefs";
+import moment from "moment";
 
 // Define component data
 const formData = reactive<FormDataType>({
+  id: null,
   project: null,
   date: new Date(),
   fromTime: null,
@@ -191,15 +192,24 @@ function clearFormData() {
 
 function buildData(): any {
 
-  const fromTime: Date = new Date(formData.date as Date)
-  fromTime.setHours((formData.fromTime as Date).getHours(), (formData.fromTime as Date).getMinutes())
-  const toTime: Date = new Date(formData.date as Date)
-  toTime.setHours((formData.toTime as Date).getHours(), (formData.toTime as Date).getMinutes())
+  const input = formData.date?.getFullYear() + "-" + (1 + (formData.date?.getMonth() || 0)).toString(10).padStart(2, '0') + "-" +
+      formData.date?.getDate().toString(10).padStart(2, '0')
+
+  const fromTimeM = moment(input, 'YYYY-MM-DD')
+
+  fromTimeM.set('hour', (formData.fromTime as Date).getHours())
+  fromTimeM.set('minute', (formData.fromTime as Date).getMinutes())
+  const fromTruncated = fromTimeM.startOf('minute').toISOString(true)
+
+  const toTimeM = moment(input, 'YYYY-MM-DD')
+  toTimeM.set('hour', (formData.toTime as Date).getHours())
+  toTimeM.set('minute', (formData.toTime as Date).getMinutes())
+  const toTimeTruncated = toTimeM.startOf('minute').toISOString(true)
 
   const x = {
     projectId: formData.project.id,
-    fromTime: fromTime.toISOString(),
-    toTime: toTime.toISOString(),
+    fromTime: fromTruncated,
+    toTime: toTimeTruncated,
     pause: formData.pause,
     workTime: 0,
     note: formData.note

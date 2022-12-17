@@ -7,14 +7,17 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 ### TODO
 
 * `07.12.2022`: ( SOLVED ) Execute remote writer does not mark row as wrote without table refresh
-* `08.12.2022`: Create script to database backup.
+* `08.12.2022`: ( SOLVED ) Create script to database backup.
 * `08.12.2022`: ( SOLVED ) Pridat zpetnou vazbu pri zapisu vykazu do vzdaleneho systemu
 * `09.12.2022`: ( SOLVED ) Spatne detekovany prekryv casu, kdyz jsou to ruzne projekty (chyba dat v databazi - pridane vteriny u timestammp)
-* `09.12.2022`: Editace timeline
+* `09.12.2022`: ( SOLVED )Editace timeline
 * `09.12.2022`: (SOLVED ) Spatne informace v summary v prvem hornim rohu
 * `13.12.2022`: Add valid keycloak configuratio during build (dev and remote) 
-* `14.12.2022`: Add remote writer does not sent all required data 
- 
+* `14.12.2022`: ( SOLVED ) Add remote writer does not send all required data
+* `14.12.2022`: ( SOLVED? ) Do GEM timesheet je spatne zapsany cas (posunuty o hodinu)
+* `14.12.2022`: Volani REST rozhrani pro remote write vraci http status 500, nezobrazi chybu a data jsou zapsana: ListTimelineTable.vue:130
+* `15.12.2022`: ( SOLVED ) Pri zavreni editacniho okna radku pomoci krizku vpravo nahore, neni jiz mozne dalsi okno otevrit
+* `16.12.2022`: ( SOLVED ) Update timeline by mel vracet cely radek tak jak je vraceny ze zdroje pro tabulku
 
 ## Running the application in dev mode
 

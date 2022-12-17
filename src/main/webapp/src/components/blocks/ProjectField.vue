@@ -26,7 +26,6 @@
     <small v-if="vualidate.$invalid && submitted"
            class="p-error">{{ vualidate.required.$message.replace('Value', props.label) }}</small>
   </div>
-
 </template>
 
 <script lang="ts" setup>
@@ -78,11 +77,13 @@ function loadCompanies() {
 
 // Define hooks
 watch(() => props.modelValue, (current, prev) => {
+  console.log('ModelValue for ProjectField changed to ', current)
   mv.value = current
 })
 
 onMounted(() => {
   loadCompanies()
+  mv.value = props.modelValue
 })
 
 

@@ -49,21 +49,18 @@ class TimelineController: AbstractBaseController() {
     @Inject
     lateinit var remoteWriteSettingsBean: RemoteWriteSettingsBean
 
-    /*@Inject
-    private lateinit var jwtToken: JsonWebToken*/
-
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("remote-write/{timelineId}")
-    fun remoteWrite(@PathParam("timelineId") timelineId: Long): RestResponse<Map<String, RestResponse<RemoteWriteTimestampEntity?>?>> {
-        return RestResponse(true, null, remoteWriterBean.write(timelineId), null)
+    fun remoteWrite(@PathParam("timelineId") timelineId: Long): Map<String, RestResponse<RemoteWriteTimestampEntity?>?> {
+        return  remoteWriterBean.write(timelineId)
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun saveTimeline(@Valid timeline: TimelineVo): OperationResult {
+    fun saveTimeline(@Valid timeline: TimelineVo): OperationResult<TimelineVo> {
 
         return timelineBean.saveUpdate(timeline, retrieveSubject())
     }
@@ -95,7 +92,7 @@ class TimelineController: AbstractBaseController() {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun updateTimeline(@Valid timeline: TimelineVo): OperationResult {
+    fun updateTimeline(@Valid timeline: TimelineVo): OperationResult<TimelineVo> {
         return timelineBean.saveUpdate(timeline, retrieveSubject())
     }
 
