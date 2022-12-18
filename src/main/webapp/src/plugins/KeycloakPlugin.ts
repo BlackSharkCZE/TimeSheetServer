@@ -6,7 +6,7 @@ const keycloakOptions: KeycloakInitOptions = {
     redirectUri: window.location.href,
     silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
 }
-const location = 'keycloak-config'
+const location = '/keycloak-config'
 const keycloak = new Keycloak(location)
 
 const keycloakPlugin: Plugin = {
