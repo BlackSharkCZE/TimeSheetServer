@@ -133,15 +133,17 @@ class InvoiceUploadBean @Inject constructor(
         }
         val completePath = "$storePath/$filePartPath"
         val path = File(completePath)
+        val filePath = "$completePath/${invoiceRequest.fileName}"
         return with(path) {
             val dirOK = this.exists() || this.mkdirs()
             if (dirOK) {
-                val filePath = "$completePath/${invoiceRequest.fileName}"
+//                val filePath = "$completePath/${invoiceRequest.fileName}"
                 FileInputStream(invoiceRequest.file).use {
                     Files.write(Paths.get(filePath), it.readBytes(), StandardOpenOption.CREATE_NEW)
                 }
                 filePartPath+"/${invoiceRequest.fileName}"
             } else {
+                logger.errorf("Can not create directory %s. DirOK: %s, DirExists: %s, MkDir: %s", filePath, this.exists(), this.mkdirs())
                 throw InternalServerErrorException("Can not create directory for the store!")
             }
         }

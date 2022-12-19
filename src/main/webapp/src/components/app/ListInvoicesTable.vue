@@ -50,7 +50,7 @@
       </template>
     </Column>
 
-    <Column header="ISSUER" field="recipient">
+    <Column header="RECIPIENT" field="recipient">
       <template #body="{data}">{{ data.recipientCompany.companyName }}</template>
       <template #filter="{filterModel,filterCallback}">
         <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
