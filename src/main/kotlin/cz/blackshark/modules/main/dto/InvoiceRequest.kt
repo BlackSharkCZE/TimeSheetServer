@@ -29,9 +29,7 @@ class InvoiceRequest {
 
     @FormParam("invoiceNumber")
     @PartType(MediaType.TEXT_PLAIN)
-    @NotNull
-    @NotEmpty
-    lateinit var invoiceNumber: String
+    var invoiceNumber: String? = null
 
     @FormParam("issueDate")
     @PartType(MediaType.TEXT_PLAIN)

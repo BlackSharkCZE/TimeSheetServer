@@ -109,7 +109,7 @@ class ApplicationDatatableController: AbstractBaseController() {
                 sort,
                 buildParams(filterMap, InvoiceEntity::class)
             ) { it }
-            else -> throw BadRequestException("Invalid request to read data for datatable. Unknow resource")
+            else -> throw BadRequestException("Invalid request to read data for datatable. Unknown resource")
         }
     }
 

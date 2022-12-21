@@ -31,7 +31,8 @@ class InvoiceUploadBean @Inject constructor(
     val fileSavingBean: FileSavingBean,
     val config: ApplicationConfig,
     val companyRepository: CompanyRepository,
-    val invoiceRepository: InvoiceRepository
+    val invoiceRepository: InvoiceRepository,
+    val invoiceNumberGenerator: InvoiceNumberGenerator
 ) {
 
     fun processUpload(body: MultipartFormDataInput): BeanProcessingResult {
@@ -109,7 +110,7 @@ class InvoiceUploadBean @Inject constructor(
         val path = if (request.file != null) saveDataFile(request, issuer); else null
         // 2. create entity
         val invoiceEntity = InvoiceEntity().apply {
-            this.number = request.invoiceNumber
+            this.number = request.invoiceNumber ?: invoiceNumberGenerator.getNextNumber(issuer.id!!)
             this.issuerCompany = issuer
             this.recipientCompany = recipient
             this.issueDate = LocalDate.parse(request.issueDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"))

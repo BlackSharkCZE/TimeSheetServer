@@ -1,0 +1,32 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="jiri">
+        <createView viewName="v_earn_history" replaceIfExists="true">
+            select gen_random_uuid() as uuid,
+                   foo.issuer_id,
+                   issue_date,
+                   payment_date,
+                   price,
+                   total_price,
+                   recipient_id,
+                   recipient_name
+            from (select i.issuer_id,
+                         i.issue_date::date,
+                          i.payment_date::date,
+                          sum(ii.price)       as price,
+                         sum(ii.total_price) as total_price,
+                         i.recipient_id,
+                         c.company_name      as recipient_name
+
+                  from invoice i
+                           join invoice_item ii on i.id = ii.invoice_int_id
+                           join company c on i.recipient_id = c.id
+                  group by i.issue_date, i.payment_date, i.recipient_id, c.company_name, i.issuer_id
+                  order by i.payment_date desc) foo
+        </createView>
+    </changeSet>
+</databaseChangeLog>

@@ -90,7 +90,7 @@ import {AxiosStatic} from "axios";
 import {inject, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import useVuelidate from "@vuelidate/core";
-import {required} from "@vuelidate/validators";
+import {required, requiredIf} from "@vuelidate/validators";
 import InputField from "@/components/blocks/InputField.vue";
 import CompanyField from "@/components/blocks/CompanyField.vue";
 import {Company} from "@/components/blocks/Types";
@@ -102,6 +102,10 @@ import FileUpload, {
 } from "primevue/fileupload";
 import moment from "moment/moment";
 import Keycloak from "keycloak-js";
+import {useUserStore} from "@/stores/UserStore";
+
+// Define stores
+const userStore = useUserStore()
 
 // Define types
 type FormData = {
@@ -128,7 +132,11 @@ const submitted = ref<boolean>(false)
 const rules = {
   issuer: {required},
   recipient: {required},
-  invoiceNumber: {required},
+  invoiceNumber: {required: requiredIf( () => {
+    if (formData.issuer == null) return true;
+    if (formData.issuer.id != userStore.userDetail.company.id) return true;
+    return false
+    })},
   issueDate: {required},
   paymentDate: {required},
   vatPaymentDate: {required}
@@ -186,7 +194,9 @@ function beforeUploadHandler(event: FileUploadBeforeUploadEvent) {
   // event.xhr.open()
   event.formData.set("issuerID", (formData?.issuer?.id?.toString() as string))
   event.formData.set("recipientID", (formData?.recipient?.id?.toString() as string))
-  event.formData.set("invoiceNumber", formData.invoiceNumber as string)
+  if (formData.invoiceNumber != null && formData.invoiceNumber.length > 0) {
+    event.formData.set("invoiceNumber", formData.invoiceNumber as string)
+  }
   event.formData.set("issueDate", moment(formData.issueDate).format("YYYY-MM-DD"))
   event.formData.set("paymentDate", moment(formData.paymentDate).format("YYYY-MM-DD"))
   event.formData.set("vatPaymentDate", moment(formData.vatPaymentDate).format("YYYY-MM-DD"))

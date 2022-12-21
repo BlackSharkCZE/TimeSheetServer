@@ -56,7 +56,14 @@ const items = ref([
       {label: 'Manage rates', to: '/private/rate'},
       {label: 'Manage remote writers', to: '/private/writers'}
     ]
+  },
+  {
+    label: 'Statistic', icon: 'pi pi-fw pi-wrench',
+    items: [
+      {label: 'Money flow', to: '/private/money-flow'}
+    ]
   }
+
 ])
 
 </script>
