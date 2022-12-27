@@ -29,4 +29,43 @@
                   order by i.payment_date desc) foo
         </createView>
     </changeSet>
+
+    <changeSet id="2" author="jiri">
+        <createSequence sequenceName="payments_id_seq" cacheSize="1" startValue="1" incrementBy="1" cycle="false" />
+        <createTable tableName="payments">
+            <column name="id" defaultValueSequenceNext="payments_id_seq" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="payment_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="payment" type="numeric(9, 2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="company_id" type="int">
+                <constraints referencedTableName="company"
+                             foreignKeyName="payment_company_fk"
+                             referencedColumnNames="id"
+                             nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="jiri">
+        <createView viewName="v_balance" replaceIfExists="true">
+            select gen_random_uuid() as uuid,income.issuer_id, outcome.company_id, income._date, income.income, outcome.outcome, income.income + outcome.outcome as balance
+            from (select (to_char(issue_date, 'YYYY-MM') || '-01') ::date as _date, sum(total_price) as income, issuer_id
+                  from v_earn_history
+                  group by _date, issuer_id
+                  order by _date) income
+                     join (select (to_char(payment_date, 'YYYY-MM') || '-01') ::date as _date, sum(payment)::numeric(8, 2) outcome, company_id
+                           from payments
+                           group by (to_char(payment_date, 'YYYY-MM') || '-01')::date, company_id
+                           order by _date) outcome on outcome._date = income._date and income.issuer_id = outcome.company_id
+        </createView>
+    </changeSet>
+
 </databaseChangeLog>

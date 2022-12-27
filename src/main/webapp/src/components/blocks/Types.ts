@@ -80,4 +80,22 @@ export type ErrorType = {
     message: string | null
 }
 
+export type PaymentType = {
+    id: number,
+    paymentDate: Date,
+    payment: number,
+    companyId: number
+}
+
+export type BalanceType = {
+    uuid: string
+    issuerId: number
+    companyId: number
+    month: Date
+    income: number
+    outcome: number
+    balance: number
+}
+
+
 export const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec']

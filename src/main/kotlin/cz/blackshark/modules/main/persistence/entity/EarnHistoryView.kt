@@ -41,4 +41,5 @@ class EarnHistoryView : PanacheEntityBase(), Serializable {
     @Column(name = "recipient_name")
     var recipientName: String = ""
 
+
 }

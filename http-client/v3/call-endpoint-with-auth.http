@@ -16,7 +16,7 @@ client.test("Get Access Token for user", function() {
 
 ###
 
-GET https://{{service-addr}}/subject
+GET http://{{service-addr}}/subject
 Accept: application/json
 Authorization: Bearer {{access_token}}
 
@@ -29,7 +29,7 @@ client.test("Call endpoint with access token", function() {
 ###
 
 
-GET https://{{service-addr}}/subject
+GET http://{{service-addr}}/subject
 Accept: application/json
 
 > {%
