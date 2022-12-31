@@ -12,8 +12,8 @@ import cz.blackshark.modules.main.persistence.RepositoryResult
 import cz.blackshark.modules.main.persistence.dao.ReportDao
 import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.RemoteWriteTimestampEntity
-import cz.blackshark.modules.main.persistence.repository.ProjectRepository
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
+import io.quarkus.security.Authenticated
 import io.vertx.core.json.JsonObject
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -28,16 +28,14 @@ import kotlin.streams.toList
 
 
 @Path("/timeline")
-class TimelineController {
+@Authenticated
+class TimelineController: AbstractBaseController() {
 
     @Inject
     lateinit var timelineRepository: TimelineRepository
 
     @Inject
     lateinit var timelineDao: TimelineDao
-
-    @Inject
-    lateinit var projectRepository: ProjectRepository
 
     @Inject
     lateinit var reportDao: ReportDao
@@ -54,16 +52,17 @@ class TimelineController {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("remote-write/{timelineId}")
-    fun remoteWrite(@PathParam("timelineId") timelineId: Long): RestResponse<Map<String, RestResponse<RemoteWriteTimestampEntity?>?>> {
-        return RestResponse(true, null, remoteWriterBean.write(timelineId), null)
+    fun remoteWrite(@PathParam("timelineId") timelineId: Long): Map<String, RestResponse<RemoteWriteTimestampEntity?>?> {
+        return  remoteWriterBean.write(timelineId)
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun saveTimeline(@Valid timeline: TimelineVo): OperationResult {
-        return timelineBean.saveUpdate(timeline)
+    fun saveTimeline(@Valid timeline: TimelineVo): OperationResult<TimelineVo> {
+
+        return timelineBean.saveUpdate(timeline, retrieveSubject())
     }
 
     @DELETE
@@ -93,8 +92,8 @@ class TimelineController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun updateTimeline(@Valid timeline: TimelineVo): OperationResult {
-        return timelineBean.saveUpdate(timeline)
+    fun updateTimeline(@Valid timeline: TimelineVo): OperationResult<TimelineVo> {
+        return timelineBean.saveUpdate(timeline, retrieveSubject())
     }
 
 
@@ -148,10 +147,10 @@ class TimelineController {
         @QueryParam("from") fromDate: LocalDate?,
         @QueryParam("to") toDate: LocalDate?
     ): List<EarningVo> {
-
+        val subject = retrieveSubject()
         val selectFromDate = fromDate ?: LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
         val selectToDate = toDate ?: LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
-        return reportDao.getEarning(selectFromDate, selectToDate)
+        return reportDao.getEarning(selectFromDate, selectToDate, subject)
     }
 
     @GET

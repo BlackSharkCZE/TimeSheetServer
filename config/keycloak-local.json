@@ -1,0 +1,10 @@
+{
+  "realm": "Timesheet3",
+  "auth-server-url": "http://localhost:8480/",
+  "ssl-required": "external",
+  "resource": "TimesheetWebApp",
+  "public-client": true,
+  "verify-token-audience": true,
+  "use-resource-role-mappings": true,
+  "confidential-port": 0
+}

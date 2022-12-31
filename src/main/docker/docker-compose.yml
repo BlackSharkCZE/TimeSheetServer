@@ -1,0 +1,55 @@
+version: '3.6'
+
+services:
+  ts-app-psql-database:
+    image: postgres:14
+    container_name: ts-app-psql-database
+    restart: 'no'
+    ports:
+      - '25432:5432'
+    networks:
+      - timesheet-3-net
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: postgres
+  ts-keycloak-psql-database:
+    image: postgres:14
+    container_name: ts-keycloak-psql-database
+    restart: 'no'
+    ports:
+      - '15432:5432'
+    networks:
+      - timesheet-3-net
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: timesheet-keycloak
+      POSTGRES_USER: timesheet-3
+  ts-timesheet-3-keycloak:
+    container_name: timesheet-3-keycloak
+    image: quay.io/keycloak/keycloak:19.0.2
+    depends_on:
+      - ts-keycloak-psql-database
+    ports:
+      - "8480:8080"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/realms/Timesheet3" ]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    networks:
+      - timesheet-3-net
+    command: ["start-dev", "--import-realm"]
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: ts-keycloak-psql-database
+      DB_DATABASE: timesheet-keycloak
+      DB_USER: timesheet-3
+      DB_SCHEMA: public
+      DB_PASSWORD: 123456
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+networks:
+  timesheet-3-net:

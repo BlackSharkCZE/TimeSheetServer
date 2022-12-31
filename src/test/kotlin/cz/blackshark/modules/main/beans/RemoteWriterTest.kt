@@ -7,6 +7,7 @@ import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import io.quarkus.test.Mock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.mockito.InjectMock
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
@@ -14,6 +15,7 @@ import org.mockito.kotlin.whenever
 import javax.inject.Inject
 
 @QuarkusTest
+@Disabled
 class RemoteWriterTest {
 
     @Inject

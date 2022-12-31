@@ -7,6 +7,7 @@ import cz.blackshark.modules.main.beans.RemoteWriteSettingsBean
 import cz.blackshark.modules.main.converter.CompanyMapper
 import cz.blackshark.modules.main.converter.ProjectMapper
 import cz.blackshark.modules.main.dto.TimelineVo
+import cz.blackshark.modules.main.http.controller.AbstractBaseController
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.entity.ProjectEntity
@@ -19,6 +20,7 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase
 import io.quarkus.panache.common.Page
 import io.quarkus.panache.common.Sort
+import io.quarkus.security.Authenticated
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import java.io.InvalidClassException
@@ -30,30 +32,44 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import javax.inject.Inject
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.SecurityContext
+import kotlin.jvm.Throws
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmErasure
 
 @Path("/datatable")
 @Produces(MediaType.APPLICATION_JSON)
-class ApplicationDatatableController @Inject constructor(
-    val timelineRepository: TimelineRepository,
-    val invoiceRepository: InvoiceRepository,
-    val companyRepository: CompanyRepository,
-    val projectRepository: ProjectRepository,
-    val remoteWriterSettingsBean: RemoteWriteSettingsBean
-) {
+@Authenticated
+class ApplicationDatatableController: AbstractBaseController() {
+
+    @Inject
+    lateinit var timelineRepository: TimelineRepository
+    @Inject
+    lateinit var invoiceRepository: InvoiceRepository
+    @Inject
+    lateinit var companyRepository: CompanyRepository
+    @Inject
+    lateinit var projectRepository: ProjectRepository
+    @Inject
+    lateinit var remoteWriterSettingsBean: RemoteWriteSettingsBean
+
 
     @Path("{resource}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Throws(NotAuthorizedException::class)
     fun getTimeline(
+        @Context securityContext: SecurityContext,
         @PathParam("resource") resource: String,
         @QueryParam("page") @DefaultValue("0") page: Int,
         @QueryParam("pageSize") @DefaultValue("25") pageSize: Int,
         @QueryParam("sort") sort: String,
         filter: String
     ): DataTableResponse<Any> {
+
+        val subject = retrieveSubject()
 
         val filterJson = Json.decodeValue(filter) as JsonObject  // prichozi JSON String
         val filterMap = mutableMapOf<String, FilterSetting>()    // pozadovana mapa
@@ -75,6 +91,7 @@ class ApplicationDatatableController @Inject constructor(
                 buildParams(filterMap, CompanyEntity::class)
             ) { en -> CompanyMapper.convertBase(en) }
             "timeline" -> {
+                filterMap["subject"] = FilterSetting("=", subject.id!!, "id")
                 buildDataTableResult(
                     timelineRepository,
                     page, pageSize,
@@ -92,7 +109,7 @@ class ApplicationDatatableController @Inject constructor(
                 sort,
                 buildParams(filterMap, InvoiceEntity::class)
             ) { it }
-            else -> throw BadRequestException("Invalid request to read data for datatable. Unknow resource")
+            else -> throw BadRequestException("Invalid request to read data for datatable. Unknown resource")
         }
     }
 
@@ -109,14 +126,14 @@ class ApplicationDatatableController @Inject constructor(
                 .findAll(Sort.by(sort, Sort.Direction.Descending))
                 .page(Page.of(page, pageSize))
             val rows: List<O> = query.list<I>().map { convert.invoke(it) }
-            val paginator = Paginator(query.pageCount(), pageSize, page)
+            val paginator = Paginator(query.pageCount(), pageSize, page, query.count())
             return DataTableResponse(rows, paginator)
         } else {
             val query: PanacheQuery<I> = repository
                 .find(params.first, Sort.by(sort, Sort.Direction.Descending), params.second)
                 .page(Page.of(page, pageSize))
             val rows: List<O> = query.list<I>().map { convert.invoke(it) }
-            val paginator = Paginator(query.pageCount(), pageSize, page)
+            val paginator = Paginator(query.pageCount(), pageSize, page, query.count())
             return DataTableResponse(rows, paginator)
         }
 

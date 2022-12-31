@@ -4,11 +4,16 @@ import cz.blackshark.modules.commons.model.RestResponse
 import cz.blackshark.modules.main.beans.InvoiceBean
 import cz.blackshark.modules.main.beans.InvoiceUploadBean
 import cz.blackshark.modules.main.beans.JasperReportGenerator
+import cz.blackshark.modules.main.dto.InvoiceRequest
 import cz.blackshark.modules.main.dto.InvoiceSummaryPreviewVo
+import cz.blackshark.modules.main.dto.RequisitionRequest
+import cz.blackshark.modules.main.exceptions.CompanyExcetption
 import cz.blackshark.modules.main.persistence.dao.InvoiceDao
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
+import io.quarkus.security.Authenticated
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput
 import org.jboss.resteasy.spi.HttpResponseCodes
 import java.math.BigDecimal
@@ -19,18 +24,32 @@ import javax.validation.Valid
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import kotlin.jvm.Throws
 
 @Path("/invoice")
-class InvoiceController @Inject constructor(
-    val logger: org.jboss.logging.Logger,
-    val invoiceRepository: InvoiceRepository,
-    val companyRepository: CompanyRepository,
-    val invoiceDao: InvoiceDao,
-    val invoiceBean: InvoiceBean,
-    val jasperReportGenerator: JasperReportGenerator,
-    val invoiceDetailController: InvoiceDetailController,
-    val invoiceUploadBean: InvoiceUploadBean
-) {
+@Authenticated
+class InvoiceController : AbstractBaseController() {
+
+
+    @Inject
+    lateinit var logger: org.jboss.logging.Logger
+    @Inject
+    lateinit var invoiceRepository: InvoiceRepository
+    @Inject
+    lateinit var companyRepository: CompanyRepository
+    @Inject
+    lateinit var invoiceDao: InvoiceDao
+    @Inject
+    lateinit var invoiceBean: InvoiceBean
+    @Inject
+    lateinit var jasperReportGenerator: JasperReportGenerator
+    @Inject
+    lateinit var invoiceDetailController: InvoiceDetailController
+    @Inject
+    lateinit var invoiceUploadBean: InvoiceUploadBean
+    @Inject
+    lateinit var invoiceGenerateController: InvoiceGenerateController
+
 
     @Path("detail")
     fun getInvocieDetail(): InvoiceDetailController {
@@ -108,6 +127,11 @@ class InvoiceController @Inject constructor(
         )
     }
 
+    @Path("/v2")
+    fun getInvoiceGenerate(): InvoiceGenerateController {
+        return invoiceGenerateController
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/generate")
@@ -148,6 +172,22 @@ class InvoiceController @Inject constructor(
     @Transactional
     fun uploadInvoice(body: MultipartFormDataInput): RestResponse<InvoiceEntity> {
         val res = invoiceUploadBean.processUpload(body)
+        return if (res.isError) {
+            RestResponse(false, res.errorCode, null, null)
+        } else {
+            RestResponse(true, "Invoice created", res.entity, HttpResponseCodes.SC_OK)
+        }
+    }
+
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("upload2")
+    @Transactional
+    @Throws(CompanyExcetption::class)
+    fun uploadInvoiceV2(@Valid @MultipartForm invoiceRequest: InvoiceRequest): RestResponse<InvoiceEntity> {
+        val res = invoiceUploadBean.processUpload2(invoiceRequest)
         return if (res.isError) {
             RestResponse(false, res.errorCode, null, null)
         } else {

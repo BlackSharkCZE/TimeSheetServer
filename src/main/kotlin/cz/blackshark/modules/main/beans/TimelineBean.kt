@@ -4,10 +4,12 @@ import cz.blackshark.modules.main.domains.OperationResult
 import cz.blackshark.modules.main.domains.ValidationError
 import cz.blackshark.modules.main.dto.TimelineVo
 import cz.blackshark.modules.main.factories.TimelineEntityFactory
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.modules.main.persistence.repository.ProjectRepository
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
+import javax.ws.rs.InternalServerErrorException
 
 @ApplicationScoped
 class TimelineBean @Inject constructor(
@@ -15,8 +17,9 @@ class TimelineBean @Inject constructor(
     internal val projectRepository: ProjectRepository
 ) {
 
-    fun saveUpdate(timelineVo: TimelineVo): OperationResult {
-        val validationResult = validate(timelineVo)
+    fun saveUpdate(timelineVo: TimelineVo, subjectEntity: SubjectEntity): OperationResult<TimelineVo> {
+
+        val validationResult = validate(timelineVo, subjectEntity)
         if (validationResult.isNotEmpty()) {
             return OperationResult(false, null, validationResult)
         } else {
@@ -37,7 +40,7 @@ class TimelineBean @Inject constructor(
                         pause = timelineVo.pause
                     }
                 } else {
-                    TimelineEntityFactory.create(timelineVo, project.get())
+                    TimelineEntityFactory.create(timelineVo, project.get(), subjectEntity)
                 }
                 timelineRepository.persistAndFlush(entity)
                 if (entity.id == null) {
@@ -47,21 +50,24 @@ class TimelineBean @Inject constructor(
                         listOf(ValidationError(TimelineVo::class.java, "id", "Save TimelineEntity failed"))
                     )
                 } else {
-                    return OperationResult(true, entity.id, listOf())
+                    return OperationResult(true, entity.id, listOf(), timelineVo.copy(id = entity.id))
                 }
             }
         }
     }
 
-    fun validate(timelineVo: TimelineVo): List<ValidationError> {
+    fun validate(timelineVo: TimelineVo, subjectEntity: SubjectEntity): List<ValidationError> {
         val res = mutableListOf<ValidationError>()
 
-        if (timelineRepository.isTimeAlreadyUsed(timelineVo.fromTime, timelineVo.id)) {
-            res.add(ValidationError(TimelineVo::class.java, "fromTime", "fromTime is alredy used in timeline"))
+        val subjectId =
+            subjectEntity.id ?: throw InternalServerErrorException("Can not validate timeline. SubjectID is null!")
+
+        if (timelineRepository.isTimeAlreadyUsed(timelineVo.fromTime, timelineVo.id, subjectId)) {
+            res.add(ValidationError(TimelineVo::class.java, "fromTime", "fromTime is already used in timeline"))
         }
 
-        if (timelineRepository.isTimeAlreadyUsed(timelineVo.toTime, timelineVo.id)) {
-            res.add(ValidationError(TimelineVo::class.java, "toTime", "toTime is alredy used in timeline"))
+        if (timelineRepository.isTimeAlreadyUsed(timelineVo.toTime, timelineVo.id, subjectId)) {
+            res.add(ValidationError(TimelineVo::class.java, "toTime", "toTime is already used in timeline"))
         }
 
         return res

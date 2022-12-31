@@ -4,7 +4,6 @@ import cz.blackshark.modules.main.persistence.Hql
 import cz.blackshark.modules.main.persistence.RepositoryResult
 import cz.blackshark.modules.main.persistence.Sql
 import cz.blackshark.modules.main.persistence.entity.TimelineEntity
-import io.quarkus.hibernate.orm.panache.Panache
 import io.quarkus.hibernate.orm.panache.PanacheQuery
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase
 import io.quarkus.panache.common.Page
@@ -13,22 +12,25 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.temporal.TemporalAdjuster
 import java.time.temporal.TemporalAdjusters
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class TimelineRepository : PanacheRepositoryBase<TimelineEntity, Long> {
 
-    fun isTimeAlreadyUsed(time: ZonedDateTime, exceptionId: Long?): Boolean {
+    fun isTimeAlreadyUsed(time: ZonedDateTime, exceptionId: Long?, subjectId: Long): Boolean {
         val c = if (exceptionId == null) {
-            count(Hql.COUNT_BY_USED_TIME, mapOf("time" to time))
+            count(Hql.COUNT_BY_USED_TIME, mapOf("time" to time, "subject" to subjectId))
         } else {
-            count(Hql.COUNT_BY_USED_TIME_WITH_ID_EXCEPTION, mapOf("time" to time, "id" to exceptionId))
+            count(
+                Hql.COUNT_BY_USED_TIME_WITH_ID_EXCEPTION,
+                mapOf("time" to time, "id" to exceptionId, "subject" to subjectId)
+            )
         }
         return c > 0
     }
 
+    @Deprecated(message = "Unused method")
     fun findByTimeRange(fromTime: ZonedDateTime, toTime: ZonedDateTime): List<TimelineEntity> {
         val pQuery: PanacheQuery<TimelineEntity> = find(
             Hql.FIND_TIMELINE_BETWEEN,
@@ -65,11 +67,13 @@ class TimelineRepository : PanacheRepositoryBase<TimelineEntity, Long> {
      * Return current worktime for the given month
      */
     fun currentWorkTimeInMonth(date: LocalDate): BigDecimal {
-        return BigDecimal.valueOf(entityManager
-            .createNativeQuery(Sql.WorkTime.WORK_TIME)
-            .setParameter("fromTime",date.withDayOfMonth(1))
-            .setParameter("toTime", date.with(TemporalAdjusters.lastDayOfMonth()))
-            .singleResult as Double)
+        return BigDecimal.valueOf(
+            entityManager
+                .createNativeQuery(Sql.WorkTime.WORK_TIME)
+                .setParameter("fromTime", date.withDayOfMonth(1))
+                .setParameter("toTime", date.with(TemporalAdjusters.lastDayOfMonth()))
+                .singleResult as Double
+        )
     }
 
 

@@ -1,0 +1,39 @@
+POST http://{{realm-addr}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+
+grant_type=password&client_id={{client-id}}&username={{username}}&password={{password}}&client_secret={{client-secret}}
+
+
+> {%
+client.test("Get Access Token for user", function() {
+    client.assert(response.status === 200, "Invalid status code")
+    client.assert(response.body.access_token)
+    client.global.set("access_token", response.body.access_token)
+})
+ %}
+
+
+###
+
+GET http://{{service-addr}}/subject
+Accept: application/json
+Authorization: Bearer {{access_token}}
+
+> {%
+client.test("Call endpoint with access token", function() {
+    client.assert(response.status === 200, "Invalid status code")
+})
+ %}
+
+###
+
+
+GET http://{{service-addr}}/subject
+Accept: application/json
+
+> {%
+client.test("Invalid status code without access token", function() {
+    client.assert(response.status === 401, "Invalid status code")
+})
+ %}

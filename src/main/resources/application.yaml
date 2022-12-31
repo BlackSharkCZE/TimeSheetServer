@@ -3,32 +3,28 @@ quarkus:
     caffeine:
       "remote-writer-settings":
         expire-after-write: 120S
+      "user-by-subject-id":
+        expire-after-write: 600S
   http:
-    port: 8883
+    port: ${SERVER_PORT:8883}
     cors:
       ~: true
-      methods:
-        - GET
-        - POST
-        - PUT
-        - PATCH
-        - OPTIONS
-        - HEAD
-        - DELETE
-      origins:
-        - http://localhost
-        - http://localhost:8081
-        - http://localhost:8082
-        - http://localhost:8080
-        - http://localhost:8885
+    host: ${HOST_NAME:timesheet.local.cz}
+  oidc:
+    auth-server-url: ${QUARKUS_REALM}
+    client-id: ${QUARKUS_CLIENT_ID}
+    credentials:
+      secret: ${QUARKUS_CLIENT_SECRET}
+    tls:
+      verification: none
   datasource:
     db-kind: postgresql
-    username: timesheet
-    password: timesheet
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:123456}
     jdbc:
-      url: jdbc:postgresql://localhost:5432/timesheet
+      url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:25432}/${DATABASE_NAME:postgres}
       min-size: 1
-      max-size: 10
+      max-size: 100
   hibernate-orm:
     log:
       sql: false
@@ -42,18 +38,18 @@ quarkus:
       - description
   log:
     level: DEBUG
-    min-level: TRACE
+    min-level: DEBUG
     console:
       level: INFO
       format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
     category:
       "cz.blackshark.http.filter":
-        level: TRACE
+        level: WARN
       "org.jboss.resteasy.client":
-        level: DEBUG
+        level: WARN
     file:
       enable: true
-      level: DEBUG
+      level: INFO
       path: log/app.log
       format: "%d{YYYY-MM-dd'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
       rotation:
@@ -61,12 +57,12 @@ quarkus:
         max-backup-index: 4
   liquibase:
     migrate-at-start: true
-    default-schema-name: public
     change-log: database/changeLog.xml
     database-change-log-table-name: databasechangelog
 application:
   jax-rs-date-format: yyyy-MM-dd
   file-storage-path: ${FILE_STORAGE_PATH}
+  keycloak-config: ${KEYCLOAK_CONFIG_FILE}
 jira:
   username: ${JIRA_USERNAME}
   token: ${JIRA_TOKEN}
@@ -83,3 +79,16 @@ drmax-jira/mp-rest/scope: "javax.inject.Singleton"
 
 gem-timesheet/mp-rest/url: ${GEM_TIMESHEET_URL}
 gem-timesheet/mp-rest/scope: "javax.inject.Singleton"
+
+"%test":
+  quarkus:
+    log:
+      level: INFO
+      min-level: TRACE
+      file:
+        format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %X{X_CORRELATION_ID} [%c{3.}] (%t) %s%e%n"
+        path: "log/aps_poc_log.log"
+        rotation:
+          max-backup-index: 10
+          max-file-size: "20M"
+        enable: true

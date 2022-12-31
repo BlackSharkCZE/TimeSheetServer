@@ -1,0 +1,74 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="jiri">
+        <createView viewName="v_earn_history" replaceIfExists="true">
+            select gen_random_uuid() as uuid,
+                   foo.issuer_id,
+                   issue_date,
+                   payment_date,
+                   price,
+                   total_price,
+                   recipient_id,
+                   recipient_name
+            from (select i.issuer_id,
+                         i.issue_date::date,
+                          i.payment_date::date,
+                          sum(ii.price)       as price,
+                         sum(ii.total_price) as total_price,
+                         i.recipient_id,
+                         c.company_name      as recipient_name
+
+                  from invoice i
+                           join invoice_item ii on i.id = ii.invoice_int_id
+                           join company c on i.recipient_id = c.id
+                  group by i.issue_date, i.payment_date, i.recipient_id, c.company_name, i.issuer_id
+                  order by i.payment_date desc) foo
+        </createView>
+    </changeSet>
+
+    <changeSet id="2" author="jiri">
+        <createSequence sequenceName="payments_id_seq" cacheSize="1" startValue="1" incrementBy="1" cycle="false" />
+        <createTable tableName="payments">
+            <column name="id" defaultValueSequenceNext="payments_id_seq" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="payment_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="payment" type="numeric(9, 2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="company_id" type="int">
+                <constraints referencedTableName="company"
+                             foreignKeyName="payment_company_fk"
+                             referencedColumnNames="id"
+                             nullable="false" />
+            </column>
+            <column name="note" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="jiri">
+        <createView viewName="v_balance" replaceIfExists="true">
+            select gen_random_uuid() as uuid,income.issuer_id, outcome.company_id, income._date, income.income, outcome.outcome, income.income + outcome.outcome as balance
+            from (select (to_char(issue_date, 'YYYY-MM') || '-01') ::date as _date, sum(total_price)::numeric(12,2) as income, issuer_id
+                  from v_earn_history
+                  group by _date, issuer_id
+                  order by _date) income
+                     join (select (to_char(payment_date, 'YYYY-MM') || '-01') ::date as _date, sum(payment)::numeric(12, 2) outcome, company_id
+                           from payments
+                           group by (to_char(payment_date, 'YYYY-MM') || '-01')::date, company_id
+                           order by _date) outcome on outcome._date = income._date and income.issuer_id = outcome.company_id
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>
