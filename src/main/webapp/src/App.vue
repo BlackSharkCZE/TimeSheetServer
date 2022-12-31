@@ -60,7 +60,8 @@ const items = ref([
   {
     label: 'Statistic', icon: 'pi pi-fw pi-wrench',
     items: [
-      {label: 'Money flow', to: '/private/money-flow'}
+      {label: 'Money flow', to: '/private/money-flow'},
+      {label: 'Payments', to: '/private/payments'}
     ]
   }
 

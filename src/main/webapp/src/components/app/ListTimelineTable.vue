@@ -2,6 +2,7 @@
   <ConfirmDialog></ConfirmDialog>
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
   <Message v-if="error.show" severity="error" :closable="true" @close="error.show=false">{{error.message}}: {{error.show}}</Message>
+  <Message v-if="info.show" severity="info" :closable="true" @close="info.show=false">{{info.message}}</Message>
 
   <TimelineRowEdit
       @update:row="handleRowUpdate"
@@ -93,6 +94,14 @@ import {ErrorType, RemoteWriterTimestamp} from "@/components/blocks/Types";
 import TimelineRowEdit from "@/components/blocks/TimelineRowEdit.vue";
 import {TimelineType} from "@/components/blocks/TimelineDefs";
 
+// Define types
+type RestResponse = {
+  success: boolean,
+  message: string | null,
+  data: any | null,
+  code: number | null
+}
+
 // Define injects
 const axios = inject<AxiosStatic>('axios')
 
@@ -112,6 +121,7 @@ const selectedRow = ref<any|null>(null)
 
 
 const error = reactive<ErrorType>({show:false, message: null})
+const info = reactive<ErrorType>({show: false, message: null})
 
 // Define lifecycle hooks
 onMounted(() => {
@@ -132,32 +142,61 @@ function writeRowToRemote(data: any) {
   const id = data.id
   axios?.post("/timeline/remote-write/" + id, {}).then(response => {
     // TODO update parser according to real response from backend Map<String, RestResponse<RemoteWriteTimestampEntity?>?>
-    if (response.status === 200 && response.data.success === true) {
-      processSuccessWrite(response.data)
+    if (response.status === 200) {
+
+
+      const result = response.data
+      const writers = [... Object.keys(result)]
+      let success = true
+
+      const im: string[] = []
+      const em: string[] = []
+
+      writers.forEach(item => {
+        const sItem = result[item]
+        if (sItem != undefined && sItem != null) {
+          success = success && sItem.success
+          if (sItem.success) {
+            im.push("Write to " + item + " success")
+          } else {
+            em.push("Write to " + item + " failed with message: \" " + sItem.message + "\"")
+          }
+        } else {
+          em.push("Response for writer " + item + " missing!")
+        }
+      })
+
+
+      info.show = im.length>0
+      info.message = im.join(". ")
+
+      error.show = em.length>0
+      error.message = em.join(". ")
+      loadData()
+
     } else {
-      processErrorWrite(response.data)
+      error.show = true
+      error.message = "Write to remote writers failed! " + response.data
     }
   })
 }
 
-function processSuccessWrite(data: any) {
+/*function processSuccessWrite(data: any) {
   let row = timelines.value.filter(it => {
     return it.id == data.id;
   })[0]
-
   row.remoteWriteTimestamp = data.list
-
-}
+}*/
 
 function editItem(row: any) {
   selectedRow.value = row
   displayEdit.value = true
 }
 
-function processErrorWrite(data: any) {
+/*function processErrorWrite(data: any) {
   error.show = true;
   error.message = data.list
-}
+}*/
 
 function loadData(filterData: any = {}) {
   loading.value = true

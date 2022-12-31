@@ -30,6 +30,9 @@ class PaymentEntity : PanacheEntityBase() {
     @JoinColumn(name = "company_id")
     var companyEntity: CompanyEntity? = null
 
+    @Column(name = "note")
+    var note: String? = null
+
     @Column(name = "payment_date")
     var paymentDate: LocalDate? = null
 

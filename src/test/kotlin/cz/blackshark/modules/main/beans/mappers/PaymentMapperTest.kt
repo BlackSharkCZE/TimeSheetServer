@@ -24,6 +24,7 @@ class PaymentMapperTest {
             this.companyEntity = CompanyEntity().apply {
                 this.id = 2L
             }
+            this.note = "TestNote"
         }
 
         val output = paymentMapper.map(input)
@@ -31,5 +32,6 @@ class PaymentMapperTest {
         Assertions.assertThat(output.companyId).isEqualTo(input.companyEntity?.id)
         Assertions.assertThat(output.paymentDate).isEqualTo(input.paymentDate)
         Assertions.assertThat(output.payment).isEqualTo(input.payment)
+        Assertions.assertThat(output.note).isEqualTo(input.note)
     }
 }

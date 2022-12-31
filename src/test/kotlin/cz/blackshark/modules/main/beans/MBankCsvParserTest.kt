@@ -21,7 +21,7 @@ class MBankCsvParserTest {
     @Test
     fun `test parser MBankExport`() {
         val workingDir = Path.of("", "src/test/resources")
-        val filePath = workingDir.resolve("mbank-10068176_180101_221222.csv")
+        val filePath = workingDir.resolve("mbank-10068176_180101_221228.csv")
         Assertions.assertThat(filePath.exists()).isTrue
 
         val result = mBankCsvParser.parseOperationList(filePath.toFile(), CompanyEntity())
@@ -29,15 +29,17 @@ class MBankCsvParserTest {
         Assertions.assertThat(result)
             .first().asInstanceOf(InstanceOfAssertFactories.type(PaymentEntity::class.java))
             .let {
-                it.extracting("payment").isEqualTo(BigDecimal("-727.00"))
-                it.extracting("paymentDate").isNotNull.isEqualTo(LocalDate.parse("2018-01-01"))
+                it.extracting("note").isEqualTo("POPLATEK ZA OKAMŽITOU PLATBU")
+                it.extracting("payment").isEqualTo(BigDecimal("-1.00"))
+                it.extracting("paymentDate").isNotNull.isEqualTo(LocalDate.parse("2022-12-14"))
             }
 
         Assertions.assertThat(result)
             .last().asInstanceOf(InstanceOfAssertFactories.type(PaymentEntity::class.java))
             .let {
-                it.extracting("payment").isEqualTo(BigDecimal("-10638.00"))
-                it.extracting("paymentDate").isNotNull.isEqualTo(LocalDate.parse("2018-03-27"))
+                it.extracting("note").isEqualTo("VLASTNÍ PŘEVOD: PŘEVOD PROSTŘEDKŮ")
+                it.extracting("payment").isEqualTo(BigDecimal("-20000.00"))
+                it.extracting("paymentDate").isNotNull.isEqualTo(LocalDate.parse("2022-12-28"))
             }
     }
 }

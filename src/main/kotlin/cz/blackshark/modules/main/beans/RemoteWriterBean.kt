@@ -59,6 +59,5 @@ class RemoteWriterBean @Inject constructor(
 
         logger.infof("Response from remote write: %s", responseMap)
         return responseMap
-
     }
 }

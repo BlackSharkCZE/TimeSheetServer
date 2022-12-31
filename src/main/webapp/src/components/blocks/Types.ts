@@ -84,7 +84,8 @@ export type PaymentType = {
     id: number,
     paymentDate: Date,
     payment: number,
-    companyId: number
+    companyId: number,
+    note: string
 }
 
 export type BalanceType = {

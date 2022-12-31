@@ -14,6 +14,7 @@ import BillingView from '@/views/private/billing/BillingView.vue'
 import AddInvoiceView from '@/views/private/invoices/AddInvoiceView.vue'
 import DphView from '@/views/private/dph/DphView.vue'
 import StatisticView from "@/views/private/statistic/StatisticView.vue";
+import PaymentsView from "@/views/private/payments/PaymentsView.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -89,6 +90,10 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'money-flow',
                 component: StatisticView
+            },
+            {
+                path: 'payments',
+                component: PaymentsView
             },
         ]
     }

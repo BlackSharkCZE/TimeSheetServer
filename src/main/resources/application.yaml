@@ -83,7 +83,7 @@ gem-timesheet/mp-rest/scope: "javax.inject.Singleton"
 "%test":
   quarkus:
     log:
-      level: DEBUG
+      level: INFO
       min-level: TRACE
       file:
         format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %X{X_CORRELATION_ID} [%c{3.}] (%t) %s%e%n"

@@ -14,5 +14,7 @@ data class PaymentVo(
     val companyId: Long,
     @NotNull
     val paymentDate: LocalDate,
+    @NotNull
+    val note: String
 )
 

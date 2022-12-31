@@ -3,8 +3,9 @@
   <Panel header="Balance Overview" class="mt-2">
 
     <h2>
-      Profit: <span :class="{'loss': profit<0, 'low': profit<10000}">{{formatPrice(profit)}}</span> ({{items.length}} měsíců) |
-      <span :class="{'loss': yearProfit<0, 'low': yearProfit<10000}">{{formatPrice(yearProfit)}}</span> (12 měsíců)
+      Profit: <span :class="{'loss': profit<0, 'low': profit<10000}">{{ formatPrice(profit) }}</span>
+      ({{ items.length }} měsíců) |
+      <span :class="{'loss': yearProfit<0, 'low': yearProfit<10000}">{{ formatPrice(yearProfit) }}</span> (12 měsíců)
     </h2>
 
     <DataTable
@@ -29,7 +30,10 @@
         <template #body="{data}">{{ formatPrice(data.outcome) }}</template>
       </Column>
       <Column header="Rozdíl">
-        <template #body="{data}"><span :class="{'loss': (data.income + data.outcome)<0, 'low': (data.income + data.outcome)<10000}"> {{ formatPrice(data.income + data.outcome) }} </span>
+        <template #body="{data}"><span
+            :class="{'loss': (data.income + data.outcome)<0, 'low': (data.income + data.outcome)<10000}"> {{
+            formatPrice(data.income + data.outcome)
+          }} </span>
         </template>
       </Column>
 
@@ -80,8 +84,8 @@ function loadData() {
       items.value = response.data.data
       totalRecords.value = response.data.data.length
       loading.value = false
-      profit.value = items.value.map( item => item.income+item.outcome).reduce((acc, current) => acc + current,0.0)
-      yearProfit.value = items.value.slice(0,12).map( item => item.income+item.outcome).reduce((acc, current) => acc + current,0.0)
+      profit.value = items.value.map(item => item.income + item.outcome).reduce((acc, current) => acc + current, 0.0)
+      yearProfit.value = items.value.slice(0, 12).map(item => item.income + item.outcome).reduce((acc, current) => acc + current, 0.0)
     } else {
       console.error('Can not load balance from server', response)
       loading.value = false
@@ -97,6 +101,7 @@ function loadData() {
   font-weight: bold;
   color: var(--red-400) !important;
 }
+
 .low {
   color: var(--orange-400)
 }

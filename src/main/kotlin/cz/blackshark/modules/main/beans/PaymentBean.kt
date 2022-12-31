@@ -7,6 +7,7 @@ import cz.blackshark.modules.main.exceptions.CompanyExcetption
 import cz.blackshark.modules.main.persistence.entity.PaymentEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.PaymentRepository
+import io.quarkus.panache.common.Sort
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import kotlin.streams.toList
@@ -27,7 +28,7 @@ class PaymentBean {
         val cId =
             companyId ?: companyRepository.findPrimaryCompany()?.id ?: throw CompanyExcetption("Company not found")
 
-        return paymentRepository.find("companyEntity.id", cId)
+        return paymentRepository.find("companyEntity.id", Sort.descending("paymentDate"), cId)
             .stream<PaymentEntity>()
             .map(paymentMapper::map)
             .toList()
