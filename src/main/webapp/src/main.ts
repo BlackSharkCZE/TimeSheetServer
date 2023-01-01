@@ -30,6 +30,8 @@ const app: Vue.App = createApp(App)
             if (!_keycloak.authenticated) {
                 _keycloak.login()
             }
+
+            console.log(_keycloak)
             moment.locale('cs')
             const pinia = createPinia()
             app.use(router)
