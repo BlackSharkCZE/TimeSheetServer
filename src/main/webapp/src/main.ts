@@ -23,6 +23,21 @@ import {useUserStore} from "@/stores/UserStore";
 import {useDataStore} from "@/stores/DataStore";
 
 import {UserInfo, useUserInfo} from "@/stores/InfoStore";
+import {CompanyService} from "@/services/CompanyService";
+
+const primeVueConfig = {
+    locale: {
+        dayNames: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
+        dayNamesShort: ["Ned", "Pon", "Úte", "Stř", "Čtv", "Pát", "Sob"],
+        dayNamesMin: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"],
+        monthNames: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"],
+        monthNamesShort: ["Led", "Úno", "Bře", "Dub", "Kvě", "Čer", "Črv", "Srp", "Zář", "Říj", "Lis", "Pro"],
+        firstDayOfWeek: 1,
+        aria: {
+            navigation: "Navigace"
+        }
+    }
+}
 
 const app: Vue.App = createApp(App)
     .use(keycloakPlugin, {
@@ -31,7 +46,6 @@ const app: Vue.App = createApp(App)
                 _keycloak.login()
             }
 
-            console.log(_keycloak)
             moment.locale('cs')
             const pinia = createPinia()
             app.use(router)
@@ -47,7 +61,9 @@ const app: Vue.App = createApp(App)
                 }
                 return config
             })
+
             app.provide('axios', app.config.globalProperties.axios)
+            app.provide('CompanyService', new CompanyService(axios))
             axios.get("/subject", {
                 headers: {
                     'Authorization': 'Bearer ' + _keycloak.token
@@ -78,7 +94,5 @@ const app: Vue.App = createApp(App)
                 app.use(PrimeVue).use(ConfirmationSerice)
                 app.mount("#app")
             })
-
-
         }
     })

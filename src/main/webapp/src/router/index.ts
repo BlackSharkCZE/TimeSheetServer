@@ -15,6 +15,7 @@ import AddInvoiceView from '@/views/private/invoices/AddInvoiceView.vue'
 import DphView from '@/views/private/dph/DphView.vue'
 import StatisticView from "@/views/private/statistic/StatisticView.vue";
 import PaymentsView from "@/views/private/payments/PaymentsView.vue";
+import TaxView from "@/views/private/tax/TaxView.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -37,6 +38,10 @@ const routes: Array<RouteRecordRaw> = [
             authRequired: true
         },
         children: [
+            {
+                path: 'tax',
+                component: TaxView
+            },
             {
               path: 'dph',
               component: DphView
