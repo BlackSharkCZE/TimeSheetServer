@@ -9,6 +9,10 @@ import keycloakPlugin from "@/plugins/KeycloakPlugin";
 import axios, {AxiosRequestConfig} from "axios";
 import moment from "moment";
 import 'moment/locale/cs'
+import {cs} from "@/cs";
+
+import {createI18n} from "vue-i18n";
+import messages from '@/i18n/messages'
 
 import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
@@ -46,6 +50,15 @@ const app: Vue.App = createApp(App)
             if (!_keycloak.authenticated) {
                 _keycloak.login()
             }
+
+            const l = navigator.language.split("-")[0] || 'cs'
+
+            const i18n = createI18n({
+                legacy: false,
+                locale: l,
+                fallbackLocale: 'cs',
+                messages
+            })
 
             moment.locale('cs')
             const pinia = createPinia()
@@ -92,7 +105,7 @@ const app: Vue.App = createApp(App)
                     } as UserInfo
                     userInfo.storeUserInfo(dataToStore)
                 }
-                app.use(PrimeVue).use(ConfirmationSerice)
+                app.use(PrimeVue, {locale: cs}).use(ConfirmationSerice)
                 app.mount("#app")
             })
         }
