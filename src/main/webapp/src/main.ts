@@ -8,6 +8,7 @@ import keycloakPlugin from "@/plugins/KeycloakPlugin";
 
 import axios, {AxiosRequestConfig} from "axios";
 import moment from "moment";
+import 'moment/locale/cs'
 
 import VueAxios from "vue-axios";
 import Keycloak from "keycloak-js";
