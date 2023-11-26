@@ -20,8 +20,10 @@ import {useUserStore} from "@/stores/UserStore";
 import {computed, ref} from "vue";
 import Menubar from "primevue/menubar";
 import UserInfo from "@/components/blocks/UserInfo.vue";
+import {useI18n} from "vue-i18n";
 
 const store = useUserStore()
+const i18n = useI18n()
 
 const noPrimaryCompany = computed(() => {
     return store.userDetail.company === undefined || store.userDetail.company === null
@@ -29,7 +31,7 @@ const noPrimaryCompany = computed(() => {
 
 const items = ref([
     {
-        label: 'Dashboard', icon: 'pi pi-fw pi-calendar', to: '/private/dashboard'
+        label: i18n.t('dashboard'), icon: 'pi pi-fw pi-calendar', to: '/private/dashboard'
     },
     {
         label: 'Accounting',
