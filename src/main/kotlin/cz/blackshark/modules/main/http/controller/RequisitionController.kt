@@ -34,7 +34,6 @@ class RequisitionController @Inject constructor(
         val logger: Logger = LoggerFactory.getLogger(RequisitionController::class.java)
     }
 
-
     @POST
     @Path("create")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -65,7 +64,6 @@ class RequisitionController @Inject constructor(
         }
     }
 
-
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Path("/{id}/content")
@@ -75,11 +73,10 @@ class RequisitionController @Inject constructor(
         return if (path.toFile().exists()) {
             Response.ok(Files.newInputStream(path, StandardOpenOption.READ))
                 .header("Content-Disposition", "attachment; filename=\"${rq.origFileName}\"")
-                .build();
+                .build()
         } else {
             logger.warn("Requested requisition $requisitionId does not exists on path $path")
             Response.status(Response.Status.NOT_FOUND).build()
         }
     }
-
 }
