@@ -10,24 +10,24 @@
                          v-model="v$.issuer.$model"
                          :vualidate="v$.issuer"
                          :submitted="submitted"
-                         label="Issuer"></company-field>
+                         :label="$t('issuer')"></company-field>
 
           <company-field id="recipient"
                          class="col-2"
                          v-model="v$.recipient.$model"
                          :vualidate="v$.recipient"
                          :submitted="submitted"
-                         label="Recipient"></company-field>
+                         :label="$t('recipient')"></company-field>
 
           <input-field id="invoiceNumber"
                        class="field col-2"
-                       label="Invoice number"
+                       :label="$t('invoice-number')"
                        :vualidate="v$.invoiceNumber"
                        :submitted="submitted"
                        v-model="v$.invoiceNumber.$model"/>
 
           <div class="field col-2">
-            <label for="since">Issue date <span v-if="v$.issueDate.required">*</span></label>
+            <label for="since">{{ $t('issue-date') }} <span v-if="v$.issueDate.required">*</span></label>
             <calendar id="since"
                       :class="{'p-invalid':v$.issueDate.$invalid && submitted}"
                       v-model="v$.issueDate.$model"/>
@@ -36,7 +36,7 @@
           </div>
 
           <div class="field col-2">
-            <label for="since">Vat payment date <span v-if="v$.vatPaymentDate.required">*</span></label>
+            <label for="since">{{$t('vat-payment-date')}} <span v-if="v$.vatPaymentDate.required">*</span></label>
             <calendar id="since"
                       :class="{'p-invalid':v$.vatPaymentDate.$invalid && submitted}"
                       v-model="v$.vatPaymentDate.$model"/>
@@ -47,7 +47,7 @@
           </div>
 
           <div class="field col-2">
-            <label for="since">Payment date <span v-if="v$.paymentDate.required">*</span></label>
+            <label for="since">{{ $t('payment-date') }} <span v-if="v$.paymentDate.required">*</span></label>
             <calendar id="since"
                       :class="{'p-invalid':v$.paymentDate.$invalid && submitted}"
                       v-model="v$.paymentDate.$model"/>
@@ -73,7 +73,7 @@
 
           <div class="field col-1">
             <label>&nbsp;</label>
-            <Button type="submit" label="Add"/>
+            <Button type="submit" :label="$t('add')"/>
           </div>
         </div>
       </div>

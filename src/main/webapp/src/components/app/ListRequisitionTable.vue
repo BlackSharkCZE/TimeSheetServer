@@ -22,6 +22,11 @@
     </Column>
     <Column field="note" header="NOTE"></Column>
     <Column field="documentName" header="DOCUMENT"></Column>
+    <Column header="Stáhnout">
+      <template #body="{data}">
+        <Button icon="pi pi-download" type="button" label="Download" @click="processDownload(data)"/>
+      </template>
+    </Column>
   </DataTable>
 
 </template>
@@ -33,6 +38,7 @@ import Column from "primevue/column";
 import moment from "moment";
 import {defineExpose, inject, onMounted, ref} from "vue";
 import {AxiosStatic} from "axios";
+import Button from "primevue/button";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
@@ -54,6 +60,24 @@ onMounted(() => {
 // Define methods
 function formatTimestamp(input: string): string {
   return moment(input).format('DD.MM.YYYY')
+}
+
+function processDownload(input: any) {
+  console.log(input)
+  axios?.get(`/requisition/${input.id}/content`, {
+    responseType: 'blob'
+  }).then(response => {
+    const objectURL = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = objectURL
+    link.setAttribute('download', `${input.documentName}.pdf`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(link.href)
+
+  })
+
 }
 
 function loadData(filterData: any = {}) {

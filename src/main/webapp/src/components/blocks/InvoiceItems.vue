@@ -200,7 +200,7 @@ function buildData(): any {
     price: formData.amount,
     vatRate: formData.vatRate,
     vatAmount: pvv - formData.amount,
-    priceWithVat: pvv
+    priceWithVat: pvv,
   }
 }
 

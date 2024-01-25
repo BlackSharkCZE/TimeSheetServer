@@ -6,6 +6,7 @@ import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
 import cz.blackshark.timesheet.commons.domain.InvoiceItemVo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigDecimal
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.transaction.Transactional
@@ -46,7 +47,7 @@ open class InvoiceDetailController {
 
         val invoice = invoiceRepository.findById(invoiceID)
         val invoiceItemEntity = InvoiceItemEntity()
-        invoiceItemEntity.vat = item.vatRate
+        invoiceItemEntity.vat = item.vatRate.divide(BigDecimal.valueOf(100)).plus(BigDecimal.ONE)
         invoiceItemEntity.price = item.price
         invoiceItemEntity.totalPrice = item.priceWithVat
         invoiceItemEntity.invoiceEntity = invoice

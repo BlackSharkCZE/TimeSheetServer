@@ -9,7 +9,7 @@
         <div class="formgrid grid">
 
           <div class="field col-12 md:col-6 sm:col-6 lg:col-1">
-            <label for="date">Date <span v-if="v$.date.required">*</span></label>
+            <label for="date">{{$t('date')}} <span v-if="v$.date.required">*</span></label>
             <Calendar id="date"
                       dateFormat="dd.mm.yy"
                       :class="{'p-invalid':v$.date.$invalid && submitted}"
@@ -19,7 +19,7 @@
           </div>
 
           <div class="field col-12 md:col-6 sm:col-6 lg:col-1">
-            <label for="fromTime">From Time <span v-if="v$.fromTime.required">*</span></label>
+            <label for="fromTime">{{ $t('from-time') }} <span v-if="v$.fromTime.required">*</span></label>
             <Calendar id="fromTime"
                       dateFormat="HH:MM"
                       :class="{'p-invalid':v$.fromTime.$invalid && submitted}"
@@ -32,7 +32,7 @@
           </div>
 
           <div class="field col-12 md:col-6 sm:col-6 lg:col-1">
-            <label for="toTime">To Time <span v-if="v$.toTime.required">*</span></label>
+            <label for="toTime">{{ $t('to-time') }} <span v-if="v$.toTime.required">*</span></label>
             <Calendar id="toTime"
                       dateFormat="HH:MM"
                       :class="{'p-invalid':v$.toTime.$invalid && submitted}"
@@ -45,7 +45,7 @@
           </div>
 
           <div class="field col-12 md:col-6 sm:col-6 lg:col-2">
-            <label for="toTime">Pause <span v-if="v$.toTime.required">*</span></label>
+            <label for="toTime">{{ $t('pause') }} <span v-if="v$.toTime.required">*</span></label>
             <InputNumber v-model="v$.pause.$model"
                          id="pause"
                          :min="0"
@@ -66,7 +66,7 @@
           <project-field
               class="col-12 md:col-6 sm:col-6 lg:col-2"
               id="project"
-              label="Project"
+              :label="$t('project')"
               v-model="formData.project"
               :vualidate="v$.project"
               :submitted="submitted">
@@ -74,14 +74,14 @@
 
           <input-field id="note"
                        class="field col-12 md:col-10 sm:col-10 lg:col-4"
-                       label="Note"
+                       :label="$t('note')"
                        :vualidate="v$.note"
                        :submitted="submitted"
                        v-model="formData.note"/>
 
           <div class="field col-12 md:col-2 sm:col-2 lg:col-1">
             <label>&nbsp;</label>
-            <Button type="submit" label="Add"/>
+            <Button type="submit" :label="$t('add')"/>
           </div>
 
         </div>

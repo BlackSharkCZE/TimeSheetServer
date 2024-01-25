@@ -98,5 +98,24 @@ export type BalanceType = {
     balance: number
 }
 
+export type CompanyMinimal = {
+    companyName: string,
+    dic: string,
+    ic: string,
+    id: number,
+    platceDph: boolean
+}
+
+export type InvoicePreview = {
+    invoiceNumber: string,
+    issueDate: Date,
+    paymentDate: Date,
+    vatPaymentDate: Date,
+    paymentSum: number,
+    paymentSumWithoutVat: number,
+    issuer: CompanyMinimal,
+    recipient: CompanyMinimal,
+}
+
 
 export const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec']

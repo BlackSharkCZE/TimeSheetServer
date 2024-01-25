@@ -143,8 +143,6 @@ function writeRowToRemote(data: any) {
   axios?.post("/timeline/remote-write/" + id, {}).then(response => {
     // TODO update parser according to real response from backend Map<String, RestResponse<RemoteWriteTimestampEntity?>?>
     if (response.status === 200) {
-
-
       const result = response.data
       const writers = [... Object.keys(result)]
       let success = true
@@ -165,7 +163,6 @@ function writeRowToRemote(data: any) {
           em.push("Response for writer " + item + " missing!")
         }
       })
-
 
       info.show = im.length>0
       info.message = im.join(". ")
