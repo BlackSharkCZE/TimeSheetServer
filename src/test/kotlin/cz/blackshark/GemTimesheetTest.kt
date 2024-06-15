@@ -27,7 +27,7 @@ class GemTimesheetTest {
 
     @Test
     fun getTimelistTest() {
-        val data = client.workLog("2021/11")
+        val data = client.workLog("2021/11", "")
         Assertions.assertNotNull(data)
         Assertions.assertTrue(data.isNotEmpty())
         println(data)
@@ -35,7 +35,7 @@ class GemTimesheetTest {
 
     @Test
     fun getProjects() {
-        val data = client.getRootProjects()
+        val data = client.getRootProjects("")
         Assertions.assertNotNull(data)
         Assertions.assertTrue(data.isNotEmpty())
         println(data)

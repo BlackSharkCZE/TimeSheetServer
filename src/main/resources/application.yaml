@@ -43,10 +43,10 @@ quarkus:
       level: INFO
       format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
     category:
-      "cz.blackshark.http.filter":
-        level: WARN
+      "cz.blackshark.modules.main.http.filter":
+        level: INFO
       "org.jboss.resteasy.client":
-        level: WARN
+        level: INFO
     file:
       enable: true
       level: INFO
@@ -68,6 +68,7 @@ jira:
   token: ${JIRA_TOKEN}
   account-id: ${JIRA_ACCOUNT_ID}
 gemts:
+  url: ${GEM_TIMESHEET_URL}
   username: ${TIMESHEET_USERNAME}
   password: ${TIMESHEET_PASSWORD}
   dr-max-project-name: "DrMax integrační platforma"
