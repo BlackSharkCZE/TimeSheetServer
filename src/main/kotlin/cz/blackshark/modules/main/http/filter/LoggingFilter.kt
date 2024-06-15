@@ -42,7 +42,13 @@ class LoggingFilter : ContainerRequestFilter, ContainerResponseFilter, WriterInt
         try {
             context.proceed()
         } finally {
-            logger.tracef("Response Data: %s", baos.toString("UTF-8"))
+            val data = baos.toString("UTF-8")
+            if (data.contains("password")) {
+                logger.trace("Response Data: <***>")
+            } else {
+                logger.tracef("Response Data: %s", data)
+            }
+
             baos.writeTo(orginalStream)
             baos.close()
             context.outputStream = orginalStream

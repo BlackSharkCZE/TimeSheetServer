@@ -4,7 +4,9 @@ import org.apache.commons.io.IOUtils
 import org.jboss.logging.Logger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.InputStream
+import java.io.OutputStream
 import javax.inject.Inject
 import javax.ws.rs.client.ClientRequestContext
 import javax.ws.rs.client.ClientRequestFilter
@@ -19,6 +21,11 @@ class ClientLoggingFilter : ClientRequestFilter, ClientResponseFilter {
     lateinit var logger: Logger
 
     override fun filter(requestContext: ClientRequestContext) {
+        val stream = ByteArrayOutputStream()
+        requestContext.entityStream = LoggingStream(stream, requestContext.entityStream)
+        val entity = requestContext.entity
+        val entityString = entity?.toString() ?: ""
+        logger.infof("Client request entity: %s", entityString)
         logger.infof("Client request: %s: %s", requestContext.method, requestContext.uri.toASCIIString())
     }
 
@@ -42,6 +49,15 @@ class ClientLoggingFilter : ClientRequestFilter, ClientResponseFilter {
                 responseContext.status,
                 responseContext.length
             )
+        }
+    }
+
+    private inner class LoggingStream(val baos: ByteArrayOutputStream, var outputStream: OutputStream) :
+        OutputStream() {
+        @Throws(IOException::class)
+        override fun write(i: Int) {
+            outputStream.write(i)
+            baos.write(i)
         }
     }
 }

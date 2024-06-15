@@ -22,16 +22,17 @@ import kotlin.math.roundToLong
 class GemTsBean @Inject constructor(
     @RestClient val client: GemTimesheetClient,
     private val config: GemTimesheetConfig,
-    private val converter: GemTimesheetConverter
+    private val converter: GemTimesheetConverter,
+    private val login: GemTimesheetLogin,
 ) {
 
-    fun getAllProjects(): List<TSProjectVO> = client.getRootProjects()
+    fun getAllProjects(): List<TSProjectVO> = client.getRootProjects(login.getCookie() ?: "")
 
     fun findDrMaxProject(): TSProjectVO? =
         getAllProjects().firstOrNull { it.text == config.drMaxProjectName() }
 
     fun workTimeOnProject(projectName: String, month: LocalDate): Duration {
-        val workLog = client.workLog(month.format(DateTimeFormatter.ofPattern("YYYY/MM")))
+        val workLog = client.workLog(month.format(DateTimeFormatter.ofPattern("YYYY/MM")), login.getCookie() ?: "")
         return Duration.of(
             (workLog
                 .filter { it.rootProjectName == projectName }
@@ -40,11 +41,9 @@ class GemTsBean @Inject constructor(
         )
     }
 
-    fun logIntoTimesheet(timeline: TimelineEntity,settings: RemoteWriteSettingsEntity) : RestResponse<Unit> {
+    fun logIntoTimesheet(timeline: TimelineEntity, settings: RemoteWriteSettingsEntity): RestResponse<Unit> {
         val data = converter.convertTimeline(timeline, settings)
-        data?.let { client.saveWorkLog(it) }
+        data?.let { client.saveWorkLog(it, login.getCookie() ?: "") }
         return RestResponse(true, null, null, null)
-
     }
-
 }
