@@ -22,6 +22,16 @@
     <Column field="id" header="ID">
       <template #body="{data}">{{ data.id }}</template>
     </Column>
+    <Column header="PRIMARY">
+      <template #body="{data}">
+        <span v-if="data.id == userStore.userDetail.company">YES</span>
+        <span v-if="!userStore.hasPrimaryCompany">
+          <i class="i-button pi cursor-pointer pi-pencil text-blue-500"
+             @click="setAsPrimary(data)">
+        </i>
+          </span>
+      </template>
+    </Column>
     <Column field="companyName" header="COMPANY NAME" filterMatchMode="startsWith" ref="companyName">
       <template #filter="{filterModel,filterCallback}">
         <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
@@ -45,12 +55,13 @@
 
 <script lang="ts" setup>
 
-import {inject, onMounted, ref, defineExpose} from 'vue'
+import {defineExpose, inject, onMounted, ref} from 'vue'
 import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
 import Column from 'primevue/column';
 import Message from 'primevue/message';
+import {useUserStore} from "@/stores/UserStore";
 
 // Define injects
 const axios = inject<AxiosStatic>('axios')
@@ -66,6 +77,7 @@ const filters = ref({
   companyName: {value: '', matchMode: 'contains'},
   ic: {value: '', matchMode: 'contains'}
 })
+const userStore = useUserStore()
 
 // Define lifecycle hooks
 onMounted(() => {
@@ -88,6 +100,14 @@ function loadData(filterData: any = {}) {
   })
 }
 
+function setAsPrimary(row: any) {
+  axios?.put(`/company/primary/${row.id}`).then(res => {
+    if (res.data.id > 0) {
+      userStore.setCompany(res.data.id)
+    }
+  })
+}
+
 function onPage(event: DataTablePageEvent) {
   pageIndex.value = event.page
   loadData()
@@ -104,10 +124,10 @@ function mapFilterToDataTablePayload(vueFilter: any): any {
     const key = keys[a]
     const {value: _value, matchMode} = vueFilter[keys[a]]
 
-    if (_value.length>0) {
+    if (_value.length > 0) {
       filter[key] = {
         type: getFilterType(matchMode),
-        value: '%'+_value+'%'
+        value: '%' + _value + '%'
       }
     }
   }
@@ -115,9 +135,11 @@ function mapFilterToDataTablePayload(vueFilter: any): any {
 }
 
 function getFilterType(vueType: string): string {
-  switch(vueType.toUpperCase()) {
-    case 'CONTAINS': return 'like'
-    default: return '='
+  switch (vueType.toUpperCase()) {
+    case 'CONTAINS':
+      return 'like'
+    default:
+      return '='
   }
 }
 

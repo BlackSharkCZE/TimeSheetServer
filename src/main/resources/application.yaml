@@ -5,18 +5,37 @@ quarkus:
         expire-after-write: 120S
       "user-by-subject-id":
         expire-after-write: 600S
+      "user-entity":
+        expire-after-access: 60S
+        maximum-size: 100
+
   http:
     port: ${SERVER_PORT:8883}
     cors:
       ~: true
+      origins:
+        - /.*/
     host: ${HOST_NAME:timesheet.local.cz}
-  oidc:
-    auth-server-url: ${QUARKUS_REALM}
-    client-id: ${QUARKUS_CLIENT_ID}
-    credentials:
-      secret: ${QUARKUS_CLIENT_SECRET}
-    tls:
-      verification: none
+    auth:
+      proactive: true
+      permission:
+        free:
+          paths:
+            - /login
+            - /*.js
+            - /*.css
+            - /user/current
+          policy: permit
+        authenticated:
+          paths:
+            - /
+            - /test
+          policy: authenticated
+      form:
+        enabled: true
+        login-page: /login
+        error-page: /login-failed
+        redirect-after-login: true
   datasource:
     db-kind: postgresql
     username: ${DATABASE_USERNAME:postgres}
@@ -42,11 +61,6 @@ quarkus:
     console:
       level: INFO
       format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
-    category:
-      "cz.blackshark.modules.main.http.filter":
-        level: INFO
-      "org.jboss.resteasy.client":
-        level: INFO
     file:
       enable: true
       level: INFO
@@ -55,6 +69,16 @@ quarkus:
       rotation:
         max-file-size: "10M"
         max-backup-index: 4
+    category:
+      "cz.blackshark.modules.main.persistence.repository":
+        level: DEBUG
+      "cz.blackshark.modules.main.http.controller":
+        level: DEBUG
+      "cz.blackshark.modules.main.http.filter":
+        level: INFO
+      "org.jboss.resteasy.client":
+        level: INFO
+
   liquibase:
     migrate-at-start: true
     change-log: database/changeLog.xml
@@ -62,7 +86,6 @@ quarkus:
 application:
   jax-rs-date-format: yyyy-MM-dd
   file-storage-path: ${FILE_STORAGE_PATH}
-  keycloak-config: ${KEYCLOAK_CONFIG_FILE}
 jira:
   username: ${JIRA_USERNAME}
   token: ${JIRA_TOKEN}
@@ -80,16 +103,3 @@ drmax-jira/mp-rest/scope: "javax.inject.Singleton"
 
 gem-timesheet/mp-rest/url: ${GEM_TIMESHEET_URL}
 gem-timesheet/mp-rest/scope: "javax.inject.Singleton"
-
-"%test":
-  quarkus:
-    log:
-      level: INFO
-      min-level: TRACE
-      file:
-        format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %X{X_CORRELATION_ID} [%c{3.}] (%t) %s%e%n"
-        path: "log/aps_poc_log.log"
-        rotation:
-          max-backup-index: 10
-          max-file-size: "20M"
-        enable: true

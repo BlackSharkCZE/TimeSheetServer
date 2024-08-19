@@ -10,5 +10,7 @@ data class SubjectDetailVo(
     val subject: String,
     val userName: String,
     val internalId: Long,
-    val company: CompanyVo? = null
+    val company: CompanyVo? = null,
+    val firstName: String,
+    val lastName: String,
 )

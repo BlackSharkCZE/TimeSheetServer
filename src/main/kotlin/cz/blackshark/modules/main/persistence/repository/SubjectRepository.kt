@@ -6,4 +6,8 @@ import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class SubjectRepository : PanacheRepositoryBase<SubjectEntity, Long> {
+
+    fun findByValue(value: String): SubjectEntity? {
+        return find("subject", value).firstResult()
+    }
 }

@@ -9,12 +9,6 @@
 
       <div class="card">
         <div class="formgrid grid">
-          <input-field id="orderNumber"
-                       class="field col-2"
-                       label="Order number"
-                       :vualidate="v$.orderNumber"
-                       :submitted="submitted"
-                       v-model="v$.orderNumber.$model"/>
 
           <input-field id="note"
                        class="field col-4"
@@ -100,14 +94,12 @@ interface Properties {
 }
 
 type FormData = {
-  orderNumber: any | null
   note: string | null,
   amount: number
   vatRate: number
 }
 
 const rules = {
-  orderNumber: {required},
   note: {required},
   amount: {required, minValue: minValue(1)},
   vatRate: {required, minValue: minValue(0)}
@@ -121,7 +113,6 @@ const invoiceItem = ref()
 const axios = inject<AxiosStatic>('axios')
 
 const formData = reactive<FormData>({
-  orderNumber: null,
   note: null,
   amount: 0,
   vatRate: 21
@@ -189,7 +180,6 @@ function clearForm() {
   formData.note = null
   formData.amount = 0
   formData.vatRate = 21
-  formData.orderNumber = null
   submitted.value = false
 }
 

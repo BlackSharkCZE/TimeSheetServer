@@ -2,6 +2,7 @@ package cz.blackshark.modules.main.http.controller
 
 import cz.blackshark.model.TimeOverlapVo
 import cz.blackshark.modules.commons.model.RestResponse
+import cz.blackshark.modules.main.beans.PrincipalService
 import cz.blackshark.modules.main.beans.RemoteWriteSettingsBean
 import cz.blackshark.modules.main.beans.RemoteWriterBean
 import cz.blackshark.modules.main.beans.TimelineBean
@@ -12,42 +13,40 @@ import cz.blackshark.modules.main.persistence.RepositoryResult
 import cz.blackshark.modules.main.persistence.dao.ReportDao
 import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.RemoteWriteTimestampEntity
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.modules.main.persistence.repository.TimelineRepository
 import io.quarkus.security.Authenticated
 import io.vertx.core.json.JsonObject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
-import javax.inject.Inject
 import javax.transaction.Transactional
 import javax.validation.Valid
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.SecurityContext
 import kotlin.streams.toList
 
 
 @Path("/timeline")
 @Authenticated
-class TimelineController: AbstractBaseController() {
+class TimelineController(
+    private val timelineRepository: TimelineRepository,
+    private val timelineDao: TimelineDao,
+    private val reportDao: ReportDao,
+    private val timelineBean: TimelineBean,
+    private val remoteWriterBean: RemoteWriterBean,
+    private val remoteWriteSettingsBean: RemoteWriteSettingsBean,
+    private val principalService: PrincipalService,
+) {
 
-    @Inject
-    lateinit var timelineRepository: TimelineRepository
-
-    @Inject
-    lateinit var timelineDao: TimelineDao
-
-    @Inject
-    lateinit var reportDao: ReportDao
-
-    @Inject
-    lateinit var timelineBean: TimelineBean
-
-    @Inject
-    lateinit var remoteWriterBean: RemoteWriterBean
-
-    @Inject
-    lateinit var remoteWriteSettingsBean: RemoteWriteSettingsBean
+    private fun retrieveSubject(securityContext: SecurityContext): SubjectEntity {
+       return principalService.withTimesheetPrincipalAndSubjectEntity(securityContext) { tp, sub ->
+           sub
+       }
+    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,9 +59,11 @@ class TimelineController: AbstractBaseController() {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun saveTimeline(@Valid timeline: TimelineVo): OperationResult<TimelineVo> {
-
-        return timelineBean.saveUpdate(timeline, retrieveSubject())
+    fun saveTimeline(
+        @Valid timeline: TimelineVo,
+        @Context securityContext: SecurityContext,
+    ): OperationResult<TimelineVo> {
+        return timelineBean.saveUpdate(timeline, retrieveSubject(securityContext))
     }
 
     @DELETE
@@ -92,8 +93,11 @@ class TimelineController: AbstractBaseController() {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun updateTimeline(@Valid timeline: TimelineVo): OperationResult<TimelineVo> {
-        return timelineBean.saveUpdate(timeline, retrieveSubject())
+    fun updateTimeline(
+        @Valid timeline: TimelineVo,
+        @Context securityContext: SecurityContext,
+        ): OperationResult<TimelineVo> {
+        return timelineBean.saveUpdate(timeline, retrieveSubject(securityContext))
     }
 
 
@@ -145,9 +149,10 @@ class TimelineController: AbstractBaseController() {
     @Produces(MediaType.APPLICATION_JSON)
     fun getEarning(
         @QueryParam("from") fromDate: LocalDate?,
-        @QueryParam("to") toDate: LocalDate?
+        @QueryParam("to") toDate: LocalDate?,
+        @Context securityContext: SecurityContext,
     ): List<EarningVo> {
-        val subject = retrieveSubject()
+        val subject = retrieveSubject(securityContext)
         val selectFromDate = fromDate ?: LocalDate.now().with(TemporalAdjusters.firstDayOfMonth())
         val selectToDate = toDate ?: LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
         return reportDao.getEarning(selectFromDate, selectToDate, subject)

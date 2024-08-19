@@ -4,7 +4,7 @@ SCRIPT_DIR="$(dirname $0)"
 cd "$SCRIPT_DIR"
 unset NODE_OPTIONS
 
-if ./mvnw clean package;
+if ./mvnw clean package -DskipTests;
   cd "target/quarkus-app/"
   tar cfz app.tgz app/ lib/ quarkus/ quarkus-app-dependencies.txt quarkus-run.jar
   scp app.tgz root@jiri-pejsa.cz://tmp

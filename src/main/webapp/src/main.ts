@@ -4,9 +4,7 @@ import App from './App.vue'
 import {createPinia} from "pinia";
 import router from './router'
 
-import keycloakPlugin from "@/plugins/KeycloakPlugin";
-
-import axios, {AxiosRequestConfig} from "axios";
+import axios from "axios";
 import moment from "moment";
 import 'moment/locale/cs'
 import {cs} from "@/cs";
@@ -15,7 +13,6 @@ import {createI18n} from "vue-i18n";
 import messages from '@/i18n/messages'
 
 import VueAxios from "vue-axios";
-import Keycloak from "keycloak-js";
 
 import PrimeVue from 'primevue/config'
 import ConfirmationSerice from 'primevue/confirmationservice'
@@ -27,8 +24,7 @@ import 'primeflex/primeflex.min.css'
 import {useUserStore} from "@/stores/UserStore";
 import {useDataStore} from "@/stores/DataStore";
 
-import {UserInfo, useUserInfo} from "@/stores/InfoStore";
-import {CompanyService} from "@/services/CompanyService";
+import {useUserInfo} from "@/stores/InfoStore";
 
 const primeVueConfig = {
     locale: {
@@ -45,30 +41,47 @@ const primeVueConfig = {
 }
 
 const app: Vue.App = createApp(App)
-    .use(keycloakPlugin, {
+const pinia = createPinia()
+const l = navigator.language.split("-")[0] || 'cs'
+const i18n = createI18n({
+    legacy: false,
+    locale: l,
+    fallbackLocale: 'cs',
+    messages
+})
+
+moment.locale('cs')
+app.use(router)
+    .use(VueAxios, axios)
+    .use(pinia)
+    .use(i18n)
+
+app.provide('axios', app.config.globalProperties.axios)
+const store = useUserStore()
+const userInfo = useUserInfo()
+const dataStore = useDataStore()
+app.use(PrimeVue, {locale: cs}).use(ConfirmationSerice)
+app.mount("#app")
+
+/*fetch("/user/current", {
+    redirect: "manual"
+}).then((res) => {
+    console.log("Response from the current: ", res)
+    if (res.type !== "opaqueredirect") {
+        // store.storeUser(response.data)
+        dataStore.load()
+    }
+    app.mount("#app")
+})*/
+
+
+/*    .use(keycloakPlugin, {
         onReady: (_keycloak: Keycloak) => {
             if (!_keycloak.authenticated) {
                 _keycloak.login()
             }
 
-            const l = navigator.language.split("-")[0] || 'cs'
 
-            const i18n = createI18n({
-                legacy: false,
-                locale: l,
-                fallbackLocale: 'cs',
-                messages
-            })
-
-            moment.locale('cs')
-            const pinia = createPinia()
-            app.use(router)
-                .use(VueAxios, axios)
-                .use(pinia)
-                .use(i18n)
-            const store = useUserStore()
-            const userInfo = useUserInfo()
-            const dataStore = useDataStore()
             app.config.globalProperties.axios.interceptors.request.use((config: AxiosRequestConfig) => {
                 config.headers = {
                     'Content-type': 'application/json',
@@ -87,7 +100,6 @@ const app: Vue.App = createApp(App)
                 store.storeUser(response.data)
             })
 
-            dataStore.load()
 
             const from = moment().add(0, 'month').startOf('month').format('YYYY-MM-DD')
             const to = moment().add(0, 'month').endOf('month').format('YYYY-MM-DD')
@@ -110,4 +122,4 @@ const app: Vue.App = createApp(App)
                 app.mount("#app")
             })
         }
-    })
+    })*/

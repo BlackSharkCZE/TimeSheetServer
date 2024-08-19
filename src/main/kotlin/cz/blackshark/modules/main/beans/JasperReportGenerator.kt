@@ -2,6 +2,7 @@ package cz.blackshark.modules.main.beans
 
 import cz.blackshark.modules.main.converter.InvoiceMapper
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.timesheet.commons.domain.InvoiceVo
 import net.sf.jasperreports.engine.JREmptyDataSource
 import net.sf.jasperreports.engine.JasperFillManager
@@ -15,9 +16,9 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class JasperReportGenerator {
 
-    fun generateInvoicePDF(entity: InvoiceEntity): ByteArray {
+    fun generateInvoicePDF(entity: InvoiceEntity, subject: SubjectEntity): ByteArray {
 
-        val invoice: InvoiceVo = InvoiceMapper.toValueObject(entity)
+        val invoice: InvoiceVo = InvoiceMapper.toValueObject(entity, subject)
         val ds = JRBeanCollectionDataSource(invoice.items)
         val params = mutableMapOf("InvoiceItemDataSource" to ds, "InvoiceHeader" to invoice.header)
 
@@ -36,9 +37,9 @@ class JasperReportGenerator {
         return out.toByteArray()
     }
 
-    fun generateInvoiceHTML(entity: InvoiceEntity): ByteArray {
+    fun generateInvoiceHTML(entity: InvoiceEntity, subject: SubjectEntity): ByteArray {
 
-        val invoice: InvoiceVo = InvoiceMapper.toValueObject(entity)
+        val invoice: InvoiceVo = InvoiceMapper.toValueObject(entity, subject)
         val ds = JRBeanCollectionDataSource(invoice.items)
         val params = mutableMapOf("InvoiceItemDataSource" to ds, "InvoiceHeader" to invoice.header)
 

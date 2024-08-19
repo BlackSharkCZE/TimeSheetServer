@@ -6,6 +6,7 @@ import cz.blackshark.modules.main.dto.VatReport
 import cz.blackshark.modules.main.exceptions.CompanyExcetption
 import cz.blackshark.modules.main.persistence.dao.DphDao
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
 import java.io.ByteArrayOutputStream
@@ -24,7 +25,7 @@ class DphBean @Inject constructor(
     private val dphDao: DphDao
 ) {
 
-    fun createInvoiceZip(companyID: Long, month: LocalDate): ByteArray {
+    fun createInvoiceZip(companyID: Long, month: LocalDate, subjectEntity: SubjectEntity): ByteArray {
 
         val issued = invoiceRepository.findIssued(
             companyID,
@@ -40,24 +41,24 @@ class DphBean @Inject constructor(
         val baos = ByteArrayOutputStream()
         val zip = ZipOutputStream(baos)
 
-        issued.forEach { invoice -> putInvoiceToZip(invoice, zip) }
-        received.forEach { invoice -> putInvoiceToZip(invoice, zip) }
+        issued.forEach { invoice -> putInvoiceToZip(invoice, zip, subjectEntity) }
+        received.forEach { invoice -> putInvoiceToZip(invoice, zip, subjectEntity) }
 
         zip.close()
         return baos.toByteArray()
     }
 
-    fun generateTaxReport(year: Int, companyID: Long): VatReport {
-        val data = findInvoices(year, companyID).map(InvoiceMapper::toValueObject).map { it.header }
+    fun generateTaxReport(year: Int, companyID: Long, subject: SubjectEntity): VatReport {
+        val data = findInvoices(year, companyID).map { InvoiceMapper.toValueObject(it, subject)} .map { it.header }
         return VatReport(data, data.sumOf { it.paymentSum }, data.sumOf { it.paymentSumWithoutVat })
     }
 
-    fun createInvoiceTaxBundle(year: Int, companyID: Long): ByteArray {
+    fun createInvoiceTaxBundle(year: Int, companyID: Long, subject: SubjectEntity): ByteArray {
         val baos = ByteArrayOutputStream()
         val zip = ZipOutputStream(baos)
         val data = findInvoices(year, companyID)
-        val sumData = data.map(InvoiceMapper::toValueObject).map { it.header }
-        data.forEach { putInvoiceToZip(it, zip) }
+        val sumData = data.map{ InvoiceMapper.toValueObject(it, subject)}.map { it.header }
+        data.forEach { putInvoiceToZip(it, zip, subject) }
 
         val entry = ZipEntry("report.info.txt")
         val reportData =
@@ -77,8 +78,8 @@ class DphBean @Inject constructor(
     }
 
 
-    private fun putInvoiceToZip(invoice: InvoiceEntity, zip: ZipOutputStream): Unit {
-        invoiceBean.generatePDF(invoice.id!!).let { (f, s) ->
+    private fun putInvoiceToZip(invoice: InvoiceEntity, zip: ZipOutputStream, subject: SubjectEntity): Unit {
+        invoiceBean.generatePDF(invoice.id!!, subject).let { (f, s) ->
             val entry = ZipEntry("$s.pdf")
             entry.size = f.size.toLong()
             zip.putNextEntry(entry)
@@ -87,15 +88,13 @@ class DphBean @Inject constructor(
         }
     }
 
-    fun getAllIssuedInvoice(): List<DphInvoiceSumPreviewVo> {
-        val company = companyRepository.findPrimaryCompany() ?: throw CompanyExcetption("Primary company not found")
-        return dphDao.findIssuedInvoices(company.id!!)
+    fun getAllIssuedInvoice(issuedByCompany: Long): List<DphInvoiceSumPreviewVo> {
+        return dphDao.findIssuedInvoices(issuedByCompany)
 
     }
 
-    fun getAllReceivedInvoice(): List<DphInvoiceSumPreviewVo> {
-        val company = companyRepository.findPrimaryCompany() ?: throw CompanyExcetption("Primary company not found")
-        return dphDao.findReceivedInvoices(company.id!!)
+    fun getAllReceivedInvoice(recipientCompany: Long): List<DphInvoiceSumPreviewVo> {
+        return dphDao.findReceivedInvoices(recipientCompany)
 
     }
 }

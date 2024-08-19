@@ -19,6 +19,10 @@ const messages = {
         "vat-payment-date": "Datum d. usk.",
         "payment-date": "Splatnost",
 
+        "your_id": "Přihlašovací jméno",
+        "your_password": "Heslo",
+        "login": "Příhlásit"
+
     }
 }
 export default messages

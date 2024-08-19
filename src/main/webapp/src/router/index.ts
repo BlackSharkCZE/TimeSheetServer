@@ -1,6 +1,4 @@
-import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
-import Home from '../views/Home.vue'
-import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
+import {createRouter, createWebHistory, RouteLocationRaw, RouteRecordRaw} from 'vue-router'
 import PrivateHome from '@/views/private/PrivateHome.vue'
 import DashboardView from '@/views/private/dashboard/DashboardView.vue'
 import CompanyView from '@/views/private/company/CompanyView.vue'
@@ -16,12 +14,22 @@ import DphView from '@/views/private/dph/DphView.vue'
 import StatisticView from "@/views/private/statistic/StatisticView.vue";
 import PaymentsView from "@/views/private/payments/PaymentsView.vue";
 import TaxView from "@/views/private/tax/TaxView.vue";
+import LoginView from "@/views/LoginView.vue";
 
+import {UserDetail, useUserStore} from "@/stores/UserStore";
+import {Exception} from "sass";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        component: DashboardView
+        component: DashboardView,
+        meta: {
+            authRequired: true
+        }
+    },
+    {
+        path: '/login',
+        component: LoginView
     },
     {
         path: '/about',
@@ -40,8 +48,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: TaxView
             },
             {
-              path: 'dph',
-              component: DphView
+                path: 'dph',
+                component: DphView
             },
             {
                 path: 'home',
@@ -107,21 +115,47 @@ const router = createRouter({
 })
 
 async function isAuthenticated() {
-    return KeycloakInstance.authenticated
+    const userStore = useUserStore()
+    return userStore.userDetail.userName !== undefined
+}
+
+async function loadUserData() {
+    const res = await fetch("/user/current")
+    const json = await res.json()
+    if (json.success === false) throw new Error("Loading user data failed. Success false!")
+    const userStore = useUserStore()
+    userStore.storeUser({
+        userName: json.login,
+        roles: json.roles,
+        company: json.companyId
+    } as UserDetail)
 }
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.authRequired == true) {
+        console.log("AuthRequired for this endpoint!")
         if (await isAuthenticated()) {
             next()
         } else {
-            const path = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + to.fullPath
-            KeycloakInstance.login({
-                redirectUri: path
-            })
-            next()
+            try {
+                console.log('Try loading user data')
+                await loadUserData()
+                console.log('Loading user data finished!')
+                const userStore = useUserStore()
+                if (userStore.userDetail.userName !== undefined) {
+                    next()
+                } else {
+                    next(false)
+                }
+            } catch (e) {
+                next({
+                   path: '/login'
+                } as RouteLocationRaw)
+            }
+
         }
     } else {
+
         next()
     }
 })

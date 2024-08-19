@@ -1,5 +1,5 @@
 <template>
-    <Menubar :model="items">
+    <Menubar :model="items" v-if="store.userDetail.userName">
         <template #start>
             <img alt="logo" src="/img/icon.png" height="36" class="mr-2">
         </template>
@@ -7,7 +7,7 @@
             <UserInfo></UserInfo>
         </template>
     </Menubar>
-    <Message :closable="false" v-if="noPrimaryCompany" severity="warn">
+    <Message :closable="false" v-if="noPrimaryCompany && store.userDetail.userName" severity="warn" >
         You do not have set primary company.
         <router-link style="color:#343434" to="/private/companies">Please add company here</router-link>
     </Message>

@@ -29,7 +29,7 @@
     <Column header="#">
       <template #body="{data}">
         <i class="i-button pi cursor-pointer pi-pencil text-blue-500"
-           @click="editItem(data)">
+           @click="edititem(data)">
         </i>
       </template>
     </Column>
