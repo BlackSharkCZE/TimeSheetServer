@@ -25,12 +25,14 @@
                                  v-model="formData.companyName">
                     </input-field>
 
-                    <input-field id="dic"
-                                 class="col-2"
-                                 label="DIC"
-                                 :vualidate="v$.dic"
-                                 :submitted="submitted"
-                                 v-model="formData.dic"/>
+                  <div :class="props.class">
+                    <label for="dic">DIC</label>
+                    <InputText
+                        id="dic"
+                        class="p-inputtext"
+                        v-model="formData.dic"/>
+                  </div>
+
                     <div class="field col-1">
                         <label>&nbsp;</label>
                         <div class="mt-3">
@@ -73,6 +75,13 @@
                                  :vualidate="v$.cisloDomu"
                                  :submitted="submitted"
                                  v-model="formData.cisloDomu"/>
+                  <input-field id="PSC"
+                               class="col-1"
+                               label="PSČ"
+                               :vualidate="v$.psc"
+                               :submitted="submitted"
+                               v-model="formData.psc"/>
+
                 </div>
 
                 <div class="formgrid grid">
@@ -119,7 +128,7 @@ import InputSwitch from 'primevue/inputswitch'
 import {AxiosStatic} from "axios";
 import {inject, reactive, ref, withDefaults, defineEmits, defineProps} from "vue";
 import useVuelidate from "@vuelidate/core";
-import {email, required} from "@vuelidate/validators";
+import {email, required, requiredIf} from "@vuelidate/validators";
 import InputField from "@/components/blocks/InputField.vue";
 import {useUserStore} from "@/stores/UserStore";
 
@@ -174,7 +183,6 @@ const rules = {
     // ic: {required: helpers.withMessage('IC je povinny parametr.', required), minLength: minLength(2)}
     ic: {required},
     companyName: {required, $autoDirty: true},
-    dic: {required},
     okres: {required},
     obec: {required},
     castObce: {required},
@@ -201,6 +209,8 @@ function handleSubmit(isFormValid: boolean) {
     submitted.value = true
     if (isFormValid) {
         saveCompany()
+    }else {
+      console.error('Form is not valid!', v$)
     }
 }
 

@@ -71,7 +71,7 @@
 
 <script lang="ts" setup>
 import {computed, defineEmits, defineProps, inject, onMounted, reactive, ref} from 'vue'
-import {InvoiceItem} from "@/components/blocks/Types";
+import {Company, InvoiceItem} from "@/components/blocks/Types";
 import Card from "primevue/card";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
@@ -91,6 +91,7 @@ interface Properties {
   items: InvoiceItem[]
   invoiceId: number,
   invoiceNumber: string,
+  issuer: Company
 }
 
 type FormData = {
@@ -115,7 +116,7 @@ const axios = inject<AxiosStatic>('axios')
 const formData = reactive<FormData>({
   note: null,
   amount: 0,
-  vatRate: 21
+  vatRate: getVatRate()
 })
 
 const formRef = ref(null)
@@ -179,19 +180,39 @@ function saveItem() {
 function clearForm() {
   formData.note = null
   formData.amount = 0
-  formData.vatRate = 21
+  formData.vatRate = getVatRate()
   submitted.value = false
 }
 
-function buildData(): any {
-  const pvv: number = ((formData.vatRate / 100.0) + 1.0) * formData.amount
-  return {
-    description: formData.note,
-    price: formData.amount,
-    vatRate: formData.vatRate,
-    vatAmount: pvv - formData.amount,
-    priceWithVat: pvv,
+function getVatRate(): Number {
+  if (props.issuer.platceDph == true) {
+    return 21
+  } else {
+    return 0
   }
+}
+
+
+function buildData(): any {
+  if (props.issuer.platceDph === true) {
+    const pvv: number = ((formData.vatRate / 100.0) + 1.0) * formData.amount
+    return {
+      description: formData.note,
+      price: formData.amount,
+      vatRate: formData.vatRate,
+      vatAmount: pvv - formData.amount,
+      priceWithVat: pvv,
+    }
+  } else {
+    return {
+      description: formData.note,
+      price: formData.amount,
+      vatRate: 0,
+      vatAmount: 0,
+      priceWithVat: formData.amount,
+    }
+  }
+
 }
 
 </script>

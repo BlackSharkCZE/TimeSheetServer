@@ -1,6 +1,7 @@
 package cz.blackshark.modules.main.converter
 
 import cz.blackshark.modules.ares.domains.generated.AresOdpovedi
+import cz.blackshark.modules.ares.model.EkonomickySubjekt
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
 import cz.blackshark.timesheet.commons.domain.CompanyBaseVo
 import cz.blackshark.timesheet.commons.domain.CompanyVo
@@ -61,5 +62,20 @@ object CompanyMapper {
             bankAccountNumber=entity.bankAccountNumber*/
         }
     }
+    fun convert(ares: EkonomickySubjekt): CompanyVo {
+        return CompanyVo().apply {
+            ic = ares.ico
+            companyName = ares.obchodniJmeno
+            okres = ares.sidlo?.nazevOkresu
+            obec = ares.sidlo?.nazevObce
+            castObce = ares.sidlo?.nazevCastiObce
+            ulice = ares.sidlo?.nazevUlice
+            cisloDomu = ares.sidlo?.cisloDomovni?.toString()
+            psc = ares.sidlo?.psc?.toString()
+            dic = ares.dic
+            platceDph = ares.dic != null
+        }
+    }
+
 
 }

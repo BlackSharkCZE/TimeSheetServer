@@ -14,6 +14,7 @@
       <invoice-items
           @itemCreated="itemCreatedHandler"
           :items="items"
+          :issuer="invoice?.issuerCompany"
           :invoice-number="invoice.number"
           :invoice-id="parseInt(router.currentRoute.value.params.number)"></invoice-items>
     </div>

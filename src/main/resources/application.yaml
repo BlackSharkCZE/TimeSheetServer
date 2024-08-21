@@ -60,10 +60,15 @@ quarkus:
     min-level: DEBUG
     console:
       level: INFO
+      min-level: DEBUG
       format: "%d{YYYY-MM-DD'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
+      category:
+        "cz.blackshark.modules.main.persistence.repository":
+          level: DEBUG
     file:
       enable: true
       level: INFO
+      min-level: DEBUG
       path: log/app.log
       format: "%d{YYYY-MM-dd'T'HH:mm:ss} %-5p %X{X-Correlation-Id} [%c{2.}] (%t) %s%e%n"
       rotation:
@@ -97,6 +102,9 @@ gemts:
   dr-max-project-name: "DrMax integrační platforma"
 ares-api/mp-rest/url: "http://wwwinfo.mfcr.cz"
 ares-api/mp-rest/scope: "javax.inject.Singleton"
+
+ares-api-2/mp-rest/url: "https://ares.gov.cz"
+ares-api-2/mp-rest/scope: "javax.injext.Singleton"
 
 drmax-jira/mp-rest/url: ${DRMAX_TIMESHEET_URL}
 drmax-jira/mp-rest/scope: "javax.inject.Singleton"

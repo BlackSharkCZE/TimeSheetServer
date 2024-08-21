@@ -167,7 +167,7 @@ class ApplicationDatatableController {
         } else {
             val whereParts = mutableListOf<String>()
             val params = mutableMapOf<String, Any?>()
-            filter.forEach { (key, filter) ->
+            filter.filterNot { it.key == "issuerCompany" || it.key  == "recipientCompany" }. forEach { (key, filter) ->
                 when (filter.type) {
                     "=" -> {
                         if (filter.childKey != null) {
