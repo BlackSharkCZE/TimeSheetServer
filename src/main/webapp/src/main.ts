@@ -50,6 +50,8 @@ const i18n = createI18n({
     messages
 })
 
+console.log("MAIN.TS ACCESSED!")
+
 moment.locale('cs')
 app.use(router)
     .use(VueAxios, axios)
@@ -62,6 +64,7 @@ const userInfo = useUserInfo()
 const dataStore = useDataStore()
 app.use(PrimeVue, {locale: cs}).use(ConfirmationSerice)
 app.mount("#app")
+
 
 /*fetch("/user/current", {
     redirect: "manual"

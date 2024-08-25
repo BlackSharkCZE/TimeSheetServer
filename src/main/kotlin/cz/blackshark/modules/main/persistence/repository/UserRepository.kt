@@ -13,12 +13,12 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class UserRepository(
     private val sessionFactory: SessionFactory,
-    private val log: Logger
-    ) : PanacheRepositoryBase<UserEntity, String> {
+    private val log: Logger,
+) : PanacheRepositoryBase<UserEntity, String> {
 
 
-    companion object {
-        private val LOG = Logger.getLogger(UserRepository::class.java)
+    fun findBySubject(subject: String): UserEntity? {
+        return find("subject_id", subject).firstResultOptional<UserEntity>().orElse(null)
     }
 
     @CacheResult(cacheName = "user-entity")
@@ -36,8 +36,6 @@ class UserRepository(
 
                     log.debugf("Load UserEntity $login from database - DEBUG LEVEL - C OBJECT")
                     log.infof("Load UserEntity $login from database - INFO LEVEL - C OBJECT")
-
-
 
                     val user = session.createQuery("from UserEntity where login = :login", UserEntity::class.java)
                         .setParameter("login", login)

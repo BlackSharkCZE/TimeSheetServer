@@ -34,7 +34,7 @@ quarkus:
       form:
         enabled: true
         login-page: /login
-        error-page: /login-failed
+        error-page: /login?error=1
         redirect-after-login: true
   datasource:
     db-kind: postgresql

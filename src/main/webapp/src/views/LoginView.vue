@@ -5,6 +5,8 @@ import InputText from "primevue/inputtext";
 import {useI18n} from "vue-i18n";
 import {inject, ref} from "vue";
 import type {AxiosStatic} from "axios";
+import {useRoute} from "vue-router";
+import Message from "primevue/message";
 
 const axios = inject<AxiosStatic>('axios')
 const htmlForm = ref()
@@ -30,6 +32,10 @@ const loginData = ref<LoginDataType>({
   j_password: ''
 })
 
+const route = useRoute()
+console.log('Route params', route.query)
+
+
 function handleFormSubmit() {
   loginData.value.j_username = formData.value.user_name
   loginData.value.j_password = formData.value.user_password
@@ -51,15 +57,21 @@ function handleFormSubmit() {
       <div class="flex flex-column">
 
         <div class="flex align-items-center justify-content-center p-2">
-          <InputText v-model="formData.user_name" :placeholder="t.t('your_id')" autofocus/>
+
+          <Message v-if="route.query.error!==undefined" severity="error" >Neplatné přihlášení</Message>
+        </div>
+
+        <div class="flex align-items-center justify-content-center p-2">
+          <InputText v-model="formData.user_name" :placeholder="t.t('your_id')" autofocus @keyup.enter="handleFormSubmit"/>
         </div>
         <div class="flex align-items-center justify-content-center p-2">
           <InputText v-model="formData.user_password" type="password"
+                     @keyup.enter="handleFormSubmit"
                      :placeholder="t.t('your_password')"/>
         </div>
 
         <div class="flex align-items-center justify-content-center p-2">
-          <Button type="button" :label="t.t('login')" @click="handleFormSubmit"/>
+          <Button type="button" :label="t.t('login')" @click="handleFormSubmit" @keyup.enter="handleFormSubmit"/>
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ import LoginView from "@/views/LoginView.vue";
 
 import {UserDetail, useUserStore} from "@/stores/UserStore";
 import {Exception} from "sass";
+import NotFoundView from "@/views/NotFoundView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -106,6 +107,12 @@ const routes: Array<RouteRecordRaw> = [
                 component: PaymentsView
             },
         ]
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        redirect: '/private/dashboard',
+        // component: NotFoundView
     }
 ]
 

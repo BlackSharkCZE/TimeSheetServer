@@ -40,6 +40,9 @@ export const useUserStore = defineStore('userStore', {
         setCompany(u: any) {
             this.userDetail.company = u
         }
+        logout() {
+            this.userDetail = {}
+        }
 
     }
 })
