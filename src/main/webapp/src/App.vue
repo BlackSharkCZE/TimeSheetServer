@@ -1,5 +1,5 @@
 <template>
-  <Menubar :model="items" v-if="store.userDetail.userName">
+  <Menubar :model="items" v-if="store.userDetail.userName !== 'anonymous'">
     <template #start>
       <img alt="logo" src="/img/icon.png" height="36" class="mr-2">
     </template>

@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
 @Path("user")
-@Authenticated
 class UserController(
     private val principalService: PrincipalService,
     private val userBean: UserBean,
@@ -33,7 +32,11 @@ class UserController(
                 roles = tp.roles,
                 companyId = tp.companyId
             )
-        } ?: throw IllegalStateException("No user in context")
+        } ?: CurrentUserVo(
+            login = "anonymous",
+            roles = emptyList(),
+            companyId = null
+        )
     }
 
 

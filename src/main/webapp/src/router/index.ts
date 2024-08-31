@@ -145,14 +145,14 @@ router.beforeEach(async (to, from, next) => {
             next()
         } else {
             try {
-                console.log('Try loading user data')
                 await loadUserData()
-                console.log('Loading user data finished!')
                 const userStore = useUserStore()
-                if (userStore.userDetail.userName !== undefined) {
+                if (userStore.userDetail.userName !== undefined && userStore.userDetail.userName !== 'anonymous') {
                     next()
                 } else {
-                    next(false)
+                    next({
+                        path: '/login'
+                    })
                 }
             } catch (e) {
                 next({
