@@ -7,7 +7,7 @@ class PasswordHashGenerator {
 
     @Test
     fun generatePassword() {
-        val password = "1234567890"
+        val password = "martina123456"
         val result = BcryptUtil.bcryptHash(password)
         println(result)
     }

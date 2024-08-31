@@ -14,7 +14,9 @@ export type UserDetail = {
 
 export const useUserStore = defineStore('userStore', {
     state: () => ({
-        userDetail: {}
+        userDetail: {
+            userName: "anonymous"
+        }
     } as UserDetailType),
     getters: {
         hasPrimaryCompany: (state) => {
@@ -39,9 +41,15 @@ export const useUserStore = defineStore('userStore', {
 
         setCompany(u: any) {
             this.userDetail.company = u
-        }
+        },
         logout() {
-            this.userDetail = {}
+            this.userDetail = {
+                userName: "anonymous",
+                subject: "",
+                internalId: -1,
+                company: null,
+                roles: []
+            }
         }
 
     }

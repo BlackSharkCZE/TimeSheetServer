@@ -123,7 +123,7 @@ const router = createRouter({
 
 async function isAuthenticated() {
     const userStore = useUserStore()
-    return userStore.userDetail.userName !== undefined
+    return userStore.userDetail.userName !== undefined && userStore.userDetail.userName !== 'anonymous'
 }
 
 async function loadUserData() {
