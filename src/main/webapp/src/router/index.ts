@@ -140,7 +140,6 @@ async function loadUserData() {
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.authRequired == true) {
-        console.log("AuthRequired for this endpoint!")
         if (await isAuthenticated()) {
             next()
         } else {

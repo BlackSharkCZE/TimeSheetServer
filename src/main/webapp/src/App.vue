@@ -8,7 +8,7 @@
 
     </template>
   </Menubar>
-  <Message :closable="false" v-if="noPrimaryCompany && store.userDetail.userName" severity="warn">
+  <Message :closable="false" v-if="noPrimaryCompany && store.userDetail.userName !== 'anonymous'" severity="warn">
     You do not have set primary company.
     <router-link style="color:#343434" to="/private/companies">Please add company here</router-link>
   </Message>
@@ -38,14 +38,14 @@ const items = ref([
     label: i18n.t('dashboard'), icon: 'pi pi-fw pi-calendar', to: '/private/dashboard'
   },
   {
-    label: 'Accounting',
+    label: 'Vyúčtování',
     icon: 'pi pi-fw pi-money-bill',
     items: [
-      {label: 'Billing', to: '/private/billing'},
+      {label: 'Vyúčtování', to: '/private/billing'},
       {
-        label: 'Invoices', items: [
-          {label: 'List invoice', to: '/private/invoices'},
-          {label: 'Upload invoice', to: '/private/invoices-add'}
+        label: 'Faktury', items: [
+          {label: 'Přehled faktur', to: '/private/invoices'},
+          {label: 'Přidat fakturu', to: '/private/invoices-add'}
         ]
       },
       {label: 'DPH', to: '/private/dph'},
@@ -53,13 +53,13 @@ const items = ref([
     ]
   },
   {
-    label: 'Configuration', icon: 'pi pi-fw pi-wrench',
+    label: 'Nastavení', icon: 'pi pi-fw pi-wrench',
     items: [
-      {label: 'Manage companies', to: '/private/companies'},
-      {label: 'Manage requisition', to: '/private/requisition'},
-      {label: 'Manage projects', to: '/private/project'},
-      {label: 'Manage rates', to: '/private/rate'},
-      {label: 'Manage remote writers', to: '/private/writers'}
+      {label: 'Správa společností', to: '/private/companies'},
+      {label: 'Správa objednávek', to: '/private/requisition'},
+      {label: 'Správa projektů', to: '/private/project'},
+      {label: 'Sazby', to: '/private/rate'},
+      {label: 'Zápis do externích systémů', to: '/private/writers'}
     ]
   },
   {

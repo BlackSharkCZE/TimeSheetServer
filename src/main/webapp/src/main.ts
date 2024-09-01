@@ -50,8 +50,6 @@ const i18n = createI18n({
     messages
 })
 
-console.log("MAIN.TS ACCESSED!")
-
 moment.locale('cs')
 app.use(router)
     .use(VueAxios, axios)

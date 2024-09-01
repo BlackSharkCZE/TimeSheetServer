@@ -58,11 +58,7 @@ const handleLogout = () => {
   router.push("/login")
 }
 
-console.log('UserStore Data', userInfo.userInfo)
 if (!userInfo.userInfo.initialized) {
-  console.log('UserInfo not initialized. Try load!')
-
-
   const from = moment().add(0, 'month').startOf('month').format('YYYY-MM-DD')
   const to = moment().add(0, 'month').endOf('month').format('YYYY-MM-DD')
 
