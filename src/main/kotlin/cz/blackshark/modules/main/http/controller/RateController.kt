@@ -1,13 +1,12 @@
 package cz.blackshark.modules.main.http.controller
 
+import cz.blackshark.modules.main.beans.PrincipalService
 import cz.blackshark.modules.main.beans.RateBean
 import cz.blackshark.modules.main.dto.RateVo
 import cz.blackshark.modules.main.exceptions.TsException
 import io.quarkus.security.Authenticated
-import org.eclipse.microprofile.jwt.JsonWebToken
-import org.jboss.logging.Logger
+import javax.annotation.security.RolesAllowed
 import javax.enterprise.context.RequestScoped
-import javax.inject.Inject
 import javax.transaction.Transactional
 import javax.ws.rs.GET
 import javax.ws.rs.POST
@@ -18,25 +17,30 @@ import javax.ws.rs.core.SecurityContext
 @Path("rate")
 @Authenticated
 @RequestScoped
-class RateController: AbstractBaseController() {
-
-    @Inject
-    private lateinit var rateBean: RateBean
+class RateController(
+    private val rateBean: RateBean,
+    private val principalService: PrincipalService,
+) {
 
     @POST
     @Path("/create")
     @Throws(TsException::class)
     @Transactional
+    @RolesAllowed("admin", "superadmin")
     fun creteRate(@Context context: SecurityContext, rateVo: RateVo): RateVo {
-        return rateBean.createRate(rateVo, retrieveSubject())
+
+        return principalService.withTimesheetPrincipalAndSubjectEntity(context) { tp, subject ->
+            rateBean.createRate(rateVo, subject)
+        }
     }
 
     @GET
     @Path("/list")
     @Throws(TsException::class)
-    fun getAllUserRates(): List<RateVo> {
-        return rateBean.findForSubject(retrieveSubject())
+    @RolesAllowed("admin", "superadmin")
+    fun getAllUserRates(@Context securityContext: SecurityContext): List<RateVo> {
+        return principalService.withTimesheetPrincipalAndSubjectEntity(securityContext) { tp, subject ->
+            rateBean.findForSubject(subject)
+        }
     }
-
-
 }

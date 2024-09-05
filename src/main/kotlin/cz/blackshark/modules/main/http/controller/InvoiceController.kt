@@ -4,9 +4,9 @@ import cz.blackshark.modules.commons.model.RestResponse
 import cz.blackshark.modules.main.beans.InvoiceBean
 import cz.blackshark.modules.main.beans.InvoiceUploadBean
 import cz.blackshark.modules.main.beans.JasperReportGenerator
+import cz.blackshark.modules.main.beans.PrincipalService
 import cz.blackshark.modules.main.dto.InvoiceRequest
 import cz.blackshark.modules.main.dto.InvoiceSummaryPreviewVo
-import cz.blackshark.modules.main.dto.RequisitionRequest
 import cz.blackshark.modules.main.exceptions.CompanyExcetption
 import cz.blackshark.modules.main.persistence.dao.InvoiceDao
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
@@ -21,35 +21,54 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.transaction.Transactional
 import javax.validation.Valid
-import javax.ws.rs.*
+import javax.ws.rs.BadRequestException
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.InternalServerErrorException
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import kotlin.jvm.Throws
+import javax.ws.rs.core.SecurityContext
 
 @Path("/invoice")
 @Authenticated
 class InvoiceController : AbstractBaseController() {
 
-
     @Inject
     lateinit var logger: org.jboss.logging.Logger
+
     @Inject
     lateinit var invoiceRepository: InvoiceRepository
+
     @Inject
     lateinit var companyRepository: CompanyRepository
+
     @Inject
     lateinit var invoiceDao: InvoiceDao
+
     @Inject
     lateinit var invoiceBean: InvoiceBean
+
     @Inject
     lateinit var jasperReportGenerator: JasperReportGenerator
+
     @Inject
     lateinit var invoiceDetailController: InvoiceDetailController
+
     @Inject
     lateinit var invoiceUploadBean: InvoiceUploadBean
+
     @Inject
     lateinit var invoiceGenerateController: InvoiceGenerateController
 
+    @Inject
+    lateinit var principalService: PrincipalService
 
     @Path("detail")
     fun getInvocieDetail(): InvoiceDetailController {
@@ -65,28 +84,33 @@ class InvoiceController : AbstractBaseController() {
 
     @GET
     @Path("{invoiceID: \\d+}/pdf")
-    fun generatePDF(@PathParam("invoiceID") invoiceID: Long): Response {
-        val res = invoiceBean.generatePDF(invoiceID)
-        return Response.ok(res.first, MediaType.APPLICATION_OCTET_STREAM_TYPE)
-            .header("Content-Disposition", "attachment; filename=${res.second}.pdf")
-            .build()
+    fun generatePDF(@PathParam("invoiceID") invoiceID: Long, @Context securityContext: SecurityContext): Response {
+        return principalService.withTimesheetPrincipalAndSubjectEntity(securityContext) { tp, subjectEntity ->
+            val res = invoiceBean.generatePDF(invoiceID, subjectEntity)
+            Response.ok(res.first, MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                .header("Content-Disposition", "attachment; filename=${res.second}.pdf")
+                .build()
+        }
     }
 
     @GET
     @Path("{invoiceID: \\d+}/html")
-    fun generateHTML(@PathParam("invoiceID") invoiceID: Long): Response {
-        val invoiceEntity = try {
-            invoiceRepository.findById(invoiceID)
-        } catch (e: Exception) {
-            throw NotFoundException("Can not find Invoice with ID $invoiceID")
-        }
+    fun generateHTML(@PathParam("invoiceID") invoiceID: Long, @Context securityContext: SecurityContext): Response {
 
-        return Response.ok(
-            jasperReportGenerator.generateInvoiceHTML(invoiceEntity),
-            MediaType.APPLICATION_OCTET_STREAM_TYPE
-        )
-            .header("Content-Disposition", "attachment; filename=${invoiceEntity.number}.html")
-            .build()
+        return principalService.withTimesheetPrincipalAndSubjectEntity(securityContext) { tp, subjectEntity ->
+            val invoiceEntity = try {
+                invoiceRepository.findById(invoiceID)
+            } catch (e: Exception) {
+                throw NotFoundException("Can not find Invoice with ID $invoiceID")
+            }
+
+            Response.ok(
+                jasperReportGenerator.generateInvoiceHTML(invoiceEntity, subjectEntity),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE
+            )
+                .header("Content-Disposition", "attachment; filename=${invoiceEntity.number}.html")
+                .build()
+        }
     }
 
     @GET
@@ -113,7 +137,7 @@ class InvoiceController : AbstractBaseController() {
     fun getSummary(
         @QueryParam("from") fromDate: LocalDate,
         @QueryParam("to") toDate: LocalDate,
-        @QueryParam("companyID") companyID: Long
+        @QueryParam("companyID") companyID: Long,
     ): InvoiceSummaryPreviewVo {
 
         val res = invoiceDao.loadInvoiceSourceData(companyID, fromDate, toDate)
@@ -138,9 +162,8 @@ class InvoiceController : AbstractBaseController() {
     fun generateInvoice(
         @QueryParam("from") fromDate: LocalDate,
         @QueryParam("to") toDate: LocalDate,
-        @QueryParam("companyID") companyID: Long
+        @QueryParam("companyID") companyID: Long,
     ): RestResponse<InvoiceEntity> {
-
 
         val issuer = companyRepository.findPrimaryCompany()
         val receiver = companyRepository.findById(companyID)
@@ -162,7 +185,6 @@ class InvoiceController : AbstractBaseController() {
         }
 
         throw BadRequestException("Generate invoice failed. See logs for more details.")
-
     }
 
     @POST
@@ -179,7 +201,6 @@ class InvoiceController : AbstractBaseController() {
         }
     }
 
-
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -194,6 +215,4 @@ class InvoiceController : AbstractBaseController() {
             RestResponse(true, "Invoice created", res.entity, HttpResponseCodes.SC_OK)
         }
     }
-
-
 }

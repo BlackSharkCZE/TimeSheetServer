@@ -3,6 +3,7 @@ package cz.blackshark.modules.main.beans
 import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.modules.main.persistence.repository.SubjectRepository
 import io.quarkus.cache.CacheResult
+import java.util.UUID
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.transaction.Transactional
@@ -21,16 +22,18 @@ class SubjectBean @Inject constructor(private val subjectRepository: SubjectRepo
 
     @Transactional
     fun createNewSubject(remoteId: String): SubjectEntity {
-        val subjectEntity = SubjectEntity(null, remoteId)
+        val subjectEntity = SubjectEntity(null, remoteId, "", "")
         subjectRepository.persist(subjectEntity)
         return subjectEntity
     }
 
-    fun findOrCreateSubject(remoteId: String): SubjectEntity {
-        return try {
-            findByRemoteId(remoteId)
-        } catch (e: NotFoundException) {
-            createNewSubject(remoteId)
-        }
+    fun findOrCreateSubject(remoteId: String?): SubjectEntity {
+        return remoteId?.let { id ->
+            try {
+                findByRemoteId(id)
+            } catch (e: NotFoundException) {
+                createNewSubject(id)
+            }
+        } ?: createNewSubject(UUID.randomUUID().toString())
     }
 }

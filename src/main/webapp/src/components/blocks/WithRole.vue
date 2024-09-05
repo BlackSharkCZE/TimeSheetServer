@@ -8,6 +8,7 @@
 
 import Keycloak from "keycloak-js";
 import {computed, inject, defineProps} from "vue";
+import {useUserStore} from "@/stores/UserStore";
 
 // Define types
 type PropsType = {
@@ -16,16 +17,18 @@ type PropsType = {
 
 // Define properties
 const props = defineProps<PropsType>()
+const userStore = useUserStore()
 
-// Define inject
-const keycloak = inject<Keycloak>('keycloak')
 
 // Define computed
 const hasAnyRole = computed(() => {
-  return props.roles.filter(role => {
-    return keycloak?.hasRealmRole(role)
+  const x = props.roles.filter(role => {
+    return userStore.hasRole(role)
   }).length > 0
 
+  console.log('Require role found: ', x)
+
+  return x
 
 })
 // Define function

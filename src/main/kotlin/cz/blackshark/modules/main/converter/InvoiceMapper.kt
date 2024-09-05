@@ -4,6 +4,7 @@ import cz.blackshark.modules.main.dto.IncomingInvoiceMetadataVo
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceEntity
 import cz.blackshark.modules.main.persistence.entity.InvoiceItemEntity
+import cz.blackshark.modules.main.persistence.entity.SubjectEntity
 import cz.blackshark.timesheet.commons.domain.InvoiceHeaderVo
 import cz.blackshark.timesheet.commons.domain.InvoiceItemVo
 import cz.blackshark.timesheet.commons.domain.InvoiceVo
@@ -12,8 +13,7 @@ import java.math.BigDecimal
 
 object InvoiceMapper {
 
-    fun toValueObject(invoiceEntity: InvoiceEntity): InvoiceVo {
-
+    fun toValueObject(invoiceEntity: InvoiceEntity, subjectEntity: SubjectEntity): InvoiceVo {
         return InvoiceVo(
             InvoiceHeaderVo(
                 invoiceEntity.number!!,
@@ -24,15 +24,14 @@ object InvoiceMapper {
                 CompanyMapper.convert(invoiceEntity.issuerCompany!!),
                 CompanyMapper.convert(invoiceEntity.recipientCompany!!),
                 invoiceEntity.items.map { it.totalPrice }.fold(BigDecimal.ZERO, BigDecimal::add),
-                invoiceEntity.items.sumOf { it.price }
+                invoiceEntity.items.sumOf { it.price },
+                subjectEntity.firstName + " " + subjectEntity.lastName,
             ),
             invoiceEntity.items.map(this::toValueObject)
         )
-
     }
 
     fun toValueObject(invoiceItem: InvoiceItemEntity): InvoiceItemVo {
-
         return if (invoiceItem.vat > BigDecimal(0.1)) {
             InvoiceItemVo(
                 invoiceItem.id!!,
@@ -69,6 +68,5 @@ object InvoiceMapper {
             vatPaymentDate = metadata.vatPaymentDate
             storePath = systemFileName
         }
-
     }
 }

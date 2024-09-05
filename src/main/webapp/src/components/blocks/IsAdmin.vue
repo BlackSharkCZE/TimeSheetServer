@@ -1,5 +1,5 @@
 <template>
-  <WithRole :roles="['role-admin']"><slot></slot></WithRole>
+  <WithRole :roles="['admin', 'superadmin']"><slot></slot></WithRole>
 </template>
 
 <script lang="ts" setup>

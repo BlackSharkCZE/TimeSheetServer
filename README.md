@@ -20,4 +20,3 @@ Manage your work log as freelancer. Write timesheet, manage projects, create inv
 * Kotlin
 * Quarkus
 * Vue + PrimeVue
-

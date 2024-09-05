@@ -1,6 +1,4 @@
-import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
-import Home from '../views/Home.vue'
-import {KeycloakInstance} from '@/plugins/KeycloakPlugin'
+import {createRouter, createWebHistory, RouteLocationRaw, RouteRecordRaw} from 'vue-router'
 import PrivateHome from '@/views/private/PrivateHome.vue'
 import DashboardView from '@/views/private/dashboard/DashboardView.vue'
 import CompanyView from '@/views/private/company/CompanyView.vue'
@@ -16,12 +14,23 @@ import DphView from '@/views/private/dph/DphView.vue'
 import StatisticView from "@/views/private/statistic/StatisticView.vue";
 import PaymentsView from "@/views/private/payments/PaymentsView.vue";
 import TaxView from "@/views/private/tax/TaxView.vue";
+import LoginView from "@/views/LoginView.vue";
 
+import {UserDetail, useUserStore} from "@/stores/UserStore";
+import {Exception} from "sass";
+import NotFoundView from "@/views/NotFoundView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        component: DashboardView
+        component: DashboardView,
+        meta: {
+            authRequired: true
+        }
+    },
+    {
+        path: '/login',
+        component: LoginView
     },
     {
         path: '/about',
@@ -40,8 +49,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: TaxView
             },
             {
-              path: 'dph',
-              component: DphView
+                path: 'dph',
+                component: DphView
             },
             {
                 path: 'home',
@@ -98,6 +107,12 @@ const routes: Array<RouteRecordRaw> = [
                 component: PaymentsView
             },
         ]
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        redirect: '/private/dashboard',
+        // component: NotFoundView
     }
 ]
 
@@ -107,7 +122,20 @@ const router = createRouter({
 })
 
 async function isAuthenticated() {
-    return KeycloakInstance.authenticated
+    const userStore = useUserStore()
+    return userStore.userDetail.userName !== undefined && userStore.userDetail.userName !== 'anonymous'
+}
+
+async function loadUserData() {
+    const res = await fetch("/user/current")
+    const json = await res.json()
+    if (json.success === false) throw new Error("Loading user data failed. Success false!")
+    const userStore = useUserStore()
+    userStore.storeUser({
+        userName: json.login,
+        roles: json.roles,
+        company: json.companyId
+    } as UserDetail)
 }
 
 router.beforeEach(async (to, from, next) => {
@@ -115,13 +143,25 @@ router.beforeEach(async (to, from, next) => {
         if (await isAuthenticated()) {
             next()
         } else {
-            const path = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + to.fullPath
-            KeycloakInstance.login({
-                redirectUri: path
-            })
-            next()
+            try {
+                await loadUserData()
+                const userStore = useUserStore()
+                if (userStore.userDetail.userName !== undefined && userStore.userDetail.userName !== 'anonymous') {
+                    next()
+                } else {
+                    next({
+                        path: '/login'
+                    })
+                }
+            } catch (e) {
+                next({
+                   path: '/login'
+                } as RouteLocationRaw)
+            }
+
         }
     } else {
+
         next()
     }
 })

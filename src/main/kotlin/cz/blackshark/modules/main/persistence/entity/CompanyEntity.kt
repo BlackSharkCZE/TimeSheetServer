@@ -44,7 +44,6 @@ open class CompanyEntity : PanacheEntityBase(), Serializable {
 	@NotNull
 	var ps: String? = null
 
-	@NotNull
 	var dic: String? = null
 
 	@Column(name = "platce_dph")

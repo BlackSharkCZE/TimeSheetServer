@@ -8,9 +8,6 @@
 
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-    <div v-if="!$keycloak.authenticated">
-      <button @click="$keycloak.login()">Login</button>
-    </div>
   </div>
 </template>
 

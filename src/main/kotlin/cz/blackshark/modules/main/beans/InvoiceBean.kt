@@ -1,6 +1,7 @@
 package cz.blackshark.modules.main.beans
 
 import cz.blackshark.config.ApplicationConfig
+import cz.blackshark.modules.main.exceptions.TsException
 import cz.blackshark.modules.main.persistence.dao.BillingDao
 import cz.blackshark.modules.main.persistence.dao.TimelineDao
 import cz.blackshark.modules.main.persistence.entity.CompanyEntity
@@ -12,6 +13,7 @@ import cz.blackshark.modules.main.persistence.repository.CompanyRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceItemRepository
 import cz.blackshark.modules.main.persistence.repository.InvoiceRepository
 import cz.blackshark.modules.main.persistence.repository.RequisitionRepository
+import cz.blackshark.security.TimesheetPrincipal
 import org.jboss.logging.Logger
 import java.math.BigDecimal
 import java.nio.file.Files
@@ -38,10 +40,9 @@ class InvoiceBean @Inject constructor(
     private val billingDao: BillingDao
 ) {
 
-    fun generateInvoice(subject: SubjectEntity, companyId: Long, issueDate: LocalDate): InvoiceEntity {
+    fun generateInvoice(subject: SubjectEntity, companyId: Long, issueDate: LocalDate, currentUser: TimesheetPrincipal): InvoiceEntity {
         val recipient = companyRepository.findById(companyId) ?: throw BadRequestException("Company not found!")
-        val issuer = companyRepository.findPrimaryCompany()
-            ?: throw InternalServerErrorException("Primary company does not exists!")
+        val issuer = companyRepository.findById(currentUser.companyId) ?: throw TsException("Current user has not primary company or company does not exits CompanyID: [${currentUser.companyId}]. UserID: [${currentUser.name}]", null)
         val invoiceNumber = invoiceNumberGenerator.getNextNumber(issuer.id!!)
             ?: throw InternalServerErrorException("Can not get new invoice number!")
         val requisition =
@@ -90,14 +91,14 @@ class InvoiceBean @Inject constructor(
         return null
     }
 
-    fun generatePDF(invoiceID: Long): Pair<ByteArray, String> {
+    fun generatePDF(invoiceID: Long, subject: SubjectEntity): Pair<ByteArray, String> {
         val invoiceEntity = try {
             invoiceRepository.findById(invoiceID)
         } catch (e: Exception) {
             throw NotFoundException("Can not find Invoice with ID $invoiceID")
         }
         if (invoiceEntity.storePath == null) {
-            return Pair(jasperReportGenerator.generateInvoicePDF(invoiceEntity), invoiceEntity.number!!)
+            return Pair(jasperReportGenerator.generateInvoicePDF(invoiceEntity, subject), invoiceEntity.number!!)
         } else {
             return Pair(
                 Files.readAllBytes(Paths.get(appConfig.fileStoragePath() + invoiceEntity.storePath)),

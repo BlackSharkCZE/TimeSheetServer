@@ -1,8 +1,10 @@
 <template>
   <ConfirmDialog></ConfirmDialog>
   <Message v-if="timelines.length==0" severity="info" :closable="false">There is not any timeline in database.</Message>
-  <Message v-if="error.show" severity="error" :closable="true" @close="error.show=false">{{error.message}}: {{error.show}}</Message>
-  <Message v-if="info.show" severity="info" :closable="true" @close="info.show=false">{{info.message}}</Message>
+  <Message v-if="error.show" severity="error" :closable="true" @close="error.show=false">{{ error.message }}:
+    {{ error.show }}
+  </Message>
+  <Message v-if="info.show" severity="info" :closable="true" @close="info.show=false">{{ info.message }}</Message>
 
   <TimelineRowEdit
       @update:row="handleRowUpdate"
@@ -82,7 +84,7 @@
 <script lang="ts" setup>
 
 import {defineExpose, inject, onMounted, reactive, ref} from 'vue'
-import {AxiosResponse, AxiosStatic} from "axios";
+import {AxiosStatic} from "axios";
 import DataTable, {DataTableFilterEvent, DataTablePageEvent} from 'primevue/datatable';
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
@@ -90,7 +92,7 @@ import Column from 'primevue/column';
 import moment from "moment";
 import WritersMarker from "@/components/blocks/WritersMarker.vue";
 import ConfirmDialog from "primevue/confirmdialog";
-import {ErrorType, RemoteWriterTimestamp} from "@/components/blocks/Types";
+import {ErrorType} from "@/components/blocks/Types";
 import TimelineRowEdit from "@/components/blocks/TimelineRowEdit.vue";
 import {TimelineType} from "@/components/blocks/TimelineDefs";
 
@@ -117,10 +119,10 @@ const filters = ref({
   projectName: {value: '', matchMode: 'contains'}
 })
 const displayEdit = ref<boolean>(false)
-const selectedRow = ref<any|null>(null)
+const selectedRow = ref<any | null>(null)
 
 
-const error = reactive<ErrorType>({show:false, message: null})
+const error = reactive<ErrorType>({show: false, message: null})
 const info = reactive<ErrorType>({show: false, message: null})
 
 // Define lifecycle hooks
@@ -144,7 +146,7 @@ function writeRowToRemote(data: any) {
     // TODO update parser according to real response from backend Map<String, RestResponse<RemoteWriteTimestampEntity?>?>
     if (response.status === 200) {
       const result = response.data
-      const writers = [... Object.keys(result)]
+      const writers = [...Object.keys(result)]
       let success = true
 
       const im: string[] = []
@@ -164,10 +166,10 @@ function writeRowToRemote(data: any) {
         }
       })
 
-      info.show = im.length>0
+      info.show = im.length > 0
       info.message = im.join(". ")
 
-      error.show = em.length>0
+      error.show = em.length > 0
       error.message = em.join(". ")
       loadData()
 
@@ -178,22 +180,10 @@ function writeRowToRemote(data: any) {
   })
 }
 
-/*function processSuccessWrite(data: any) {
-  let row = timelines.value.filter(it => {
-    return it.id == data.id;
-  })[0]
-  row.remoteWriteTimestamp = data.list
-}*/
-
 function editItem(row: any) {
   selectedRow.value = row
   displayEdit.value = true
 }
-
-/*function processErrorWrite(data: any) {
-  error.show = true;
-  error.message = data.list
-}*/
 
 function loadData(filterData: any = {}) {
   loading.value = true
@@ -234,11 +224,13 @@ function onFilter(event: DataTableFilterEvent) {
 function mapFilterToDataTablePayload(vueFilter: any): any {
   const filter: any = {}
   const keys = Object.keys(vueFilter)
-
+  if (keys === undefined || keys === null || keys.length === 0) {
+    return filter
+  }
   for (let a = 0; a < keys.length; a++) {
     const key = keys[a]
     const {value: _value, matchMode} = vueFilter[keys[a]]
-    if (_value.length > 0) {
+    if (_value !== null && _value.length > 0) {
       if (key === 'projectName') {
         filter['projectEntity'] = {
           type: getFilterType(matchMode),
