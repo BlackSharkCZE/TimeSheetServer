@@ -3,9 +3,6 @@
   <Panel header="Select month"
          class="mt-2">
 
-    <div>
-      {{store.userDetail}}
-    </div>
     <form @submit.prevent="handleSubmit()" class="p-fluid">
 
       <div class="card">
