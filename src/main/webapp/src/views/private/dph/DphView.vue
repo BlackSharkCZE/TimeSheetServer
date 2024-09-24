@@ -3,6 +3,9 @@
   <Panel header="Select month"
          class="mt-2">
 
+    <div>
+      {{store.userDetail}}
+    </div>
     <form @submit.prevent="handleSubmit()" class="p-fluid">
 
       <div class="card">
@@ -201,7 +204,7 @@ function processContentDownload() {
 
   const path = formData.year+'-'+(formData.month.index + 1).toString(10).padStart(2,'0')+'-01'
 
-  axios?.get('/dph/download/' + path + '/' + store.userDetail.company.id, {
+  axios?.get('/dph/download/' + path + '/' + store.userDetail.company, {
     responseType: 'blob'
   }).then(response => {
     const objectURL = URL.createObjectURL(response.data)
@@ -213,6 +216,9 @@ function processContentDownload() {
     link.remove()
     window.URL.revokeObjectURL(link.href)
 
+  }).catch(error => {
+    alert('Error while downloading file')
+    console.error(error)
   })
 }
 
