@@ -13,7 +13,7 @@
     <Column field="id" header="ID"></Column>
     <Column field="keyPattern" header="PATTERN"></Column>
     <Column field="remoteWriterList" header="WRITERS"></Column>
-    <Column field="remoteWriterList" header="WRITERS"></Column>
+    <Column field="description" header="NOTE"></Column>
 
   </DataTable>
 
