@@ -39,7 +39,12 @@ const emits = defineEmits(['update:modelValue', 'change'])
 
 // Define component property
 const props = withDefaults(defineProps<Properties>(), {
-  years: () => [2020, 2021, 2022, 2023, 2024]
+  years: () => {
+    const start = 2020;
+    const endDate = (new Date()).getFullYear() + 1;
+    return Array.from({length: endDate - start + 1}, (_, i) => start + i);
+  },
+  // years: () => [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 })
 
 // Define lifecycle hooks
